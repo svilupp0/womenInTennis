@@ -1,5 +1,6 @@
 import { prisma } from '../../../lib/prisma'
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 export default async function handler(req, res) {
   // Solo metodo POST
@@ -52,12 +53,25 @@ export default async function handler(req, res) {
     // Login successful - rimuovi password dalla risposta
     const { password: _, ...userWithoutPassword } = user
 
-    // Per ora restituiamo solo i dati utente
-    // TODO: Implementare JWT o sessioni per autenticazione persistente
+    // Genera JWT token
+    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+    const token = jwt.sign(
+      { 
+        userId: user.id,
+        email: user.email 
+      },
+      jwtSecret,
+      { 
+        expiresIn: '24h' // Token valido per 24 ore
+      }
+    )
+
+    // Risposta di successo con JWT
     res.status(200).json({
       success: true,
       message: 'Login effettuato con successo!',
-      user: userWithoutPassword
+      user: userWithoutPassword,
+      token: token
     })
 
   } catch (error) {

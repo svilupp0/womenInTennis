@@ -4,5 +4,5 @@
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
   "/login": "pages/login.js",
-  "/api/auth/login": "pages/api/auth/login.js"
+  "/api/auth/register": "pages/api/auth/register.js"
 }

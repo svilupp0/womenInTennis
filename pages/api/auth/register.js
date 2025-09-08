@@ -1,5 +1,6 @@
 import { prisma } from '../../../lib/prisma'
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 export default async function handler(req, res) {
   // Solo metodo POST
@@ -59,11 +60,25 @@ export default async function handler(req, res) {
       }
     })
 
-    // Risposta di successo
+    // Genera JWT token
+    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+    const token = jwt.sign(
+      { 
+        userId: newUser.id,
+        email: newUser.email 
+      },
+      jwtSecret,
+      { 
+        expiresIn: '24h' // Token valido per 24 ore
+      }
+    )
+
+    // Risposta di successo con JWT
     res.status(201).json({
       success: true,
       message: 'Registrazione completata con successo!',
-      user: newUser
+      user: newUser,
+      token: token
     })
 
   } catch (error) {
