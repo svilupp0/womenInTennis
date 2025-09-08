@@ -1,9 +1,12 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
 import styles from '../styles/Auth.module.css'
 
 export default function Register() {
+  const { registerAndRedirect, loading: authLoading } = useAuth()
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -28,6 +31,7 @@ export default function Register() {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setSuccess('')
 
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
@@ -43,34 +47,26 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          comune: formData.comune,
-          livello: formData.livello
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setSuccess('Registrazione completata! Ora puoi accedere.')
-        setFormData({
-          email: '',
-          password: '',
-          confirmPassword: '',
-          comune: '',
-          livello: ''
-        })
-      } else {
-        setError(data.error || 'Errore durante la registrazione')
+      // Prepara dati per registrazione
+      const userData = {
+        email: formData.email,
+        password: formData.password,
+        comune: formData.comune,
+        livello: formData.livello
       }
+
+      // Usa il hook useAuth per registrazione con redirect automatico
+      const result = await registerAndRedirect(
+        userData,
+        '/dashboard'
+      )
+
+      if (!result.success) {
+        setError(result.error || 'Errore durante la registrazione')
+      }
+      // Se success = true, il redirect è automatico
     } catch (error) {
+      console.error('Errore registrazione:', error)
       setError('Errore di connessione. Riprova più tardi.')
     } finally {
       setIsLoading(false)
@@ -193,10 +189,10 @@ export default function Register() {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={isLoading}
+                  disabled={isLoading || authLoading}
                   style={{ width: '100%', marginTop: '1rem' }}
                 >
-                  {isLoading ? '⏳ Registrazione...' : '🚀 Crea Account'}
+                  {(isLoading || authLoading) ? '⏳ Registrazione...' : '🚀 Crea Account'}
                 </button>
               </form>
 

@@ -1,9 +1,12 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
 import styles from '../styles/Auth.module.css'
 
 export default function Login() {
+  const { loginAndRedirect, loading: authLoading } = useAuth()
+  
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -33,26 +36,19 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }),
-      })
+      // Usa il hook useAuth per login con redirect automatico
+      const result = await loginAndRedirect(
+        formData.email, 
+        formData.password, 
+        '/dashboard'
+      )
 
-      const data = await response.json()
-
-      if (response.ok) {
-        // Redirect to dashboard on success
-        window.location.href = '/dashboard'
-      } else {
-        setError(data.error || 'Errore durante il login')
+      if (!result.success) {
+        setError(result.error || 'Errore durante il login')
       }
+      // Se success = true, il redirect è automatico
     } catch (error) {
+      console.error('Errore login:', error)
       setError('Errore di connessione. Riprova più tardi.')
     } finally {
       setIsLoading(false)
@@ -125,10 +121,10 @@ export default function Login() {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={isLoading}
+                  disabled={isLoading || authLoading}
                   style={{ width: '100%', marginTop: '1rem' }}
                 >
-                  {isLoading ? '⏳ Accesso...' : '🚀 Accedi'}
+                  {(isLoading || authLoading) ? '⏳ Accesso...' : '🚀 Accedi'}
                 </button>
               </form>
 
