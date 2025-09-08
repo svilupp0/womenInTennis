@@ -1,6 +1,29 @@
 {
+  "name": "womenintennis",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/svilupp0/womenInTennis#readme",
+  "bugs": {
+    "url": "https://github.com/svilupp0/womenInTennis/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svilupp0/womenInTennis.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
-    "@railway/cli": "^4.6.3",
-    "railway": "^2.0.17"
+    "@prisma/client": "^6.15.0",
+    "next": "^15.5.2",
+    "prisma": "^6.15.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
