@@ -28,6 +28,13 @@ export default function Dashboard() {
   const [showEditProfile, setShowEditProfile] = useState(false)
   const [openContactMenu, setOpenContactMenu] = useState(null)
   const [comuniDisponibili, setComuniDisponibili] = useState([])
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportTarget, setReportTarget] = useState(null)
+  const [reportForm, setReportForm] = useState({ reason: '', description: '' })
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false)
+  const [showMyReports, setShowMyReports] = useState(false)
+  const [myReports, setMyReports] = useState([])
+  const [isLoadingReports, setIsLoadingReports] = useState(false)
 
   // Redirect se non autenticato
   useEffect(() => {
@@ -168,6 +175,91 @@ export default function Dashboard() {
     setOpenContactMenu(null)
   }
 
+  // Gestione segnalazioni
+  const handleReportUser = (player) => {
+    setReportTarget(player)
+    setReportForm({ reason: '', description: '' })
+    setShowReportModal(true)
+    setOpenContactMenu(null)
+  }
+
+  const handleReportFormChange = (field, value) => {
+    setReportForm(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const submitReport = async () => {
+    if (!reportForm.reason) {
+      alert('Seleziona un motivo per la segnalazione')
+      return
+    }
+
+    setIsSubmittingReport(true)
+    try {
+      const response = await fetch('/api/reports/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          reportedId: reportTarget.id,
+          reason: reportForm.reason,
+          description: reportForm.description
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        alert('Segnalazione inviata con successo')
+        setShowReportModal(false)
+        setReportTarget(null)
+        setReportForm({ reason: '', description: '' })
+      } else {
+        alert(data.error || 'Errore durante l\'invio della segnalazione')
+      }
+    } catch (error) {
+      console.error('Errore invio segnalazione:', error)
+      alert('Errore di connessione. Riprova più tardi.')
+    } finally {
+      setIsSubmittingReport(false)
+    }
+  }
+
+  const loadMyReports = async () => {
+    setIsLoadingReports(true)
+    try {
+      const response = await fetch('/api/reports/my?type=given', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setMyReports(data.reports || [])
+      } else {
+        console.error('Errore caricamento segnalazioni:', response.statusText)
+        setMyReports([])
+      }
+    } catch (error) {
+      console.error('Errore caricamento segnalazioni:', error)
+      setMyReports([])
+    } finally {
+      setIsLoadingReports(false)
+    }
+  }
+
+  const toggleMyReports = () => {
+    if (!showMyReports) {
+      loadMyReports()
+    }
+    setShowMyReports(!showMyReports)
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -258,6 +350,12 @@ export default function Dashboard() {
                       onClick={() => setShowEditProfile(!showEditProfile)}
                     >
                       ✏️ Modifica Profilo
+                    </button>
+                    <button 
+                      className="btn btn-outline"
+                      onClick={toggleMyReports}
+                    >
+                      📄 Le mie segnalazioni
                     </button>
                   </div>
                 </div>
@@ -389,14 +487,150 @@ export default function Dashboard() {
                             </div>
                           )}
                         </div>
+                        <button 
+                          className="btn btn-warning"
+                          onClick={() => handleReportUser(player)}
+                        >
+                          🚨 Segnala
+                        </button>
                       </div>
                     </div>
                   ))
                 )}
               </div>
             </section>
+
+            {/* 4. Lista delle mie segnalazioni */}
+            {showMyReports && (
+              <section className={styles.reportsSection}>
+                <div className={styles.reportsCard}>
+                  <div className={styles.reportsHeader}>
+                    <h2>📄 Le mie segnalazioni</h2>
+                    <button 
+                      className="btn btn-secondary"
+                      onClick={() => setShowMyReports(false)}
+                    >
+                      ✕ Chiudi
+                    </button>
+                  </div>
+                  
+                  {isLoadingReports ? (
+                    <div className={styles.loading}>⏳ Caricamento segnalazioni...</div>
+                  ) : myReports.length === 0 ? (
+                    <div className={styles.noReports}>
+                      <p>📝 Non hai ancora fatto nessuna segnalazione.</p>
+                    </div>
+                  ) : (
+                    <div className={styles.reportsList}>
+                      {myReports.map((report) => (
+                        <div key={report.id} className={styles.reportItem}>
+                          <div className={styles.reportHeader}>
+                            <span className={styles.reportUser}>
+                              👤 {report.reported.username}
+                            </span>
+                            <span className={`${styles.reportStatus} ${styles[report.status.toLowerCase()]}`}>
+                              {report.status === 'PENDING' && '⏳ In attesa'}
+                              {report.status === 'REVIEWED' && '👁️ Revisionata'}
+                              {report.status === 'RESOLVED' && '✅ Risolta'}
+                              {report.status === 'DISMISSED' && '❌ Respinta'}
+                            </span>
+                          </div>
+                          <div className={styles.reportDetails}>
+                            <p className={styles.reportReason}>
+                              <strong>Motivo:</strong> {report.reason.replace(/_/g, ' ').toLowerCase()}
+                            </p>
+                            {report.description && (
+                              <p className={styles.reportDescription}>
+                                <strong>Descrizione:</strong> {report.description}
+                              </p>
+                            )}
+                            <p className={styles.reportDate}>
+                              <strong>Data:</strong> {new Date(report.createdAt).toLocaleDateString('it-IT')}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
           </div>
         </main>
+
+        {/* Modal Segnalazione */}
+        {showReportModal && (
+          <div className={styles.modalOverlay} onClick={() => setShowReportModal(false)}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h3>🚨 Segnala Utente</h3>
+                <button 
+                  className={styles.modalClose}
+                  onClick={() => setShowReportModal(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              
+              <div className={styles.modalBody}>
+                <div className={styles.reportTargetInfo}>
+                  <div className={styles.targetAvatar}>
+                    {reportTarget?.email.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h4>{reportTarget?.email.split('@')[0]}</h4>
+                    <p>📍 {reportTarget?.comune || 'Non specificato'} • 🎾 {reportTarget?.livello || 'Non specificato'}</p>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Motivo della segnalazione *</label>
+                  <select 
+                    className="form-input"
+                    value={reportForm.reason}
+                    onChange={(e) => handleReportFormChange('reason', e.target.value)}
+                  >
+                    <option value="">Seleziona un motivo</option>
+                    <option value="INAPPROPRIATE_BEHAVIOR">Comportamento inappropriato</option>
+                    <option value="FAKE_PROFILE">Profilo falso</option>
+                    <option value="HARASSMENT">Molestie</option>
+                    <option value="SPAM">Spam</option>
+                    <option value="NO_SHOW">Non si è presentata</option>
+                    <option value="OTHER">Altro</option>
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Descrizione (opzionale)</label>
+                  <textarea 
+                    className="form-input"
+                    rows={4}
+                    placeholder="Descrivi brevemente il problema..."
+                    value={reportForm.description}
+                    onChange={(e) => handleReportFormChange('description', e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <div className={styles.modalFooter}>
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => setShowReportModal(false)}
+                  disabled={isSubmittingReport}
+                >
+                  Annulla
+                </button>
+                <button 
+                  className="btn btn-danger"
+                  onClick={submitReport}
+                  disabled={isSubmittingReport || !reportForm.reason}
+                >
+                  {isSubmittingReport ? '⏳ Invio...' : '🚨 Invia Segnalazione'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )

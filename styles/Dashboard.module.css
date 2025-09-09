@@ -564,6 +564,8 @@
 .playerActions {
   display: flex;
   gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .noResults {
@@ -627,4 +629,304 @@
 .contactOption:active {
   background: var(--primary-green-alpha);
   transform: scale(0.98);
+}
+
+/* Removed contactSeparator and reportOption styles - no longer needed */
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: var(--space-md);
+}
+
+.modal {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2xl);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: var(--gray-800);
+  font-size: 1.25rem;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--gray-500);
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.modalClose:hover {
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.modalBody {
+  padding: var(--space-lg);
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border-top: 1px solid var(--gray-200);
+}
+
+.reportTargetInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+}
+
+.targetAvatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-orange) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.reportTargetInfo h4 {
+  margin: 0 0 var(--space-xs) 0;
+  color: var(--gray-800);
+}
+
+.reportTargetInfo p {
+  margin: 0;
+  color: var(--gray-600);
+  font-size: 0.875rem;
+}
+
+.formGroup {
+  margin-bottom: var(--space-lg);
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+}
+
+/* Reports Section */
+.reportsSection {
+  margin-bottom: var(--space-xl);
+}
+
+.reportsCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.reportsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.reportsHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin: 0;
+}
+
+.noReports {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--gray-600);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--gray-300);
+}
+
+.reportsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.reportItem {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  border-left: 4px solid var(--gray-300);
+  transition: all 0.2s ease;
+}
+
+.reportItem:hover {
+  background: var(--gray-100);
+}
+
+.reportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.reportUser {
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.reportStatus {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.reportStatus.pending {
+  background: var(--accent-orange-alpha);
+  color: var(--accent-orange);
+}
+
+.reportStatus.reviewed {
+  background: var(--primary-blue-alpha);
+  color: var(--primary-blue);
+}
+
+.reportStatus.resolved {
+  background: var(--primary-green-alpha);
+  color: var(--primary-green);
+}
+
+.reportStatus.dismissed {
+  background: var(--gray-200);
+  color: var(--gray-600);
+}
+
+.reportDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.reportDetails p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--gray-600);
+}
+
+.reportReason strong,
+.reportDescription strong,
+.reportDate strong {
+  color: var(--gray-700);
+}
+
+/* Button Styles */
+.btn.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary-green);
+  color: var(--primary-green);
+}
+
+.btn.btn-outline:hover {
+  background: var(--primary-green);
+  color: white;
+}
+
+.btn.btn-danger {
+  background: var(--accent-red);
+  color: white;
+  border: 2px solid var(--accent-red);
+}
+
+.btn.btn-danger:hover {
+  background: var(--accent-red-dark);
+  border-color: var(--accent-red-dark);
+}
+
+.btn.btn-danger:disabled {
+  background: var(--gray-300);
+  border-color: var(--gray-300);
+  color: var(--gray-500);
+  cursor: not-allowed;
+}
+
+.btn.btn-warning {
+  background: var(--accent-orange);
+  color: white;
+  border: 2px solid var(--accent-orange);
+  font-size: 0.875rem;
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.btn.btn-warning:hover {
+  background: var(--accent-red);
+  border-color: var(--accent-red);
+  transform: translateY(-1px);
+}
+
+.btn.btn-warning:active {
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal {
+    margin: var(--space-md);
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .modalFooter {
+    flex-direction: column;
+  }
+  
+  .reportTargetInfo {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .reportsHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

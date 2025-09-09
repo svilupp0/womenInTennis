@@ -14,6 +14,44 @@ model User {
   password     String
   comune       String?       // Comune di residenza
   livello      String?       // Principiante / Intermedio / Avanzato
+  telefono     String?       // opzionale
   disponibilita Boolean?     // Disponibile a giocare o no
   createdAt    DateTime @default(now())
+  
+  // Relazioni per il sistema di report
+  reportsGiven    Report[] @relation("reporter")  // Report fatti da questo utente
+  reportsReceived Report[] @relation("reported")  // Report ricevuti da questo utente
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  reporterId  Int      // Chi fa la segnalazione
+  reportedId  Int      // Chi viene segnalato
+  reason      ReportReason // Motivo della segnalazione
+  description String?  // Descrizione dettagliata opzionale
+  status      ReportStatus @default(PENDING) // Stato della segnalazione
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relazioni
+  reporter    User @relation("reporter", fields: [reporterId], references: [id])
+  reported    User @relation("reported", fields: [reportedId], references: [id])
+  
+  @@unique([reporterId, reportedId]) // Un utente può segnalare un altro solo una volta
+}
+
+enum ReportReason {
+  INAPPROPRIATE_BEHAVIOR  // Comportamento inappropriato
+  FAKE_PROFILE           // Profilo falso
+  HARASSMENT             // Molestie
+  SPAM                   // Spam
+  NO_SHOW                // Non si è presentata all'appuntamento
+  OTHER                  // Altro
+}
+
+enum ReportStatus {
+  PENDING    // In attesa di revisione
+  REVIEWED   // Revisionata
+  RESOLVED   // Risolta
+  DISMISSED  // Respinta
 }
