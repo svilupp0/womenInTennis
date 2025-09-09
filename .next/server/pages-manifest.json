@@ -5,5 +5,9 @@
   "/": "pages/index.js",
   "/login": "pages/login.js",
   "/api/auth/login": "pages/api/auth/login.js",
-  "/dashboard": "pages/dashboard.js"
+  "/dashboard": "pages/dashboard.js",
+  "/admin": "pages/admin.js",
+  "/api/comuni/available": "pages/api/comuni/available.js",
+  "/api/users/search": "pages/api/users/search.js",
+  "/api/admin/reports": "pages/api/admin/reports.js"
 }
