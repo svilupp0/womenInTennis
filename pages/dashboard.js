@@ -14,7 +14,8 @@ export default function Dashboard() {
     getDisplayName,
     getUserLevel,
     getUserLocation,
-    isAvailable
+    isAvailable,
+    isAdmin
   } = useAuth()
 
   const [availability, setAvailability] = useState(false)
@@ -36,12 +37,15 @@ export default function Dashboard() {
   const [myReports, setMyReports] = useState([])
   const [isLoadingReports, setIsLoadingReports] = useState(false)
 
-  // Redirect se non autenticato
+  // Redirect se non autenticato o se admin
   useEffect(() => {
     if (!loading && !isAuthenticated()) {
       window.location.href = '/login'
+    } else if (!loading && isAuthenticated() && isAdmin()) {
+      // Redirect admin alla dashboard admin
+      window.location.href = '/admin'
     }
-  }, [loading, isAuthenticated])
+  }, [loading, isAuthenticated, isAdmin])
 
   // Imposta disponibilità iniziale
   useEffect(() => {

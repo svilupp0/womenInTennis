@@ -16,6 +16,7 @@ model User {
   livello      String?       // Principiante / Intermedio / Avanzato
   telefono     String?       // opzionale
   disponibilita Boolean?     // Disponibile a giocare o no
+  isAdmin      Boolean  @default(false)  // Flag admin
   createdAt    DateTime @default(now())
   
   // Relazioni per il sistema di report

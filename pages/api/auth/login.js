@@ -32,6 +32,7 @@ export default async function handler(req, res) {
         comune: true,
         livello: true,
         disponibilita: true,
+        isAdmin: true,
         createdAt: true
       }
     })
@@ -58,7 +59,8 @@ export default async function handler(req, res) {
     const token = jwt.sign(
       { 
         userId: user.id,
-        email: user.email 
+        email: user.email,
+        isAdmin: user.isAdmin
       },
       jwtSecret,
       { 

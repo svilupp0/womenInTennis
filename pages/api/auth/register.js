@@ -57,6 +57,7 @@ export default async function handler(req, res) {
         livello: true,
         telefono: true,
         disponibilita: true,
+        isAdmin: true,
         createdAt: true
         // Non restituiamo mai la password
       }
@@ -67,7 +68,8 @@ export default async function handler(req, res) {
     const token = jwt.sign(
       { 
         userId: newUser.id,
-        email: newUser.email 
+        email: newUser.email,
+        isAdmin: newUser.isAdmin
       },
       jwtSecret,
       { 

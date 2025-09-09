@@ -57,6 +57,11 @@ export const useAuth = () => {
       return user?.comune || 'Non specificato'
     },
 
+    // Check se utente è admin
+    isAdmin: () => {
+      return user?.isAdmin === true
+    },
+
     // Check se token è scaduto (basic check)
     isTokenExpired: () => {
       if (!token) return true
