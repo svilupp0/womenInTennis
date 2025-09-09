@@ -82,8 +82,71 @@
   padding: var(--space-xl) 0;
 }
 
-.welcomeSection {
-  margin-bottom: var(--space-2xl);
+/* Profile Section */
+.profileSection {
+  margin-bottom: var(--space-xl);
+}
+
+.profileCard {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-lg);
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, var(--primary-green-light-alpha), var(--accent-orange-alpha)) border-box;
+}
+
+.profileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+
+.avatarSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.profileName {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: var(--space-xs);
+}
+
+.profileDetails {
+  color: var(--gray-600);
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.profileActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
 }
 
 .welcomeCard {
@@ -274,41 +337,54 @@
     display: flex;
   }
   
-  .dashboardGrid {
+  .filtersGrid {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .actionButtons {
-    flex-direction: row;
+  .playersGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  .actionBtn {
-    width: auto;
-    flex: 1;
+  .profileHeader {
+    flex-wrap: nowrap;
+  }
+  
+  .profileActions {
+    flex-wrap: nowrap;
   }
 }
 
 @media (min-width: 768px) {
-  .welcomeCard {
-    padding: var(--space-2xl);
+  .filtersGrid {
+    grid-template-columns: repeat(3, 1fr);
   }
   
-  .welcomeTitle {
+  .playersGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+  
+  .profileName {
     font-size: 2.25rem;
-  }
-  
-  .statsGrid {
-    grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (min-width: 1024px) {
-  .dashboardGrid {
+  .playersGrid {
     grid-template-columns: repeat(3, 1fr);
   }
   
   .main {
     padding: var(--space-2xl) 0;
+  }
+  
+  .filtersGrid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -330,4 +406,225 @@
   background: white;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+}
+
+/* Filters Section */
+.filtersSection {
+  margin-bottom: var(--space-xl);
+}
+
+.filtersCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.filtersTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: var(--space-lg);
+}
+
+.filtersGrid {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: 1fr;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.filterLabel {
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  color: var(--gray-600);
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-green);
+}
+
+/* Players Section */
+.playersSection {
+  margin-bottom: var(--space-xl);
+}
+
+.playersHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.playersHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin: 0;
+}
+
+.searchingIndicator {
+  color: var(--primary-green);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.playersGrid {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: 1fr;
+}
+
+.playerCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.playerCard:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-2px);
+  border-color: var(--primary-green-light-alpha);
+}
+
+.playerHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.playerAvatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary-green-medium) 0%, var(--primary-green-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  box-shadow: var(--shadow-sm);
+}
+
+.playerInfo {
+  flex: 1;
+}
+
+.playerName {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.playerDetails {
+  color: var(--gray-600);
+  font-size: 0.875rem;
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.playerStatus {
+  margin: 0;
+}
+
+.available {
+  color: var(--primary-green);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.unavailable {
+  color: var(--gray-400);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.playerActions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.noResults {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--gray-600);
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--gray-300);
+}
+
+.noResults p {
+  margin: var(--space-sm) 0;
+}
+
+/* Contact Dropdown */
+.contactDropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.contactMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--gray-200);
+  min-width: 140px;
+  z-index: 1000;
+  overflow: hidden;
+  margin-top: var(--space-xs);
+}
+
+.contactOption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.contactOption:last-child {
+  border-bottom: none;
+}
+
+.contactOption:hover {
+  background: var(--primary-green-light-alpha);
+  color: var(--primary-green);
+}
+
+.contactOption:active {
+  background: var(--primary-green-alpha);
+  transform: scale(0.98);
 }

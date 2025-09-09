@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, password, comune, livello } = req.body
+    const { email, password, comune, livello, telefono } = req.body
 
     // Validazione input
     if (!email || !password) {
@@ -47,6 +47,7 @@ export default async function handler(req, res) {
         password: hashedPassword,
         comune: comune || null,
         livello: livello || null,
+        telefono: telefono || null,
         disponibilita: true // Default: disponibile per giocare
       },
       select: {
@@ -54,6 +55,7 @@ export default async function handler(req, res) {
         email: true,
         comune: true,
         livello: true,
+        telefono: true,
         disponibilita: true,
         createdAt: true
         // Non restituiamo mai la password

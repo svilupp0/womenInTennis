@@ -12,7 +12,8 @@ export default function Register() {
     password: '',
     confirmPassword: '',
     comune: '',
-    livello: ''
+    livello: '',
+    telefono: ''
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -52,7 +53,8 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
         comune: formData.comune,
-        livello: formData.livello
+        livello: formData.livello,
+        telefono: formData.telefono
       }
 
       // Usa il hook useAuth per registrazione con redirect automatico
@@ -184,6 +186,19 @@ export default function Register() {
                     <option value="Intermedio">Intermedio</option>
                     <option value="Avanzato">Avanzato</option>
                   </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="telefono">Telefono (opzionale)</label>
+                  <input
+                    type="tel"
+                    id="telefono"
+                    name="telefono"
+                    value={formData.telefono}
+                    onChange={handleChange}
+                    className="form-input"
+                    placeholder="Es. +39 123 456 7890"
+                  />
                 </div>
 
                 <button
