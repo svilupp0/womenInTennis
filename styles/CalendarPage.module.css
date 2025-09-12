@@ -1,0 +1,204 @@
+/* styles/CalendarPage.module.css */
+/* Stili aggiuntivi per la pagina calendario */
+
+.loadingPage,
+.errorPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background);
+}
+
+.loadingContent,
+.errorContent {
+  text-align: center;
+  padding: var(--space-xl);
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+}
+
+.calendarPage {
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+.pageHeader {
+  background: white;
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  gap: var(--space-lg);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.logoIcon {
+  font-size: 1.5rem;
+}
+
+.navigation {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.navLink {
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-sm);
+  transition: all 0.2s ease;
+}
+
+.navLink:hover,
+.navLink.active {
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.1);
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.userName {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+}
+
+.userEmail {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.main {
+  padding: var(--space-xl) 0;
+}
+
+.instructionsSection {
+  margin-bottom: var(--space-xl);
+}
+
+.instructionsCard {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.instructionsCard h2 {
+  margin: 0 0 var(--space-lg) 0;
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
+.instructionsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
+}
+
+.instructionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.instructionIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.calendarSection {
+  margin-bottom: var(--space-xl);
+}
+
+.tipsSection {
+  margin-bottom: var(--space-xl);
+}
+
+.tipsCard {
+  background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.1), rgba(var(--color-primary-rgb), 0.05));
+  border-radius: var(--border-radius);
+  padding: var(--space-lg);
+  border: 1px solid rgba(var(--color-accent-rgb), 0.2);
+}
+
+.tipsCard h3 {
+  margin: 0 0 var(--space-md) 0;
+  color: var(--color-primary);
+  font-size: 1.25rem;
+}
+
+.tipsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.tipsList li {
+  position: relative;
+  padding-left: var(--space-lg);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.tipsList li::before {
+  content: '💡';
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  
+  .navigation {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .userMenu {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .instructionsList {
+    grid-template-columns: 1fr;
+  }
+}

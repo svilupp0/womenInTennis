@@ -22,6 +22,11 @@ model User {
   // Relazioni per il sistema di report
   reportsGiven    Report[] @relation("reporter")  // Report fatti da questo utente
   reportsReceived Report[] @relation("reported")  // Report ricevuti da questo utente
+  
+  // Nuove relazioni per calendario
+  events          Event[]           // Eventi/disponibilità create dall'utente
+  proposalsSent   MatchProposal[] @relation("proposer")   // Proposte inviate
+  proposalsReceived MatchProposal[] @relation("target")   // Proposte ricevute
 }
 
 model Report {
@@ -55,4 +60,70 @@ enum ReportStatus {
   REVIEWED   // Revisionata
   RESOLVED   // Risolta
   DISMISSED  // Respinta
+}
+
+// NUOVI MODELLI PER CALENDARIO E DISPONIBILITÀ
+
+// Modello per eventi/disponibilità nel calendario
+model Event {
+  id          Int      @id @default(autoincrement())
+  userId      Int      // Creatore dell'evento
+  title       String   // Titolo (es: "Disponibile per partita")
+  description String?  // Descrizione opzionale
+  start       DateTime // Data/ora inizio
+  end         DateTime // Data/ora fine
+  location    String?  // Luogo (campo, circolo, etc.)
+  status      EventStatus @default(AVAILABLE) // Stato evento
+  color       String?  // Colore per calendario (hex)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relazioni
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  proposals   MatchProposal[]    // Proposte legate a questo evento
+  
+  @@index([userId])
+  @@index([start])
+  @@index([status])
+}
+
+// Stati possibili per un evento
+enum EventStatus {
+  AVAILABLE   // Disponibile - altri possono proporre
+  PROPOSED    // Ha ricevuto una proposta
+  CONFIRMED   // Confermato con partner
+  DENIED      // Proposta rifiutata
+  EXPIRED     // Scaduto (data passata)
+  CANCELLED   // Cancellato dal creatore
+}
+
+// Modello per proposte di partite
+model MatchProposal {
+  id           Int      @id @default(autoincrement())
+  proposerId   Int      // Chi propone
+  targetId     Int      // A chi viene proposta
+  eventId      Int      // Evento/slot di disponibilità
+  
+  message      String?  // Messaggio personalizzato
+  status       ProposalStatus @default(PENDING)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relazioni
+  proposer     User  @relation("proposer", fields: [proposerId], references: [id], onDelete: Cascade)
+  target       User  @relation("target", fields: [targetId], references: [id], onDelete: Cascade)
+  event        Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  @@index([targetId])
+  @@index([proposerId])
+  @@index([status])
+}
+
+// Stati possibili per una proposta
+enum ProposalStatus {
+  PENDING   // In attesa di risposta
+  ACCEPTED  // Accettata
+  REJECTED  // Rifiutata
+  EXPIRED   // Scaduta
+  CANCELLED // Cancellata dal proponente
 }
