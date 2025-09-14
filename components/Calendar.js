@@ -192,14 +192,14 @@ const Calendar = () => {
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          height="auto"
+          height={400}
           events={calendarEvents}
           dateClick={handleDateClick}
           eventClick={handleEventClick}
           headerToolbar={{
-            left: 'prev,next today',
+            left: 'prev,next',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            right: 'today'
           }}
           locale="it"
           buttonText={{
@@ -214,6 +214,8 @@ const Calendar = () => {
             minute: '2-digit',
             hour12: false
           }}
+          aspectRatio={1.2}
+          contentHeight={350}
         />
       </div>
 

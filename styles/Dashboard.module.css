@@ -341,10 +341,6 @@
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .playersGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
   .profileHeader {
     flex-wrap: nowrap;
   }
@@ -352,15 +348,16 @@
   .profileActions {
     flex-wrap: nowrap;
   }
+  
+  /* Su mobile grande, aumenta leggermente l'altezza */
+  .playersListContainer {
+    max-height: 400px;
+  }
 }
 
 @media (min-width: 768px) {
   .filtersGrid {
     grid-template-columns: repeat(3, 1fr);
-  }
-  
-  .playersGrid {
-    grid-template-columns: repeat(2, 1fr);
   }
   
   .avatar {
@@ -372,19 +369,36 @@
   .profileName {
     font-size: 2.25rem;
   }
+  
+  /* Layout 2 colonne per riga 2 su tablet */
+  .row2Grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  /* Aumenta altezza container su tablet */
+  .playersListContainer {
+    max-height: 500px;
+  }
 }
 
 @media (min-width: 1024px) {
-  .playersGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  
   .main {
     padding: var(--space-2xl) 0;
   }
   
   .filtersGrid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* Layout 2 colonne per riga 2 su desktop */
+  .row2Grid {
+    grid-template-columns: 1fr 1fr !important;
+    min-width: 600px;
+  }
+  
+  /* Aumenta altezza container su desktop */
+  .playersListContainer {
+    max-height: 700px;
   }
 }
 
@@ -408,9 +422,25 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Filters Section */
-.filtersSection {
+/* RIGA 2: Filtri + Calendario */
+.row2Section {
   margin-bottom: var(--space-xl);
+}
+
+.row2Grid {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: 1fr;
+  width: 100%;
+  align-items: start;
+}
+
+/* Colonna 1: Filtri */
+.filtersColumn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
 }
 
 .filtersCard {
@@ -418,6 +448,7 @@
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-shadow: var(--shadow-md);
+  height: fit-content;
 }
 
 .filtersTitle {
@@ -431,6 +462,88 @@
   display: grid;
   gap: var(--space-lg);
   grid-template-columns: 1fr;
+}
+
+/* Colonna 2: Calendario */
+.calendarColumn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.calendarCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-md);
+  height: fit-content;
+  /* Assicura che il calendario si adatti alla colonna */
+  min-width: 0;
+  overflow: hidden;
+}
+
+.calendarTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: var(--space-lg);
+}
+
+/* Players Card nella colonna filtri */
+.playersCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  margin-top: var(--space-lg);
+  height: fit-content;
+}
+
+.playersListContainer {
+  max-height: 600px;
+  overflow-y: auto;
+  margin-top: var(--space-md);
+}
+
+.playersList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Scrollbar personalizzata per la lista giocatrici */
+.playersListContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.playersListContainer::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 3px;
+}
+
+.playersListContainer::-webkit-scrollbar-thumb {
+  background: var(--primary-green-alpha);
+  border-radius: 3px;
+}
+
+.playersListContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-green);
+}
+
+/* Responsive per mobile - stack verticale */
+@media (max-width: 767px) {
+  .row2Grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .playersListContainer {
+    max-height: 300px;
+  }
+  
+  .filtersGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .filterGroup {

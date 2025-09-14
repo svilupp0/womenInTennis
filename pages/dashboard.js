@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import Calendar from '../components/Calendar'
 import styles from '../styles/Dashboard.module.css'
 
 export default function Dashboard() {
@@ -366,141 +367,157 @@ export default function Dashboard() {
               </div>
             </section>
 
-            {/* 2. Filtri di ricerca */}
-            <section className={styles.filtersSection}>
-              <div className={styles.filtersCard}>
-                <h2 className={styles.filtersTitle}>🔍 Trova Partner di Tennis</h2>
-                <div className={styles.filtersGrid}>
-                  <div className={styles.filterGroup}>
-                    <label className={styles.filterLabel}>Comune:</label>
-                    <select 
-                      className="form-input"
-                      value={searchFilters.comune}
-                      onChange={(e) => handleFilterChange('comune', e.target.value)}
-                    >
-                      <option value="">Tutti i comuni</option>
-                      {comuniDisponibili.map((comune) => (
-                        <option key={comune.nome} value={comune.nome}>
-                          {comune.nome} ({comune.count} giocatrici)
-                        </option>
-                      ))}
-                    </select>
+            {/* RIGA 2: Filtri + Risultati | Calendario */}
+            <section className={styles.row2Section}>
+              <div className={styles.row2Grid}>
+                {/* Colonna 1: Filtri di ricerca + Risultati giocatrici */}
+                <div className={styles.filtersColumn}>
+                  {/* Filtri di ricerca */}
+                  <div className={styles.filtersCard}>
+                    <h2 className={styles.filtersTitle}>🔍 Trova Partner di Tennis</h2>
+                    <div className={styles.filtersGrid}>
+                      <div className={styles.filterGroup}>
+                        <label className={styles.filterLabel}>Comune:</label>
+                        <select 
+                          className="form-input"
+                          value={searchFilters.comune}
+                          onChange={(e) => handleFilterChange('comune', e.target.value)}
+                        >
+                          <option value="">Tutti i comuni</option>
+                          {comuniDisponibili.map((comune) => (
+                            <option key={comune.nome} value={comune.nome}>
+                              {comune.nome} ({comune.count} giocatrici)
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <div className={styles.filterGroup}>
+                        <label className={styles.filterLabel}>Livello:</label>
+                        <select 
+                          className="form-input"
+                          value={searchFilters.livello}
+                          onChange={(e) => handleFilterChange('livello', e.target.value)}
+                        >
+                          <option value="">Tutti i livelli</option>
+                          <option value="Principiante">Principiante</option>
+                          <option value="Intermedio">Intermedio</option>
+                          <option value="Avanzato">Avanzato</option>
+                        </select>
+                      </div>
+                      
+                      <div className={styles.filterGroup}>
+                        <label className={styles.filterLabel}>Solo disponibili:</label>
+                        <div className={styles.checkboxWrapper}>
+                          <input 
+                            type="checkbox"
+                            checked={searchFilters.disponibilita}
+                            onChange={(e) => handleFilterChange('disponibilita', e.target.checked)}
+                            className={styles.checkbox}
+                          />
+                          <span>Mostra solo giocatrici disponibili</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className={styles.filterGroup}>
-                    <label className={styles.filterLabel}>Livello:</label>
-                    <select 
-                      className="form-input"
-                      value={searchFilters.livello}
-                      onChange={(e) => handleFilterChange('livello', e.target.value)}
-                    >
-                      <option value="">Tutti i livelli</option>
-                      <option value="Principiante">Principiante</option>
-                      <option value="Intermedio">Intermedio</option>
-                      <option value="Avanzato">Avanzato</option>
-                    </select>
-                  </div>
-                  
-                  <div className={styles.filterGroup}>
-                    <label className={styles.filterLabel}>Solo disponibili:</label>
-                    <div className={styles.checkboxWrapper}>
-                      <input 
-                        type="checkbox"
-                        checked={searchFilters.disponibilita}
-                        onChange={(e) => handleFilterChange('disponibilita', e.target.checked)}
-                        className={styles.checkbox}
-                      />
-                      <span>Mostra solo giocatrici disponibili</span>
+
+                  {/* Risultati giocatrici */}
+                  <div className={styles.playersCard}>
+                    <div className={styles.playersHeader}>
+                      <h2>🎾 Giocatrici Disponibili ({searchResults.length})</h2>
+                      {isSearching && <span className={styles.searchingIndicator}>🔄 Ricerca...</span>}
+                    </div>
+                    
+                    <div className={styles.playersListContainer}>
+                      {searchResults.length === 0 && !isSearching ? (
+                        <div className={styles.noResults}>
+                          <p>🎾 Nessuna giocatrice trovata con questi filtri.</p>
+                          <p>Prova a modificare i criteri di ricerca!</p>
+                        </div>
+                      ) : (
+                        <div className={styles.playersList}>
+                          {searchResults.map((player) => (
+                            <div key={player.id} className={styles.playerCard}>
+                              <div className={styles.playerHeader}>
+                                <div className={styles.playerAvatar}>
+                                  {player.email.charAt(0).toUpperCase()}
+                                </div>
+                                <div className={styles.playerInfo}>
+                                  <h3 className={styles.playerName}>
+                                    {player.email.split('@')[0]}
+                                  </h3>
+                                  <p className={styles.playerDetails}>
+                                    📍 {player.comune || 'Non specificato'} • 🎾 {player.livello || 'Non specificato'}
+                                  </p>
+                                  <div className={styles.playerStatus}>
+                                    {player.disponibilita ? (
+                                      <span className={styles.available}>✅ Disponibile</span>
+                                    ) : (
+                                      <span className={styles.unavailable}>❌ Non disponibile</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className={styles.playerActions}>
+                                <div className={styles.contactDropdown}>
+                                  <button 
+                                    className="btn btn-primary"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      toggleContactMenu(player.id)
+                                    }}
+                                  >
+                                    💬 Contatta
+                                  </button>
+                                  {openContactMenu === player.id && (
+                                    <div className={styles.contactMenu}>
+                                      {player.telefono && (
+                                        <>
+                                          <button 
+                                            className={styles.contactOption}
+                                            onClick={() => handleWhatsApp(player)}
+                                          >
+                                            📱 WhatsApp
+                                          </button>
+                                          <button 
+                                            className={styles.contactOption}
+                                            onClick={() => handleCall(player)}
+                                          >
+                                            📞 Chiamata
+                                          </button>
+                                        </>
+                                      )}
+                                      <button 
+                                        className={styles.contactOption}
+                                        onClick={() => handleEmail(player)}
+                                      >
+                                        ✉️ Email
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                                <button 
+                                  className="btn btn-warning"
+                                  onClick={() => handleReportUser(player)}
+                                >
+                                  🚨 Segnala
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
 
-            {/* 3. Lista giocatrici disponibili */}
-            <section className={styles.playersSection}>
-              <div className={styles.playersHeader}>
-                <h2>🎾 Giocatrici Disponibili ({searchResults.length})</h2>
-                {isSearching && <span className={styles.searchingIndicator}>🔄 Ricerca...</span>}
-              </div>
-              
-              <div className={styles.playersGrid}>
-                {searchResults.length === 0 && !isSearching ? (
-                  <div className={styles.noResults}>
-                    <p>🎾 Nessuna giocatrice trovata con questi filtri.</p>
-                    <p>Prova a modificare i criteri di ricerca!</p>
+                {/* Colonna 2: Calendario */}
+                <div className={styles.calendarColumn}>
+                  <div className={styles.calendarCard}>
+                    <h2 className={styles.calendarTitle}>📅 Le Mie Disponibilità</h2>
+                    <Calendar />
                   </div>
-                ) : (
-                  searchResults.map((player) => (
-                    <div key={player.id} className={styles.playerCard}>
-                      <div className={styles.playerHeader}>
-                        <div className={styles.playerAvatar}>
-                          {player.email.charAt(0).toUpperCase()}
-                        </div>
-                        <div className={styles.playerInfo}>
-                          <h3 className={styles.playerName}>
-                            {player.email.split('@')[0]}
-                          </h3>
-                          <p className={styles.playerDetails}>
-                            📍 {player.comune || 'Non specificato'} • 🎾 {player.livello || 'Non specificato'}
-                          </p>
-                          <div className={styles.playerStatus}>
-                            {player.disponibilita ? (
-                              <span className={styles.available}>✅ Disponibile</span>
-                            ) : (
-                              <span className={styles.unavailable}>❌ Non disponibile</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className={styles.playerActions}>
-                        <div className={styles.contactDropdown}>
-                          <button 
-                            className="btn btn-primary"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleContactMenu(player.id)
-                            }}
-                          >
-                            💬 Contatta
-                          </button>
-                          {openContactMenu === player.id && (
-                            <div className={styles.contactMenu}>
-                              {player.telefono && (
-                                <>
-                                  <button 
-                                    className={styles.contactOption}
-                                    onClick={() => handleWhatsApp(player)}
-                                  >
-                                    📱 WhatsApp
-                                  </button>
-                                  <button 
-                                    className={styles.contactOption}
-                                    onClick={() => handleCall(player)}
-                                  >
-                                    📞 Chiamata
-                                  </button>
-                                </>
-                              )}
-                              <button 
-                                className={styles.contactOption}
-                                onClick={() => handleEmail(player)}
-                              >
-                                ✉️ Email
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                        <button 
-                          className="btn btn-warning"
-                          onClick={() => handleReportUser(player)}
-                        >
-                          🚨 Segnala
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
+                </div>
               </div>
             </section>
 
