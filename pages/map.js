@@ -124,6 +124,51 @@ export default function Map() {
           }
         }
 
+        // Aggiungi marker per Matchpoint Lecce (campo famoso)
+        const matchpointMarker = new window.google.maps.Marker({
+          position: { lat: 40.344500, lng: 18.212694 },
+          map: googleMap,
+          title: "Matchpoint Lecce",
+          icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+              <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="18" cy="18" r="14" fill="#ff6b35" stroke="#fff" stroke-width="3"/>
+                <text x="18" y="22" text-anchor="middle" fill="white" font-size="18">🏆</text>
+              </svg>
+            `),
+            scaledSize: new window.google.maps.Size(36, 36)
+          }
+        })
+
+        // Info window per Matchpoint Lecce
+        const matchpointInfoWindow = new window.google.maps.InfoWindow({
+          content: `
+            <div style="padding: 12px; max-width: 280px;">
+              <h3 style="margin: 0 0 8px 0; color: #ff6b35; font-size: 16px; font-weight: bold;">🏆 Matchpoint Lecce</h3>
+              <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
+                📍 Via Provinciale Lecce - Vernole, KM 2, 73100 Lecce LE, Italia
+              </p>
+              <p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">
+                📞 393 2023863
+              </p>
+              <div style="background: #fff3e0; padding: 6px; border-radius: 4px; margin-bottom: 8px; font-size: 12px; color: #e65100;">
+                ⭐ Campo da tennis famoso di Lecce
+              </div>
+              <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=40.344500,18.212694', '_blank')" 
+                      style="margin-top: 8px; padding: 6px 12px; background: #ff6b35; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                🗺️ Visualizza su Google Maps
+              </button>
+            </div>
+          `
+        })
+
+        matchpointMarker.addListener('click', () => {
+          matchpointInfoWindow.open(googleMap, matchpointMarker)
+        })
+
+        // Salva il marker
+        setMarkers(prev => [...prev, matchpointMarker])
+
         // Cerca campi da tennis nell'area iniziale (Roma)
         searchTennisCourts({ lat: 41.9028, lng: 12.4964 }, 15000)
         
@@ -423,6 +468,10 @@ export default function Map() {
           <div className={styles.legendItem}>
             <span className={styles.legendIcon}>🎾</span>
             <span>Campi da tennis reali (Google Places)</span>
+          </div>
+          <div className={styles.legendItem}>
+            <span className={styles.legendIcon} style={{color: '#ff6b35'}}>🏆</span>
+            <span>Campi da tennis famosi</span>
           </div>
           <div className={styles.legendItem}>
             <span className={styles.legendIcon} style={{color: '#4285f4'}}>📍</span>
