@@ -310,13 +310,18 @@ export default function Dashboard() {
                   <span className={styles.userName}>{getDisplayName()}</span>
                   <span className={styles.userEmail}>{user?.email}</span>
                 </div>
-                <button 
-                  onClick={handleLogout}
-                  className="btn btn-secondary"
-                  style={{ padding: 'var(--space-xs) var(--space-md)', fontSize: '0.875rem' }}
-                >
-                  Esci
-                </button>
+                <div className={styles.headerActions}>
+                  <Link href="/map" className="btn btn-accent" style={{ padding: 'var(--space-xs) var(--space-md)', fontSize: '0.875rem' }}>
+                    🗺️ Mappa
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="btn btn-secondary"
+                    style={{ padding: 'var(--space-xs) var(--space-md)', fontSize: '0.875rem' }}
+                  >
+                    Esci
+                  </button>
+                </div>
               </div>
             </div>
           </div>

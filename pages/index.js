@@ -50,9 +50,9 @@ export default function Home() {
                 <Link href="/register" className="btn btn-primary">
                   🚀 Inizia ora - È gratis!
                 </Link>
-                <button className="btn btn-accent">
-                  🎾 Scopri come funziona
-                </button>
+                <Link href="/map" className="btn btn-accent">
+                  🗺️ Esplora la mappa
+                </Link>
               </div>
             </div>
           </div>
@@ -72,6 +72,9 @@ export default function Home() {
                 <p className={styles.featureDescription}>
                   Cerca tenniste nella tua città o comune. Filtra per distanza e trova partner comode da raggiungere.
                 </p>
+                <Link href="/map" className="btn btn-secondary" style={{marginTop: '1rem', display: 'inline-block'}}>
+                  🗺️ Visualizza mappa
+                </Link>
               </div>
               
               <div className={styles.featureCard}>
