@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import styles from '../styles/Auth.module.css'
 
 export default function Login() {
-  const { loginAndRedirect, loading: authLoading } = useAuth()
+  const { loginAndRedirect, resendVerification, loading: authLoading } = useAuth()
   
   const [formData, setFormData] = useState({
     email: '',
@@ -13,6 +13,10 @@ export default function Login() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showEmailVerification, setShowEmailVerification] = useState(false)
+  const [unverifiedEmail, setUnverifiedEmail] = useState('')
+  const [isResending, setIsResending] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState('')
 
   const handleChange = (e) => {
     setFormData({
@@ -21,12 +25,14 @@ export default function Login() {
     })
     // Clear errors when user starts typing
     if (error) setError('')
+    if (resendSuccess) setResendSuccess('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setResendSuccess('')
 
     // Basic validation
     if (!formData.email || !formData.password) {
@@ -44,7 +50,14 @@ export default function Login() {
       )
 
       if (!result.success) {
-        setError(result.error || 'Errore durante il login')
+        // Gestione specifica per email non verificata
+        if (result.code === 'EMAIL_NOT_VERIFIED') {
+          setUnverifiedEmail(result.email || formData.email)
+          setShowEmailVerification(true)
+          setError('')
+        } else {
+          setError(result.error || 'Errore durante il login')
+        }
       }
       // Se success = true, il redirect è automatico
     } catch (error) {
@@ -55,6 +68,123 @@ export default function Login() {
     }
   }
 
+  const handleResendVerification = async () => {
+    setIsResending(true)
+    setError('')
+    setResendSuccess('')
+
+    try {
+      const result = await resendVerification(unverifiedEmail)
+      
+      if (result.success) {
+        setResendSuccess(result.message)
+      } else {
+        setError(result.error)
+      }
+    } catch (error) {
+      console.error('Errore reinvio:', error)
+      setError('Errore di connessione. Riprova più tardi.')
+    } finally {
+      setIsResending(false)
+    }
+  }
+
+  const handleBackToLogin = () => {
+    setShowEmailVerification(false)
+    setUnverifiedEmail('')
+    setError('')
+    setResendSuccess('')
+  }
+
+  // Schermata email non verificata
+  if (showEmailVerification) {
+    return (
+      <>
+        <Head>
+          <title>Email Non Verificata - Women in Tennis</title>
+          <meta name="description" content="Verifica la tua email per accedere" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+        </Head>
+
+        <div className={styles.authPage}>
+          <header className={styles.header}>
+            <div className="container">
+              <Link href="/" className={styles.logo}>
+                <div className={styles.logoIcon}>🎾</div>
+                <span>Women in Tennis</span>
+              </Link>
+            </div>
+          </header>
+
+          <main className={styles.main}>
+            <div className="container">
+              <div className={styles.authCard}>
+                <div className={styles.authHeader}>
+                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚠️</div>
+                  <h1>Email non verificata</h1>
+                  <p>Devi verificare la tua email <strong>{unverifiedEmail}</strong> prima di poter accedere.</p>
+                </div>
+
+                {error && (
+                  <div className={styles.errorMessage}>
+                    {error}
+                  </div>
+                )}
+
+                {resendSuccess && (
+                  <div className={styles.successMessage}>
+                    {resendSuccess}
+                  </div>
+                )}
+
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                  <h3 style={{ marginBottom: '1rem', color: 'var(--gray-700)' }}>
+                    Come procedere:
+                  </h3>
+                  <ol style={{ textAlign: 'left', color: 'var(--gray-600)', lineHeight: '1.8' }}>
+                    <li>Controlla la tua casella di posta elettronica</li>
+                    <li>Cerca l'email di verifica da Women in Tennis</li>
+                    <li>Clicca sul link di verifica nell'email</li>
+                    <li>Torna qui per fare login</li>
+                  </ol>
+                </div>
+
+                <div style={{ textAlign: 'center' }}>
+                  <button
+                    onClick={handleResendVerification}
+                    disabled={isResending}
+                    className="btn btn-accent"
+                    style={{ marginBottom: '1rem', width: '100%' }}
+                  >
+                    {isResending ? '📤 Invio...' : '📧 Reinvia Email di Verifica'}
+                  </button>
+
+                  <button
+                    onClick={handleBackToLogin}
+                    className="btn btn-secondary"
+                    style={{ width: '100%' }}
+                  >
+                    🔙 Torna al Login
+                  </button>
+                </div>
+
+                <div className={styles.authFooter}>
+                  <p>
+                    Non trovi l'email? Controlla la cartella spam o{' '}
+                    <Link href="/register" className={styles.authLink}>
+                      registrati di nuovo
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </>
+    )
+  }
+
+  // Form di login normale
   return (
     <>
       <Head>
@@ -133,6 +263,12 @@ export default function Login() {
                   Non hai ancora un account?{' '}
                   <Link href="/register" className={styles.authLink}>
                     Registrati qui
+                  </Link>
+                </p>
+                <p style={{ marginTop: '0.5rem' }}>
+                  Problemi con l'accesso?{' '}
+                  <Link href="/verify-email" className={styles.authLink}>
+                    Verifica email
                   </Link>
                 </p>
               </div>

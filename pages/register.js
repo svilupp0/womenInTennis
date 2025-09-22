@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import styles from '../styles/Auth.module.css'
 
 export default function Register() {
-  const { registerAndRedirect, loading: authLoading } = useAuth()
+  const { registerAndRedirect, resendVerification, loading: authLoading } = useAuth()
   
   const [formData, setFormData] = useState({
     email: '',
@@ -18,6 +18,9 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [showEmailVerification, setShowEmailVerification] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState('')
+  const [isResending, setIsResending] = useState(false)
 
   const handleChange = (e) => {
     setFormData({
@@ -57,16 +60,20 @@ export default function Register() {
         telefono: formData.telefono
       }
 
-      // Usa il hook useAuth per registrazione con redirect automatico
-      const result = await registerAndRedirect(
-        userData,
-        '/dashboard'
-      )
+      // Usa il hook useAuth per registrazione
+      const result = await registerAndRedirect(userData, '/dashboard')
 
-      if (!result.success) {
+      if (result.success) {
+        if (result.requiresEmailVerification) {
+          // Mostra schermata verifica email
+          setRegisteredEmail(formData.email)
+          setShowEmailVerification(true)
+          setSuccess(result.message)
+        }
+        // Se non richiede verifica, il redirect è automatico
+      } else {
         setError(result.error || 'Errore durante la registrazione')
       }
-      // Se success = true, il redirect è automatico
     } catch (error) {
       console.error('Errore registrazione:', error)
       setError('Errore di connessione. Riprova più tardi.')
@@ -75,6 +82,121 @@ export default function Register() {
     }
   }
 
+  const handleResendVerification = async () => {
+    setIsResending(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const result = await resendVerification(registeredEmail)
+      
+      if (result.success) {
+        setSuccess(result.message)
+      } else {
+        setError(result.error)
+      }
+    } catch (error) {
+      console.error('Errore reinvio:', error)
+      setError('Errore di connessione. Riprova più tardi.')
+    } finally {
+      setIsResending(false)
+    }
+  }
+
+  // Schermata verifica email
+  if (showEmailVerification) {
+    return (
+      <>
+        <Head>
+          <title>Verifica Email - Women in Tennis</title>
+          <meta name="description" content="Verifica la tua email per completare la registrazione" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+        </Head>
+
+        <div className={styles.authPage}>
+          <header className={styles.header}>
+            <div className="container">
+              <Link href="/" className={styles.logo}>
+                <div className={styles.logoIcon}>🎾</div>
+                <span>Women in Tennis</span>
+              </Link>
+            </div>
+          </header>
+
+          <main className={styles.main}>
+            <div className="container">
+              <div className={styles.authCard}>
+                <div className={styles.authHeader}>
+                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📧</div>
+                  <h1>Controlla la tua email!</h1>
+                  <p>Abbiamo inviato un link di verifica a <strong>{registeredEmail}</strong></p>
+                </div>
+
+                {error && (
+                  <div className={styles.errorMessage}>
+                    {error}
+                  </div>
+                )}
+
+                {success && (
+                  <div className={styles.successMessage}>
+                    {success}
+                  </div>
+                )}
+
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                  <h3 style={{ marginBottom: '1rem', color: 'var(--gray-700)' }}>
+                    Prossimi passi:
+                  </h3>
+                  <ol style={{ textAlign: 'left', color: 'var(--gray-600)', lineHeight: '1.8' }}>
+                    <li>Controlla la tua casella di posta elettronica</li>
+                    <li>Clicca sul link di verifica nell'email</li>
+                    <li>Torna qui per fare login</li>
+                  </ol>
+                </div>
+
+                <div style={{ textAlign: 'center' }}>
+                  <button
+                    onClick={handleResendVerification}
+                    disabled={isResending}
+                    className="btn btn-secondary"
+                    style={{ marginBottom: '1rem', width: '100%' }}
+                  >
+                    {isResending ? '📤 Invio...' : '📧 Reinvia Email'}
+                  </button>
+
+                  <Link href="/login" className="btn btn-primary" style={{ width: '100%' }}>
+                    🚀 Vai al Login
+                  </Link>
+                </div>
+
+                <div className={styles.authFooter}>
+                  <p>
+                    Non hai ricevuto l'email? Controlla la cartella spam o{' '}
+                    <button 
+                      onClick={handleResendVerification}
+                      disabled={isResending}
+                      style={{ 
+                        background: 'none', 
+                        border: 'none', 
+                        color: 'var(--primary-green)', 
+                        textDecoration: 'underline',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      richiedi un nuovo invio
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </>
+    )
+  }
+
+  // Form di registrazione normale
   return (
     <>
       <Head>

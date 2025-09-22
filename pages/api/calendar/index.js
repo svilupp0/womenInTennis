@@ -2,31 +2,35 @@
 // API per gestire eventi del calendario
 
 import { PrismaClient } from '@prisma/client'
-import jwt from 'jsonwebtoken'
+import { authenticateToken } from '../../../lib/middleware/auth'
 
 const prisma = new PrismaClient()
 
 export default async function handler(req, res) {
-  if (req.method === 'GET') {
-    return getCalendarEvents(req, res)
-  } else if (req.method === 'POST') {
-    return createEvent(req, res)
-  } else {
-    return res.status(405).json({ error: 'Method not allowed' })
-  }
+  // Applica middleware di autenticazione
+  return new Promise((resolve, reject) => {
+    authenticateToken(req, res, (error) => {
+      if (error) {
+        reject(error)
+      } else {
+        // Procedi con la logica dell'API
+        if (req.method === 'GET') {
+          resolve(getCalendarEvents(req, res))
+        } else if (req.method === 'POST') {
+          resolve(createEvent(req, res))
+        } else {
+          resolve(res.status(405).json({ error: 'Method not allowed' }))
+        }
+      }
+    })
+  })
 }
 
 // GET /api/calendar - Ottieni eventi dell'utente
 async function getCalendarEvents(req, res) {
   try {
-    // Verifica autenticazione
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) {
-      return res.status(401).json({ error: 'Token mancante' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = decoded.userId
+    // userId è già disponibile dal middleware di autenticazione
+    const userId = req.userId
 
     // Ottieni eventi dell'utente
     const events = await prisma.event.findMany({
@@ -124,14 +128,8 @@ async function getCalendarEvents(req, res) {
 // POST /api/calendar - Crea nuovo evento
 async function createEvent(req, res) {
   try {
-    // Verifica autenticazione
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) {
-      return res.status(401).json({ error: 'Token mancante' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = decoded.userId
+    // userId è già disponibile dal middleware di autenticazione
+    const userId = req.userId
 
     const { title, description, start, end, location } = req.body
 

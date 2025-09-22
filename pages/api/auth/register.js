@@ -1,54 +1,94 @@
 import { prisma } from '../../../lib/prisma'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import { validateEmail, validatePassword, sanitizeInput } from '../../../lib/security/emailValidator'
+import { generateVerificationToken } from '../../../lib/security/tokenUtils'
+import { sendVerificationEmail } from '../../../lib/services/emailService'
+import { registrationLimiter } from '../../../lib/security/rateLimiter'
+import { ERROR_MESSAGES } from '../../../lib/constants/errorMessages'
 
 export default async function handler(req, res) {
   // Solo metodo POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Metodo non consentito' })
+    return res.status(405).json({ error: ERROR_MESSAGES.METHOD_NOT_ALLOWED })
+  }
+
+  // Applica rate limiting
+  try {
+    await new Promise((resolve, reject) => {
+      registrationLimiter(req, res, (result) => {
+        if (result instanceof Error) {
+          reject(result)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  } catch (error) {
+    return res.status(429).json({ error: ERROR_MESSAGES.TOO_MANY_REGISTRATION_ATTEMPTS })
   }
 
   try {
     const { email, password, comune, livello, telefono } = req.body
 
-    // Validazione input
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email e password sono obbligatori' })
+    // Validazione email avanzata
+    const emailValidation = validateEmail(email)
+    if (!emailValidation.isValid) {
+      return res.status(400).json({ error: emailValidation.error })
     }
 
-    // Validazione email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Formato email non valido' })
+    // Validazione password avanzata
+    const passwordValidation = validatePassword(password)
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({ error: passwordValidation.error })
     }
 
-    // Validazione password lunghezza
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'La password deve essere di almeno 6 caratteri' })
-    }
+    // Sanitizza input opzionali
+    const normalizedEmail = emailValidation.email
+    const sanitizedComune = sanitizeInput(comune, 100)
+    const sanitizedLivello = sanitizeInput(livello, 50)
+    const sanitizedTelefono = sanitizeInput(telefono, 20)
 
     // Verifica se l'utente esiste già
     const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() }
+      where: { email: normalizedEmail },
+      select: {
+        id: true,
+        emailVerified: true
+      }
     })
 
     if (existingUser) {
-      return res.status(400).json({ error: 'Un utente con questa email esiste già' })
+      if (existingUser.emailVerified) {
+        return res.status(400).json({ 
+          error: ERROR_MESSAGES.EMAIL_EXISTS_VERIFIED 
+        })
+      } else {
+        return res.status(400).json({ 
+          error: ERROR_MESSAGES.EMAIL_EXISTS_UNVERIFIED 
+        })
+      }
     }
 
     // Hash della password
     const saltRounds = 12
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-    // Crea nuovo utente nel database
+    // Genera token di verifica
+    const { token, expiry } = generateVerificationToken(24) // 24 ore
+
+    // Crea nuovo utente nel database (NON VERIFICATO)
     const newUser = await prisma.user.create({
       data: {
-        email: email.toLowerCase(),
+        email: normalizedEmail,
         password: hashedPassword,
-        comune: comune || null,
-        livello: livello || null,
-        telefono: telefono || null,
-        disponibilita: true // Default: disponibile per giocare
+        comune: sanitizedComune || null,
+        livello: sanitizedLivello || null,
+        telefono: sanitizedTelefono || null,
+        disponibilita: true,
+        emailVerified: false, // IMPORTANTE: Non verificato
+        verificationToken: token,
+        verificationTokenExpiry: expiry,
+        lastVerificationSent: new Date()
       },
       select: {
         id: true,
@@ -58,31 +98,40 @@ export default async function handler(req, res) {
         telefono: true,
         disponibilita: true,
         isAdmin: true,
+        emailVerified: true,
         createdAt: true
-        // Non restituiamo mai la password
+        // Non restituiamo mai la password o il token
       }
     })
 
-    // Genera JWT token
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-    const token = jwt.sign(
-      { 
-        userId: newUser.id,
-        email: newUser.email,
-        isAdmin: newUser.isAdmin
-      },
-      jwtSecret,
-      { 
-        expiresIn: '24h' // Token valido per 24 ore
-      }
+    // Invia email di verifica
+    const emailSent = await sendVerificationEmail(
+      normalizedEmail, 
+      token, 
+      sanitizedComune || ''
     )
 
-    // Risposta di successo con JWT
+    if (!emailSent) {
+      // Se l'email non viene inviata, elimina l'utente creato
+      await prisma.user.delete({
+        where: { id: newUser.id }
+      })
+      
+      return res.status(500).json({ 
+        error: 'Errore nell\'invio dell\'email di verifica. Riprova più tardi.' 
+      })
+    }
+
+    // Risposta di successo (SENZA JWT - utente deve verificare prima)
     res.status(201).json({
       success: true,
-      message: 'Registrazione completata con successo!',
-      user: newUser,
-      token: token
+      message: ERROR_MESSAGES.REGISTRATION_SUCCESS,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        emailVerified: newUser.emailVerified
+      },
+      nextStep: 'EMAIL_VERIFICATION_REQUIRED'
     })
 
   } catch (error) {
@@ -90,12 +139,12 @@ export default async function handler(req, res) {
 
     // Gestione errori specifici Prisma
     if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'Email già registrata' })
+      return res.status(400).json({ error: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS })
     }
 
     // Errore generico
     res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+      error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR 
     })
   } finally {
     // Disconnetti Prisma

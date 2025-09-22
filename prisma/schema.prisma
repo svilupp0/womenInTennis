@@ -17,6 +17,21 @@ model User {
   telefono     String?       // opzionale
   disponibilita Boolean?     // Disponibile a giocare o no
   isAdmin      Boolean  @default(false)  // Flag admin
+  
+  // Email verification
+  emailVerified           Boolean   @default(false)
+  verificationToken       String?   @unique
+  verificationTokenExpiry DateTime?
+  lastVerificationSent    DateTime? // Anti-spam
+  
+  // Password reset
+  resetPasswordToken      String?   @unique
+  resetPasswordTokenExpiry DateTime?
+  
+  // Security
+  loginAttempts           Int       @default(0)
+  lockoutUntil           DateTime?
+  
   createdAt    DateTime @default(now())
   
   // Relazioni per il sistema di report

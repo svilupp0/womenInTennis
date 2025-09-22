@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null)
   }
 
-  // Funzione login
+  // Funzione login (AGGIORNATA per email verification)
   const login = async (email, password) => {
     try {
       const response = await fetch('/api/auth/login', {
@@ -55,6 +55,15 @@ export const AuthProvider = ({ children }) => {
         saveAuthData(data.user, data.token)
         return { success: true, user: data.user }
       } else {
+        // Gestione specifica per email non verificata
+        if (data.code === 'EMAIL_NOT_VERIFIED') {
+          return { 
+            success: false, 
+            error: data.error,
+            code: 'EMAIL_NOT_VERIFIED',
+            email: data.email 
+          }
+        }
         return { success: false, error: data.error }
       }
     } catch (error) {
@@ -62,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Funzione register
+  // Funzione register (AGGIORNATA per email verification)
   const register = async (userData) => {
     try {
       const response = await fetch('/api/auth/register', {
@@ -76,8 +85,19 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json()
 
       if (response.ok) {
-        saveAuthData(data.user, data.token)
-        return { success: true, user: data.user }
+        // NON salvare auth data se richiede verifica email
+        if (data.nextStep === 'EMAIL_VERIFICATION_REQUIRED') {
+          return { 
+            success: true, 
+            user: data.user, 
+            requiresEmailVerification: true,
+            message: data.message 
+          }
+        } else {
+          // Fallback per registrazioni già verificate
+          saveAuthData(data.user, data.token)
+          return { success: true, user: data.user }
+        }
       } else {
         return { success: false, error: data.error }
       }
@@ -89,6 +109,29 @@ export const AuthProvider = ({ children }) => {
   // Funzione logout
   const logout = () => {
     clearAuthData()
+  }
+
+  // Funzione per reinviare email di verifica
+  const resendVerificationEmail = async (email) => {
+    try {
+      const response = await fetch('/api/auth/resend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        return { success: true, message: data.message }
+      } else {
+        return { success: false, error: data.error }
+      }
+    } catch (error) {
+      return { success: false, error: 'Errore di connessione' }
+    }
   }
 
   // Funzione per verificare se utente è autenticato
@@ -129,6 +172,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    resendVerificationEmail,
     isAuthenticated,
     getAuthHeader,
     saveAuthData,

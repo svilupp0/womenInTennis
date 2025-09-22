@@ -19,6 +19,7 @@ export const useAuth = () => {
     login,
     register,
     logout,
+    resendVerificationEmail,
     isAuthenticated,
     getAuthHeader,
     saveAuthData,
@@ -96,15 +97,21 @@ export const useAuth = () => {
       return result
     },
 
-    // Register con redirect automatico
+    // Register SENZA redirect automatico (per email verification)
     registerAndRedirect: async (userData, redirectPath = '/dashboard') => {
       const result = await register(userData)
       
-      if (result.success && typeof window !== 'undefined') {
+      // Solo redirect se NON richiede verifica email
+      if (result.success && !result.requiresEmailVerification && typeof window !== 'undefined') {
         window.location.href = redirectPath
       }
       
       return result
+    },
+
+    // Funzione per reinviare email di verifica
+    resendVerification: async (email) => {
+      return await resendVerificationEmail(email)
     }
   }
 
@@ -118,6 +125,7 @@ export const useAuth = () => {
     login,
     register,
     logout,
+    resendVerificationEmail,
     isAuthenticated,
     getAuthHeader,
     saveAuthData,
