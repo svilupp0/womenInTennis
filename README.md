@@ -316,10 +316,7 @@ npm run test:email
 
 ## 📞 Supporto
 
-- 📧 **Email**: support@womenintennis.com
-- 💬 **Discord**: [Community Server](https://discord.gg/womenintennis)
-- 📱 **Twitter**: [@WomenInTennis](https://twitter.com/womenintennis)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/svilupp0/womenInTennis/issues)
+- 📧 **Email**: win.womeninnet@gmail.com
 
 ## 📄 Licenza
 
