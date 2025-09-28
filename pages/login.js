@@ -260,6 +260,11 @@ export default function Login() {
 
               <div className={styles.authFooter}>
                 <p>
+                  <Link href="/forgot-password" className={styles.authLink}>
+                    🔐 Password dimenticata?
+                  </Link>
+                </p>
+                <p style={{ marginTop: '0.5rem' }}>
                   Non hai ancora un account?{' '}
                   <Link href="/register" className={styles.authLink}>
                     Registrati qui

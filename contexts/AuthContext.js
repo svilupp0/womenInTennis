@@ -125,6 +125,52 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Funzione per richiedere reset password
+  const requestPasswordReset = async (email) => {
+    try {
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        return { success: true, message: data.message }
+      } else {
+        return { success: false, error: data.error }
+      }
+    } catch (error) {
+      return { success: false, error: 'Errore di connessione' }
+    }
+  }
+
+  // Funzione per reset password
+  const resetPassword = async (token, email, password, confirmPassword) => {
+    try {
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, email, password, confirmPassword }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        return { success: true, message: data.message }
+      } else {
+        return { success: false, error: data.error }
+      }
+    } catch (error) {
+      return { success: false, error: 'Errore di connessione' }
+    }
+  }
+
   // Funzione per verificare se utente è autenticato
   const isAuthenticated = () => {
     return !!user && !!token
@@ -192,6 +238,8 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     resendVerificationEmail,
+    requestPasswordReset,
+    resetPassword,
     isAuthenticated,
     getAuthHeader,
     saveAuthData,
