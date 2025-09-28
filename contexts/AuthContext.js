@@ -1,16 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
 // Crea il Context
-const AuthContext = createContext({})
-
-// Hook per usare il context
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth deve essere usato dentro AuthProvider')
-  }
-  return context
-}
+export const AuthContext = createContext({})
 
 // Provider Component
 export const AuthProvider = ({ children }) => {
@@ -164,6 +155,34 @@ export const AuthProvider = ({ children }) => {
     setLoading(false)
   }, [])
 
+  // 🆕 FUNZIONE: Aggiorna dati utente senza logout/login (VERSIONE CORRETTA)
+  const updateUser = (updatedUserData) => {
+    if (!user) {
+      console.warn('⚠️ Tentativo di aggiornare user quando user è null')
+      return
+    }
+
+    // 🔄 MERGE con i dati esistenti (non sovrascrivere!)
+    const mergedUserData = {
+      ...user, // ← MANTIENI tutti i dati esistenti
+      ...updatedUserData // ← SOVRASCRIVI solo i campi forniti
+    }
+
+    // Aggiorna localStorage con i dati completi
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(mergedUserData))
+    }
+    
+    // Aggiorna React state
+    setUser(mergedUserData)
+    
+    console.log('🔄 User data updated:', {
+      before: user,
+      received: updatedUserData, 
+      after: mergedUserData
+    })
+  }
+
   // Valore del context
   const value = {
     user,
@@ -176,7 +195,8 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     getAuthHeader,
     saveAuthData,
-    clearAuthData
+    clearAuthData,
+    updateUser // ← NUOVA FUNZIONE ESPOSTA
   }
 
   return (
@@ -185,5 +205,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   )
 }
-
-export default AuthContext

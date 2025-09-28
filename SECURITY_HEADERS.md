@@ -1,6 +1,6 @@
 # 🛡️ Security Headers Configuration
 
-## Configurazione Headers di Sicurezza - Women in Tennis
+## Configurazione Headers di Sicurezza - Women in Net
 
 Questo file documenta la configurazione dei security headers implementata in `next.config.js`.
 
@@ -132,7 +132,7 @@ Con questa configurazione dovresti ottenere:
 
 ---
 
-**Configurazione creata per Women in Tennis**  
+**Configurazione creata per Women in Net**
 **Data**: $(date)  
 **Versione**: 1.0  
 **Status**: ✅ Pronto per produzione

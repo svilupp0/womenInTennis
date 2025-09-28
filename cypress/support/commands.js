@@ -1,6 +1,6 @@
 // cypress/support/commands.js
 
-// Custom commands for Women in Tennis testing
+// Custom commands for Women in Net testing
 
 // Command to login programmatically
 Cypress.Commands.add('login', (email = 'test@example.com', password = 'password123') => {

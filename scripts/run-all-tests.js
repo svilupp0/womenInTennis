@@ -3,7 +3,7 @@
 
 const { execSync } = require('child_process')
 
-console.log('🧪 Running complete test suite for Women in Tennis\n')
+console.log('🧪 Running complete test suite for Women in Net\n')
 
 const runCommand = (command, description) => {
   console.log(`📋 ${description}`)

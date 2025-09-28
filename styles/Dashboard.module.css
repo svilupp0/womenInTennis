@@ -183,7 +183,7 @@
 }
 
 .profileName {
-  font-size: 2rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: white;
   margin-bottom: var(--space-xs);
@@ -196,7 +196,7 @@
 
 .profileDetails {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 1.125rem;
+  font-size: 1rem;
   margin: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
@@ -256,6 +256,31 @@
   transform: translateX(34px);
 }
 
+/* 🔄 Stati aggiuntivi toggle */
+.toggle.updating {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.toggle.updating .toggleSlider {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.updating {
+  color: var(--accent-orange);
+  font-size: 0.75rem;
+}
+
+.error {
+  color: var(--accent-red);
+  font-size: 0.75rem;
+}
+
 /* Cards con glassmorphism */
 .filtersCard,
 .calendarCard,
@@ -280,7 +305,7 @@
 
 .filtersTitle,
 .calendarTitle {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: white;
   margin-bottom: var(--space-lg);
@@ -368,7 +393,7 @@
 }
 
 .playersHeader h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: white;
   margin: 0;
@@ -889,7 +914,132 @@
   transform: scale(1.05) rotate(5deg);
 }
 
-.playerCard:hover .playerAvatar {
+.profileCard:hover .playerAvatar {
   transform: scale(1.1);
   box-shadow: 0 6px 16px rgba(0, 163, 46, 0.3);
+}
+
+/* 🔧 Edit Profile Section */
+.editProfileSection {
+  margin-bottom: var(--space-xl);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.editProfileCard {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.editProfileCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-orange) 0%, var(--primary-green) 100%);
+}
+
+.editProfileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.editProfileTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin: 0;
+  background: linear-gradient(135deg, var(--accent-orange) 0%, var(--primary-green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.editProfileForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.formRow {
+  display: grid;
+  gap: var(--space-lg);
+  grid-template-columns: 1fr;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.formLabel {
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-xs);
+}
+
+.fieldHint {
+  color: var(--gray-500);
+  font-size: 0.75rem;
+  font-style: italic;
+  margin-top: var(--space-xs);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.errorMessage {
+  background: rgba(235, 77, 77, 0.1);
+  border: 1px solid rgba(235, 77, 77, 0.3);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: var(--accent-red);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-lg);
+  backdrop-filter: blur(10px);
+}
+
+/* Responsive per form modifica profilo */
+@media (min-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .formActions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 767px) {
+  .editProfileHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  .formActions .btn {
+    width: 100%;
+  }
 }

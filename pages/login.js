@@ -101,7 +101,7 @@ export default function Login() {
     return (
       <>
         <Head>
-          <title>Email Non Verificata - Women in Tennis</title>
+          <title>Email Non Verificata - Women in Net</title>
           <meta name="description" content="Verifica la tua email per accedere" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
@@ -111,7 +111,7 @@ export default function Login() {
             <div className="container">
               <Link href="/" className={styles.logo}>
                 <div className={styles.logoIcon}>🎾</div>
-                <span>Women in Tennis</span>
+                <span>Women in Net</span>
               </Link>
             </div>
           </header>
@@ -143,7 +143,7 @@ export default function Login() {
                   </h3>
                   <ol style={{ textAlign: 'left', color: 'var(--gray-600)', lineHeight: '1.8' }}>
                     <li>Controlla la tua casella di posta elettronica</li>
-                    <li>Cerca l'email di verifica da Women in Tennis</li>
+                    <li>Cerca l'email di verifica da Women in Net</li>
                     <li>Clicca sul link di verifica nell'email</li>
                     <li>Torna qui per fare login</li>
                   </ol>
@@ -188,8 +188,8 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Accedi - Women in Tennis</title>
-        <meta name="description" content="Accedi al tuo account Women in Tennis" />
+        <title>Accedi - Women in Net</title>
+        <meta name="description" content="Accedi al tuo account Women in Net" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -199,7 +199,7 @@ export default function Login() {
           <div className="container">
             <Link href="/" className={styles.logo}>
               <div className={styles.logoIcon}>🎾</div>
-              <span>Women in Tennis</span>
+              <span>Women in Net</span>
             </Link>
           </div>
         </header>
@@ -210,7 +210,7 @@ export default function Login() {
             <div className={styles.authCard}>
               <div className={styles.authHeader}>
                 <h1>Bentornata!</h1>
-                <p>Accedi al tuo account per trovare nuove partner di tennis</p>
+                <p>Accedi al tuo account per trovare nuove partner di net</p>
               </div>
 
               {error && (

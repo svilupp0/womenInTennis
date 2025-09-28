@@ -1,7 +1,8 @@
-# 🗺️ Integrazione Google Maps - Women in Tennis
+# 🗺️ Integrazione Google Maps - Women in Net
 
 ## Panoramica
-Questa documentazione descrive l'integrazione di Google Maps nella webapp Women in Tennis per visualizzare campi da tennis e posizioni delle giocatrici.
+
+Questa documentazione descrive l'integrazione di Google Maps nella webapp Women in Net per visualizzare campi da tennis e posizioni delle giocatrici.
 
 ## 📁 File Creati/Modificati
 
@@ -91,7 +92,7 @@ script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUB
 
 ### URL della Mappa
 - **Percorso**: `/map`
-- **Titolo pagina**: "Mappa Campi da Tennis - Women in Tennis"
+- **Titolo pagina**: "Mappa Campi da Tennis - Women in Net"
 
 ## 📱 Esperienza Mobile
 
@@ -188,6 +189,6 @@ Per problemi o domande sull'integrazione Google Maps:
 
 ---
 
-**Ultima modifica**: Dicembre 2024  
-**Versione**: 1.0  
-**Autore**: Team Women in Tennis
+**Ultima modifica**: Dicembre 2024
+**Versione**: 1.0
+**Autore**: Team Women in Net

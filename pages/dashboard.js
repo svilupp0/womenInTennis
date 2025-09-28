@@ -2,7 +2,9 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { useAvailability } from '../hooks/useAvailability'
 import Calendar from '../components/Calendar'
+import { truncateDisplayName, getInitials, isMobileDevice, getTooltipDisplayName } from '../utils/displayNameUtils'
 import styles from '../styles/Dashboard.module.css'
 
 export default function Dashboard() {
@@ -16,10 +18,20 @@ export default function Dashboard() {
     getUserLevel,
     getUserLocation,
     isAvailable,
-    isAdmin
+    isAdmin,
+    updateUser // ← NUOVA FUNZIONE per aggiornare dati senza reload
   } = useAuth()
 
-  const [availability, setAvailability] = useState(false)
+  // 🔄 Hook per gestione disponibilità con persistenza
+  const {
+    availability,
+    toggleAvailability,
+    isUpdating: isUpdatingAvailability,
+    error: availabilityError,
+    isSynced
+  } = useAvailability()
+
+  const [isMobile, setIsMobile] = useState(false)
   const [searchFilters, setSearchFilters] = useState({
     comune: '',
     livello: '',
@@ -37,6 +49,15 @@ export default function Dashboard() {
   const [showMyReports, setShowMyReports] = useState(false)
   const [myReports, setMyReports] = useState([])
   const [isLoadingReports, setIsLoadingReports] = useState(false)
+  
+  // 🔧 Stati per modifica profilo
+  const [editProfileForm, setEditProfileForm] = useState({
+    comune: '',
+    livello: '',
+    telefono: ''
+  })
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
+  const [profileUpdateError, setProfileUpdateError] = useState(null)
 
   // Redirect se non autenticato o se admin
   useEffect(() => {
@@ -48,18 +69,33 @@ export default function Dashboard() {
     }
   }, [loading, isAuthenticated, isAdmin])
 
-  // Imposta disponibilità iniziale
+  // 🔧 UX FIX: Rileva dispositivo mobile per ottimizzare display name
   useEffect(() => {
-    if (user) {
-      setAvailability(isAvailable())
-    }
-  }, [user, isAvailable])
+    const checkMobile = () => setIsMobile(isMobileDevice())
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
-  // Toggle disponibilità
-  const handleAvailabilityToggle = async () => {
-    // TODO: Implementare API call per aggiornare disponibilità
-    setAvailability(!availability)
-  }
+  // 🔄 Gestione errori disponibilità
+  useEffect(() => {
+    if (availabilityError) {
+      console.error('Errore disponibilità:', availabilityError)
+      // Potresti mostrare una toast notification qui
+    }
+  }, [availabilityError])
+
+  // 🔄 Inizializza form modifica profilo con dati utente
+  useEffect(() => {
+    if (user && showEditProfile) {
+      setEditProfileForm({
+        comune: user.comune || '',
+        livello: user.livello || '',
+        telefono: user.telefono || ''
+      })
+      setProfileUpdateError(null)
+    }
+  }, [user, showEditProfile])
 
   // Logout con conferma
   const handleLogout = () => {
@@ -160,7 +196,7 @@ export default function Dashboard() {
   // Funzioni di contatto
   const handleWhatsApp = (player) => {
     if (player.telefono) {
-      const message = encodeURIComponent(`Ciao! Ho visto il tuo profilo su Women in Tennis e mi piacerebbe giocare insieme. Quando sei disponibile?`)
+      const message = encodeURIComponent(`Ciao! Ho visto il tuo profilo su Women in Net e mi piacerebbe giocare insieme. Quando sei disponibile?`)
       window.open(`https://wa.me/${player.telefono.replace(/[^0-9]/g, '')}?text=${message}`, '_blank')
     }
     setOpenContactMenu(null)
@@ -174,8 +210,8 @@ export default function Dashboard() {
   }
 
   const handleEmail = (player) => {
-    const subject = encodeURIComponent('Partner Tennis - Women in Tennis')
-    const body = encodeURIComponent(`Ciao ${player.email.split('@')[0]}!\n\nHo visto il tuo profilo su Women in Tennis e mi piacerebbe giocare insieme.\n\nSono di ${getUserLocation()} e il mio livello è ${getUserLevel()}.\n\nQuando sei disponibile per una partita?\n\nGrazie!`)
+    const subject = encodeURIComponent('Partner Tennis - Women in Net')
+    const body = encodeURIComponent(`Ciao ${player.email.split('@')[0]}!\n\nHo visto il tuo profilo su Women in Net e mi piacerebbe giocare insieme.\n\nSono di ${getUserLocation()} e il mio livello è ${getUserLevel()}.\n\nQuando sei disponibile per una partita?\n\nGrazie!`)
     window.location.href = `mailto:${player.email}?subject=${subject}&body=${body}`
     setOpenContactMenu(null)
   }
@@ -265,6 +301,77 @@ export default function Dashboard() {
     setShowMyReports(!showMyReports)
   }
 
+  // 🔧 Gestione form modifica profilo
+  const handleProfileFormChange = (field, value) => {
+    setEditProfileForm(prev => ({
+      ...prev,
+      [field]: value
+    }))
+    // Pulisci errore quando l'utente modifica
+    if (profileUpdateError) {
+      setProfileUpdateError(null)
+    }
+  }
+
+  // 🚀 Salva modifiche profilo (VERSIONE CORRETTA - NO RELOAD)
+  const saveProfileChanges = async () => {
+    setIsUpdatingProfile(true)
+    setProfileUpdateError(null)
+
+    try {
+      const response = await fetch('/api/users/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(editProfileForm)
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        // ✅ L'API restituisce l'utente aggiornato dal DATABASE
+        const updatedUserFromDB = data.user
+        // Es: { id: 1, email: "user@example.com", comune: "Milano", livello: "Intermedio", ... }
+        
+        // 🔄 SINCRONIZZA TUTTO con il DATABASE usando updateUser
+        // Questa funzione fa il merge corretto e aggiorna sia localStorage che React state
+        updateUser(updatedUserFromDB)
+        
+        // ✅ Successo - chiudi form
+        setShowEditProfile(false)
+        alert('✅ Profilo aggiornato con successo!')
+        
+        // 🎉 NESSUN RELOAD NECESSARIO!
+        // I dati sono già sincronizzati e l'UI si aggiorna automaticamente
+        
+      } else {
+        // ❌ Errore dal server
+        setProfileUpdateError(data.error || 'Errore durante l\'aggiornamento del profilo')
+      }
+    } catch (error) {
+      console.error('Errore aggiornamento profilo:', error)
+      setProfileUpdateError('Errore di connessione. Riprova più tardi.')
+    } finally {
+      setIsUpdatingProfile(false)
+    }
+  }
+
+  // ❌ Annulla modifiche profilo
+  const cancelProfileEdit = () => {
+    setShowEditProfile(false)
+    setProfileUpdateError(null)
+    // Reset form ai valori originali
+    if (user) {
+      setEditProfileForm({
+        comune: user.comune || '',
+        livello: user.livello || '',
+        telefono: user.telefono || ''
+      })
+    }
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -290,7 +397,7 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard - Women in Tennis</title>
+        <title>Dashboard - Women in Net</title>
         <meta name="description" content="La tua dashboard personale per trovare partner di tennis" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -302,7 +409,7 @@ export default function Dashboard() {
             <div className={styles.headerContent}>
               <Link href="/" className={styles.logo}>
                 <div className={styles.logoIcon}>🎾</div>
-                <span>Women in Tennis</span>
+                <span>Women in Net</span>
               </Link>
               
               <div className={styles.userMenu}>
@@ -335,22 +442,42 @@ export default function Dashboard() {
               <div className={styles.profileCard}>
                 <div className={styles.profileHeader}>
                   <div className={styles.avatarSection}>
-                    <div className={styles.avatar}>
-                      {getDisplayName().charAt(0).toUpperCase()}
-                    </div>
                     <div className={styles.profileInfo}>
-                      <h1 className={styles.profileName}>{getDisplayName()}</h1>
-                      <p className={styles.profileDetails}>
+                      <h1 
+                        className={styles.profileName}
+                        title={getTooltipDisplayName(getDisplayName())}
+                        aria-label={`Nome utente: ${getDisplayName()}`}
+                      >
+                        {truncateDisplayName(getDisplayName(), isMobile ? 25 : 30, isMobile)}
+                      </h1>
+                      <p 
+                        className={styles.profileDetails}
+                        title={isMobile ? `${getUserLocation()} - ${getUserLevel()}` : undefined}
+                      >
                         📍 {getUserLocation()} • 🎾 {getUserLevel()}
                       </p>
                     </div>
                   </div>
                   <div className={styles.profileActions}>
                     <div className={styles.availabilityToggle}>
-                      <span className={styles.toggleLabel}>Disponibile:</span>
+                      <span className={styles.toggleLabel}>
+                        Disponibile:
+                        {isUpdatingAvailability && <span className={styles.updating}> ⏳</span>}
+                        {!isSynced && !isUpdatingAvailability && <span className={styles.error}> ⚠️</span>}
+                      </span>
                       <div 
-                        className={`${styles.toggle} ${availability ? styles.active : ''}`}
-                        onClick={handleAvailabilityToggle}
+                        className={`${styles.toggle} ${availability ? styles.active : ''} ${isUpdatingAvailability ? styles.updating : ''}`}
+                        onClick={toggleAvailability}
+                        role="switch"
+                        aria-checked={availability}
+                        aria-label={`Disponibilità: ${availability ? 'attiva' : 'disattiva'}`}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            toggleAvailability()
+                          }
+                        }}
                       >
                         <div className={styles.toggleSlider}></div>
                       </div>
@@ -371,6 +498,99 @@ export default function Dashboard() {
                 </div>
               </div>
             </section>
+
+            {/* 🔧 Form Modifica Profilo */}
+            {showEditProfile && (
+              <section className={styles.editProfileSection}>
+                <div className={styles.editProfileCard}>
+                  <div className={styles.editProfileHeader}>
+                    <h2 className={styles.editProfileTitle}>✏️ Modifica Profilo</h2>
+                    <button 
+                      className="btn btn-secondary"
+                      onClick={cancelProfileEdit}
+                      disabled={isUpdatingProfile}
+                    >
+                      ✕ Chiudi
+                    </button>
+                  </div>
+                  
+                  {profileUpdateError && (
+                    <div className={styles.errorMessage}>
+                      ⚠️ {profileUpdateError}
+                    </div>
+                  )}
+                  
+                  <div className={styles.editProfileForm}>
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Comune di residenza:</label>
+                        <input 
+                          type="text"
+                          className="form-input"
+                          placeholder="Es: Milano, Roma, Napoli..."
+                          value={editProfileForm.comune}
+                          onChange={(e) => handleProfileFormChange('comune', e.target.value)}
+                          disabled={isUpdatingProfile}
+                        />
+                        <small className={styles.fieldHint}>
+                          📍 Inserisci la tua città per trovare partner vicine
+                        </small>
+                      </div>
+                      
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Livello di gioco:</label>
+                        <select 
+                          className="form-input"
+                          value={editProfileForm.livello}
+                          onChange={(e) => handleProfileFormChange('livello', e.target.value)}
+                          disabled={isUpdatingProfile}
+                        >
+                          <option value="">Seleziona il tuo livello</option>
+                          <option value="Principiante">🌱 Principiante</option>
+                          <option value="Intermedio">🌿 Intermedio</option>
+                          <option value="Avanzato">🏆 Avanzato</option>
+                        </select>
+                        <small className={styles.fieldHint}>
+                          🎾 Aiuta le altre giocatrici a trovare partner del loro livello
+                        </small>
+                      </div>
+                    </div>
+                    
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Numero di telefono (opzionale):</label>
+                      <input 
+                        type="tel"
+                        className="form-input"
+                        placeholder="Es: +39 123 456 7890"
+                        value={editProfileForm.telefono}
+                        onChange={(e) => handleProfileFormChange('telefono', e.target.value)}
+                        disabled={isUpdatingProfile}
+                      />
+                      <small className={styles.fieldHint}>
+                        📱 Permette contatti via WhatsApp e chiamate dirette (opzionale)
+                      </small>
+                    </div>
+                    
+                    <div className={styles.formActions}>
+                      <button 
+                        className="btn btn-secondary"
+                        onClick={cancelProfileEdit}
+                        disabled={isUpdatingProfile}
+                      >
+                        ❌ Annulla
+                      </button>
+                      <button 
+                        className="btn btn-primary"
+                        onClick={saveProfileChanges}
+                        disabled={isUpdatingProfile}
+                      >
+                        {isUpdatingProfile ? '⏳ Salvataggio...' : '✅ Salva Modifiche'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* RIGA 2: Filtri + Risultati | Calendario */}
             <section className={styles.row2Section}>

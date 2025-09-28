@@ -191,7 +191,7 @@ export default function AdminDashboard() {
   return (
     <>
       <Head>
-        <title>Admin Dashboard - Women in Tennis</title>
+        <title>Admin Dashboard - Women in Net</title>
         <meta name="description" content="Dashboard amministrativa per la moderazione" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
             <div className={styles.headerContent}>
               <Link href="/" className={styles.logo}>
                 <div className={styles.logoIcon}>🎾</div>
-                <span>Women in Tennis - Admin</span>
+                <span>Women in Net - Admin</span>
               </Link>
               
               <div className={styles.userMenu}>

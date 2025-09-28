@@ -1,15 +1,11 @@
-import { useAuth as useAuthContext } from '../contexts/AuthContext'
+import { useContext } from 'react'
+import { AuthContext } from '../contexts/AuthContext'
 
-/**
- * Hook personalizzato per gestione autenticazione
- * Fornisce accesso semplificato al AuthContext con funzioni helper
- */
 export const useAuth = () => {
-  const context = useAuthContext()
-
-  // Verifica che il hook sia usato dentro AuthProvider
+  const context = useContext(AuthContext)
+  
   if (!context) {
-    throw new Error('useAuth deve essere usato dentro AuthProvider')
+    throw new Error('useAuth must be used within an AuthProvider')
   }
 
   const {
@@ -17,119 +13,93 @@ export const useAuth = () => {
     token,
     loading,
     login,
-    register,
     logout,
-    resendVerificationEmail,
-    isAuthenticated,
-    getAuthHeader,
-    saveAuthData,
-    clearAuthData
-  } = context
-
-  // Funzioni helper aggiuntive
-  const helpers = {
-    // Check se utente ha completato il profilo
-    hasCompleteProfile: () => {
-      return user && user.comune && user.livello
-    },
-
-    // Get user display name (email se non c'è nome)
-    getDisplayName: () => {
-      return user?.nome || user?.email?.split('@')[0] || 'Utente'
-    },
-
-    // Check se utente è disponibile per giocare
-    isAvailable: () => {
-      return user?.disponibilita === true
-    },
-
-    // Get user level in italiano
-    getUserLevel: () => {
-      const levels = {
-        'Principiante': 'Principiante',
-        'Intermedio': 'Intermedio', 
-        'Avanzato': 'Avanzato'
-      }
-      return levels[user?.livello] || 'Non specificato'
-    },
-
-    // Get user location
-    getUserLocation: () => {
-      return user?.comune || 'Non specificato'
-    },
-
-    // Check se utente è admin
-    isAdmin: () => {
-      return user?.isAdmin === true
-    },
-
-    // Check se token è scaduto (basic check)
-    isTokenExpired: () => {
-      if (!token) return true
-      
-      try {
-        // Decode JWT payload (senza verifica, solo per check scadenza)
-        const payload = JSON.parse(atob(token.split('.')[1]))
-        const now = Date.now() / 1000
-        return payload.exp < now
-      } catch (error) {
-        console.error('Errore verifica token:', error)
-        return true
-      }
-    },
-
-    // Logout con redirect
-    logoutAndRedirect: (redirectPath = '/') => {
-      logout()
-      if (typeof window !== 'undefined') {
-        window.location.href = redirectPath
-      }
-    },
-
-    // Login con redirect automatico
-    loginAndRedirect: async (email, password, redirectPath = '/dashboard') => {
-      const result = await login(email, password)
-      
-      if (result.success && typeof window !== 'undefined') {
-        window.location.href = redirectPath
-      }
-      
-      return result
-    },
-
-    // Register SENZA redirect automatico (per email verification)
-    registerAndRedirect: async (userData, redirectPath = '/dashboard') => {
-      const result = await register(userData)
-      
-      // Solo redirect se NON richiede verifica email
-      if (result.success && !result.requiresEmailVerification && typeof window !== 'undefined') {
-        window.location.href = redirectPath
-      }
-      
-      return result
-    },
-
-    // Funzione per reinviare email di verifica
-    resendVerification: async (email) => {
-      return await resendVerificationEmail(email)
-    }
-  }
-
-  return {
-    // Stato base
-    user,
-    token,
-    loading,
-    
-    // Funzioni core
-    login,
     register,
-    logout,
+    requestPasswordReset,
+    resetPassword,
     resendVerificationEmail,
     isAuthenticated,
     getAuthHeader,
     saveAuthData,
     clearAuthData,
+    updateUser // <- IMPORTATO dal context
+  } = context
+
+  // Funzioni helper aggiuntive
+  const helpers = {
+    // Informazioni utente
+    getUserEmail: () => user?.email || '',
+    getUserLocation: () => user?.comune || 'Non specificato',
+    getUserLevel: () => {
+      const levels = {
+        'Principiante': 'Principiante',
+        'Intermedio': 'Intermedio',
+        'Avanzato': 'Avanzato'
+      }
+      return levels[user?.livello] || 'Non specificato'
+    },
+    getUserPhone: () => user?.telefono || 'Non specificato',
+    isUserAvailable: () => user?.disponibilita ?? false,
+    isEmailVerified: () => user?.emailVerified || false,
+    isAdmin: () => user?.isAdmin || false,
+
+    // Backward compatibility
+    getDisplayName: () => {
+      return user?.nome || user?.email?.split('@')[0] || 'Utente'
+    },
+    isAvailable: () => {
+      return user?.disponibilita === true
+    },
+
+    // Informazioni auth
+    hasValidToken: () => !!token && !loading,
+    
+    // Informazioni profilo
+    hasCompleteProfile: () => {
+      return !!(user?.comune && user?.livello)
+    },
+    
+    getProfileCompleteness: () => {
+      if (!user) return 0
+      
+      let completed = 0
+      const fields = ['email', 'comune', 'livello', 'telefono']
+      
+      fields.forEach(field => {
+        if (user[field]) completed++
+      })
+      
+      return Math.round((completed / fields.length) * 100)
+    },
+
+    // Login con redirect automatico
+    loginAndRedirect: async (email, password, redirectPath = '/dashboard') => {
+      const result = await login(email, password)
+      if (result.success && typeof window !== 'undefined') {
+        window.location.href = redirectPath
+      }
+      return result
+    }
+  }
+
+  return {
+    // Stati base
+    user,
+    token,
+    loading,
+    
+    // Funzioni auth
+    login,
+    logout,
+    register,
+    requestPasswordReset,
+    resetPassword,
+    resendVerificationEmail,
+    isAuthenticated,
+    getAuthHeader,
+    saveAuthData,
+    clearAuthData,
+    updateUser, // <- ESPORTATO per l'uso nei componenti
     
     // Helper functions
     ...helpers

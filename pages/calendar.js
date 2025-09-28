@@ -62,7 +62,7 @@ export default function CalendarPage() {
   return (
     <>
       <Head>
-        <title>Calendario - Women in Tennis</title>
+        <title>Calendario - Women in Net</title>
         <meta name="description" content="Gestisci le tue disponibilità e organizza partite di tennis" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -74,7 +74,7 @@ export default function CalendarPage() {
             <div className={styles.headerContent}>
               <Link href="/dashboard" className={styles.logo}>
                 <div className={styles.logoIcon}>🎾</div>
-                <span>Women in Tennis</span>
+                <span>Women in Net</span>
               </Link>
               
               <nav className={styles.navigation}>

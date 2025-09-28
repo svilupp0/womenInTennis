@@ -108,7 +108,7 @@ export default function Register() {
     return (
       <>
         <Head>
-          <title>Verifica Email - Women in Tennis</title>
+          <title>Verifica Email - Women in Net</title>
           <meta name="description" content="Verifica la tua email per completare la registrazione" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
@@ -118,7 +118,7 @@ export default function Register() {
             <div className="container">
               <Link href="/" className={styles.logo}>
                 <div className={styles.logoIcon}>🎾</div>
-                <span>Women in Tennis</span>
+                <span>Women in Net</span>
               </Link>
             </div>
           </header>
@@ -200,8 +200,8 @@ export default function Register() {
   return (
     <>
       <Head>
-        <title>Registrati - Women in Tennis</title>
-        <meta name="description" content="Registrati a Women in Tennis e trova la tua partner di tennis ideale" />
+        <title>Registrati - Women in Net</title>
+        <meta name="description" content="Registrati a Women in Net e trova la tua partner di tennis ideale" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -211,7 +211,7 @@ export default function Register() {
           <div className="container">
             <Link href="/" className={styles.logo}>
               <div className={styles.logoIcon}>🎾</div>
-              <span>Women in Tennis</span>
+              <span>Women in Net</span>
             </Link>
           </div>
         </header>
@@ -222,7 +222,7 @@ export default function Register() {
             <div className={styles.authCard}>
               <div className={styles.authHeader}>
                 <h1>Unisciti alla community</h1>
-                <p>Crea il tuo account e inizia a trovare partner di tennis nella tua zona</p>
+                <p>Crea il tuo account e inizia a trovare partner di net nella tua zona</p>
               </div>
 
               {error && (

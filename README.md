@@ -1,4 +1,4 @@
-# 🎾 Women in Tennis
+# 🎾 Women in Net
 
 Una piattaforma web dedicata alle donne appassionate di tennis per trovare partner di gioco, organizzare partite e scoprire campi da tennis nella propria zona.
 
@@ -336,6 +336,6 @@ Questo progetto è rilasciato sotto licenza **ISC**. Vedi il file [LICENSE](LICE
 
 **Fatto con ❤️ per la community tennistica femminile**
 
-[🌐 Website](https://womenintennis.com) • [📱 App](https://app.womenintennis.com) • [📧 Newsletter](https://newsletter.womenintennis.com)
+[🌐 Website](https://womeninnet.com) • [📱 App](https://app.womeninnet.com) • [📧 Newsletter](https://newsletter.womeninnet.com)
 
 </div>

@@ -1,0 +1,425 @@
+/* 🎨 USER PROFILE HEADER STYLES */
+/* Stili ottimizzati per il componente UserProfileHeader */
+
+/* ========================================
+   MOBILE STATUS BAR
+   ======================================== */
+
+.mobileStatusBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--space-md);
+  padding: var(--space-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(10px);
+}
+
+.statusIndicator {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.statusIndicator.available {
+  color: var(--primary-green-light);
+  background: rgba(0, 163, 46, 0.2);
+  border: 1px solid rgba(0, 163, 46, 0.3);
+}
+
+.statusIndicator.unavailable {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   RESPONSIVE PROFILE IMPROVEMENTS
+   ======================================== */
+
+/* Mobile First - Layout ottimizzato */
+.profileHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: stretch;
+}
+
+.avatarSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  width: 100%;
+}
+
+.profileInfo {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.profileActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: stretch;
+}
+
+/* ========================================
+   TYPOGRAPHY MOBILE OPTIMIZED
+   ======================================== */
+
+.profileName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--space-xs);
+  
+  /* Gestione overflow */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  
+  /* Effetti visivi */
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, white 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  /* Accessibilità */
+  cursor: help;
+}
+
+.profileDetails {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  
+  /* Gestione overflow */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* ========================================
+   AVATAR RESPONSIVE
+   ======================================== */
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 8px 24px rgba(0, 163, 46, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(0, 163, 46, 0.4);
+}
+
+/* ========================================
+   TOGGLE IMPROVEMENTS
+   ======================================== */
+
+.availabilityToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.toggleLabel {
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: 0.875rem;
+}
+
+.toggle {
+  position: relative;
+  width: 60px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.toggle:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.toggle.active {
+  background: var(--primary-green);
+  border-color: var(--primary-green);
+  box-shadow: 0 4px 12px rgba(0, 163, 46, 0.3);
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 26px;
+  height: 26px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle.active .toggleSlider {
+  transform: translateX(28px);
+}
+
+/* ========================================
+   BUTTON MOBILE OPTIMIZATIONS
+   ======================================== */
+
+.profileActions .btn {
+  font-size: 0.75rem;
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 36px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.profileActions .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profileActions .btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+@media (min-width: 480px) {
+  .profileName {
+    font-size: 1.375rem;
+  }
+  
+  .avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 1.75rem;
+  }
+  
+  .toggle {
+    width: 65px;
+    height: 34px;
+  }
+  
+  .toggleSlider {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .toggle.active .toggleSlider {
+    transform: translateX(31px);
+  }
+}
+
+@media (min-width: 640px) {
+  .profileName {
+    font-size: 1.5rem;
+  }
+  
+  .avatar {
+    width: 75px;
+    height: 75px;
+    font-size: 1.875rem;
+  }
+  
+  .profileActions {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  
+  .profileActions .btn {
+    font-size: 0.875rem;
+    padding: var(--space-sm) var(--space-md);
+    min-height: 40px;
+  }
+  
+  .mobileStatusBar {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .profileHeader {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .avatarSection {
+    gap: var(--space-lg);
+    flex: 1;
+    max-width: 70%;
+  }
+  
+  .profileActions {
+    flex-shrink: 0;
+    max-width: 30%;
+    justify-content: flex-end;
+  }
+  
+  .profileName {
+    font-size: 1.75rem;
+    white-space: normal;
+  }
+  
+  .profileDetails {
+    font-size: 1.125rem;
+    white-space: normal;
+  }
+  
+  .avatar {
+    width: 85px;
+    height: 85px;
+    font-size: 2rem;
+  }
+  
+  .toggle {
+    width: 70px;
+    height: 36px;
+  }
+  
+  .toggleSlider {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .toggle.active .toggleSlider {
+    transform: translateX(34px);
+  }
+  
+  .toggleLabel {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profileName {
+    font-size: 2rem;
+  }
+  
+  .avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 2.2rem;
+  }
+  
+  .profileActions .btn {
+    font-size: 1rem;
+    padding: var(--space-sm) var(--space-lg);
+    min-height: 44px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ======================================== */
+
+/* Focus states migliorati */
+.profileName:focus,
+.profileDetails:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Screen reader support */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .profileName {
+    background: none;
+    -webkit-text-fill-color: white;
+    color: white;
+  }
+  
+  .toggle {
+    border-width: 3px;
+  }
+  
+  .statusIndicator {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .avatar,
+  .toggle,
+  .toggleSlider,
+  .profileActions .btn {
+    transition: none;
+  }
+  
+  .avatar:hover {
+    transform: none;
+  }
+}
+
+/* ========================================
+   DARK MODE READY
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  .profileName {
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.9) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .mobileStatusBar {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
+  .statusIndicator.unavailable {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+}

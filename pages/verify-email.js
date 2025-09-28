@@ -108,14 +108,14 @@ export default function VerifyEmail() {
   return (
     <>
       <Head>
-        <title>Verifica Email - Women in Tennis</title>
+        <title>Verifica Email - Women in Net</title>
         <meta name="description" content="Verifica la tua email per completare la registrazione" />
       </Head>
 
       <div className={styles.container}>
         <div className={styles.authBox}>
           <div className={styles.header}>
-            <h1>🎾 Women in Tennis</h1>
+            <h1>🎾 Women in Net</h1>
             <h2>Verifica Email</h2>
           </div>
 

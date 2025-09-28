@@ -389,7 +389,7 @@ export default function Map() {
   return (
     <>
       <Head>
-        <title>Mappa Campi da Tennis - Women in Tennis</title>
+        <title>Mappa Campi da Tennis - Women in Net</title>
         <meta name="description" content="Trova campi da tennis e tenniste nella tua zona" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />

@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Women in Tennis - Trova la tua partner di tennis</title>
+        <title>Women in Net - Trova la tua partner di tennis</title>
         <meta name="description" content="Connetti con altre tenniste nella tua zona. Trova la partner perfetta per i tuoi match!" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -20,7 +20,7 @@ export default function Home() {
             <div className={styles.headerContent}>
               <div className={styles.logo}>
                 <div className={styles.logoIcon}>🎾</div>
-                <span>Women in Tennis</span>
+                <span>Women in Net</span>
               </div>
               
               <div className={styles.authButtons}>
@@ -62,7 +62,7 @@ export default function Home() {
         <section className={styles.features}>
           <div className="container">
             <h2 className={styles.featuresTitle}>
-              Perché scegliere Women in Tennis?
+              Perché scegliere Women in Net?
             </h2>
             
             <div className={styles.featuresGrid}>
@@ -101,10 +101,10 @@ export default function Home() {
           <div className="container">
             <div className={styles.footerContent}>
               <div className={styles.footerLogo}>
-                Women in Tennis
+                Women in Net
               </div>
               <p className={styles.footerText}>
-                © 2024 Women in Tennis. La community delle tenniste italiane.
+                © 2024 Women in Net. La community delle tenniste italiane.
               </p>
             </div>
           </div>

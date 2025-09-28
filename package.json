@@ -1,14 +1,14 @@
 {
-  "name": "womenintennis",
+  "name": "womeninnet",
   "version": "1.0.0",
   "description": "",
-  "homepage": "https://github.com/svilupp0/womenInTennis#readme",
+  "homepage": "https://github.com/svilupp0/womenInNet#readme",
   "bugs": {
-    "url": "https://github.com/svilupp0/womenInTennis/issues"
+    "url": "https://github.com/svilupp0/womenInNet/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/svilupp0/womenInTennis.git"
+    "url": "git+https://github.com/svilupp0/womenInNet.git"
   },
   "license": "ISC",
   "author": "",

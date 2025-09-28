@@ -1,3 +1,4 @@
+
 // components/Calendar.js
 // Componente calendario basato sul codice open source Scheduler.js
 
@@ -183,7 +184,6 @@ const Calendar = () => {
   return (
     <div className={styles.calendarContainer}>
       <div className={styles.calendarHeader}>
-        <h2>🗓️ Il Mio Calendario Tennis</h2>
         {isLoading && <span className={styles.loading}>🔄 Caricamento...</span>}
       </div>
       
