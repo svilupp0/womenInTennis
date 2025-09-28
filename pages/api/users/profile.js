@@ -107,7 +107,8 @@ export default async function handler(req, res) {
         telefono: true,
         disponibilita: true,
         emailVerified: true,
-        createdAt: true
+        createdAt: true,
+        updatedAt: true
         // Escludi password e altri campi sensibili
       }
     })

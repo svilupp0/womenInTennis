@@ -33,6 +33,7 @@ model User {
   lockoutUntil           DateTime?
   
   createdAt    DateTime @default(now())
+  updatedAt    DateTime? @updatedAt 
   
   // Relazioni per il sistema di report
   reportsGiven    Report[] @relation("reporter")  // Report fatti da questo utente

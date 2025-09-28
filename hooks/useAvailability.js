@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from './useAuth'
 
 export const useAvailability = () => {
-  const { user, token, isAvailable } = useAuth()
+  const { user, token, isAvailable, updateUser } = useAuth()
   const [availability, setAvailability] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState(null)
@@ -80,6 +80,13 @@ export const useAvailability = () => {
       }
 
       console.log('✅ Availability updated successfully:', confirmedAvailability);
+      
+      // 🔄 SINCRONIZZA anche il user context per mantenere coerenza
+      if (updateUser && user) {
+        updateUser({ disponibilita: confirmedAvailability })
+        console.log('🔄 User context synchronized with new availability:', confirmedAvailability)
+      }
+      
       return true
 
     } catch (error) {
