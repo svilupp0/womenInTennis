@@ -147,8 +147,6 @@ export default async function handler(req, res) {
       error: 'Errore interno del server. Riprova più tardi.',
       code: 'INTERNAL_ERROR'
     })
-  } finally {
-    // Disconnetti Prisma
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }

@@ -20,8 +20,6 @@ export default async function handler(req, res) {
       success: false, 
       error: error.message 
     })
-  } finally {
-    // Prisma gestisce automaticamente le connessioni, non serve disconnettere manualmente
-    await prisma.$disconnect()
   }
+  // Nota: Prisma singleton gestisce automaticamente le connessioni
 }

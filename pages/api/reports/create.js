@@ -1,28 +1,15 @@
 import { prisma } from '../../../lib/prisma'
-import jwt from 'jsonwebtoken'
+import { withAuth } from '../../../lib/middleware/authMiddleware'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Solo metodo POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Metodo non consentito' })
   }
 
   try {
-    // Verifica token JWT
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Token di autenticazione richiesto' })
-    }
-
-    const token = authHeader.split(' ')[1]
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-    
-    let decoded
-    try {
-      decoded = jwt.verify(token, jwtSecret)
-    } catch (error) {
-      return res.status(401).json({ error: 'Token non valido' })
-    }
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     const { reportedId, reason, description } = req.body
 
@@ -32,7 +19,7 @@ export default async function handler(req, res) {
     }
 
     // Verifica che l'utente non stia segnalando se stesso
-    if (decoded.userId === parseInt(reportedId)) {
+    if (userId === parseInt(reportedId)) {
       return res.status(400).json({ error: 'Non puoi segnalare te stesso' })
     }
 
@@ -49,7 +36,7 @@ export default async function handler(req, res) {
     const existingReport = await prisma.report.findUnique({
       where: {
         reporterId_reportedId: {
-          reporterId: decoded.userId,
+          reporterId: userId,
           reportedId: parseInt(reportedId)
         }
       }
@@ -76,7 +63,7 @@ export default async function handler(req, res) {
     // Crea la segnalazione
     const newReport = await prisma.report.create({
       data: {
-        reporterId: decoded.userId,
+        reporterId: userId,
         reportedId: parseInt(reportedId),
         reason: reason,
         description: description || null,
@@ -127,8 +114,8 @@ export default async function handler(req, res) {
     res.status(500).json({ 
       error: 'Errore interno del server. Riprova più tardi.' 
     })
-  } finally {
-    // Disconnetti Prisma
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }
+
+export default withAuth(handler)

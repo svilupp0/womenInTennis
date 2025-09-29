@@ -1,36 +1,29 @@
 // pages/api/calendar/index.js
-// API per gestire eventi del calendario
+// API per gestione calendario eventi
 
-import { PrismaClient } from '@prisma/client'
-import { authenticateToken } from '../../../lib/middleware/auth'
+import { prisma } from '../../../lib/prisma'
+import { withAuth } from '../../../lib/middleware/authMiddleware'
 
-const prisma = new PrismaClient()
-
-export default async function handler(req, res) {
-  // Applica middleware di autenticazione
-  return new Promise((resolve, reject) => {
-    authenticateToken(req, res, (error) => {
-      if (error) {
-        reject(error)
-      } else {
-        // Procedi con la logica dell'API
-        if (req.method === 'GET') {
-          resolve(getCalendarEvents(req, res))
-        } else if (req.method === 'POST') {
-          resolve(createEvent(req, res))
-        } else {
-          resolve(res.status(405).json({ error: 'Method not allowed' }))
-        }
-      }
-    })
-  })
+async function handler(req, res) {
+  try {
+    if (req.method === 'GET') {
+      await getEvents(req, res)
+    } else if (req.method === 'POST') {
+      await createEvent(req, res)
+    } else {
+      res.status(405).json({ error: 'Method not allowed' })
+    }
+  } catch (error) {
+    console.error('Errore API calendar:', error)
+    res.status(500).json({ error: 'Errore interno del server' })
+  }
 }
 
 // GET /api/calendar - Ottieni eventi dell'utente
-async function getCalendarEvents(req, res) {
+async function getEvents(req, res) {
   try {
-    // userId è già disponibile dal middleware di autenticazione
-    const userId = req.userId
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     // Ottieni eventi dell'utente
     const events = await prisma.event.findMany({
@@ -128,8 +121,8 @@ async function getCalendarEvents(req, res) {
 // POST /api/calendar - Crea nuovo evento
 async function createEvent(req, res) {
   try {
-    // userId è già disponibile dal middleware di autenticazione
-    const userId = req.userId
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     const { title, description, start, end, location } = req.body
 
@@ -207,3 +200,5 @@ async function createEvent(req, res) {
     return res.status(500).json({ error: 'Errore interno del server' })
   }
 }
+
+export default withAuth(handler)

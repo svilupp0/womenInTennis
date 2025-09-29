@@ -1,12 +1,10 @@
 // pages/api/calendar/[id].js
-// API per gestire singolo evento (modifica/elimina)
+// API per gestione eventi specifici
 
-import { PrismaClient } from '@prisma/client'
-import jwt from 'jsonwebtoken'
+import { prisma } from '../../../lib/prisma'
+import { withAuth } from '../../../lib/middleware/authMiddleware'
 
-const prisma = new PrismaClient()
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   const { id } = req.query
   const eventId = parseInt(id)
 
@@ -28,14 +26,8 @@ export default async function handler(req, res) {
 // GET /api/calendar/[id] - Ottieni dettagli evento
 async function getEvent(req, res, eventId) {
   try {
-    // Verifica autenticazione
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) {
-      return res.status(401).json({ error: 'Token mancante' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = decoded.userId
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     const event = await prisma.event.findFirst({
       where: {
@@ -78,17 +70,13 @@ async function getEvent(req, res, eventId) {
   }
 }
 
+export default withAuth(handler)
+
 // PUT /api/calendar/[id] - Modifica evento
 async function updateEvent(req, res, eventId) {
   try {
-    // Verifica autenticazione
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) {
-      return res.status(401).json({ error: 'Token mancante' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = decoded.userId
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     // Verifica che l'evento appartenga all'utente
     const existingEvent = await prisma.event.findFirst({
@@ -171,14 +159,8 @@ async function updateEvent(req, res, eventId) {
 // DELETE /api/calendar/[id] - Elimina evento
 async function deleteEvent(req, res, eventId) {
   try {
-    // Verifica autenticazione
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) {
-      return res.status(401).json({ error: 'Token mancante' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = decoded.userId
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     // Verifica che l'evento appartenga all'utente
     const existingEvent = await prisma.event.findFirst({

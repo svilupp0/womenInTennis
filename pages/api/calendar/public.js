@@ -1,25 +1,17 @@
 // pages/api/calendar/public.js
-// API per vedere eventi disponibili di altre utenti
+// API per eventi pubblici (con autenticazione per filtrare utente corrente)
 
-import { PrismaClient } from '@prisma/client'
-import jwt from 'jsonwebtoken'
+import { prisma } from '../../../lib/prisma'
+import { withAuth } from '../../../lib/middleware/authMiddleware'
 
-const prisma = new PrismaClient()
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    // Verifica autenticazione
-    const token = req.headers.authorization?.replace('Bearer ', '')
-    if (!token) {
-      return res.status(401).json({ error: 'Token mancante' })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    const userId = decoded.userId
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     // Parametri di filtro
     const { comune, livello, date } = req.query
@@ -112,4 +104,7 @@ export default async function handler(req, res) {
     console.error('Errore caricamento eventi pubblici:', error)
     return res.status(500).json({ error: 'Errore interno del server' })
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }
+
+export default withAuth(handler)

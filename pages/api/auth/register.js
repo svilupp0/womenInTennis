@@ -146,8 +146,6 @@ export default async function handler(req, res) {
     res.status(500).json({ 
       error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR 
     })
-  } finally {
-    // Disconnetti Prisma
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }

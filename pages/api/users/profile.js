@@ -1,12 +1,10 @@
 // pages/api/users/profile.js
 // API per aggiornamento profilo utente
 
-import { PrismaClient } from '@prisma/client'
-import jwt from 'jsonwebtoken'
+import { prisma } from '../../../lib/prisma'
+import { withAuth } from '../../../lib/middleware/authMiddleware'
 
-const prisma = new PrismaClient()
-
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Solo metodo PUT accettato
   if (req.method !== 'PUT') {
     return res.status(405).json({ 
@@ -16,28 +14,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Verifica autenticazione JWT
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Token di autenticazione mancante o malformato' 
-      })
-    }
-
-    const token = authHeader.substring(7) // Rimuovi "Bearer "
-    let decoded
-    
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET)
-    } catch (jwtError) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Token non valido o scaduto' 
-      })
-    }
-
-    const userId = decoded.userId
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     // 2. Valida i dati in input
     const { comune, livello, telefono, disponibilita } = req.body
@@ -135,7 +113,8 @@ export default async function handler(req, res) {
       success: false,
       error: 'Errore interno del server'
     })
-  } finally {
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }
+
+export default withAuth(handler)

@@ -1,7 +1,7 @@
 import { prisma } from '../../../../../lib/prisma'
-import jwt from 'jsonwebtoken'
+import { withAdminAuth } from '../../../../../lib/middleware/authMiddleware'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Solo metodo POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Metodo non consentito' })
@@ -21,31 +21,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Azione non valida' })
     }
 
-    // Verifica token JWT
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Token di autenticazione mancante' })
-    }
-
-    const token = authHeader.substring(7)
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-    
-    let decoded
-    try {
-      decoded = jwt.verify(token, jwtSecret)
-    } catch (error) {
-      return res.status(401).json({ error: 'Token non valido' })
-    }
-
-    // Verifica che l'utente sia admin
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
-      select: { isAdmin: true }
-    })
-
-    if (!user || !user.isAdmin) {
-      return res.status(403).json({ error: 'Accesso negato. Solo gli admin possono accedere.' })
-    }
+    // 👑 Admin già autenticato dal middleware withAdminAuth
 
     // Verifica che la segnalazione esista
     const report = await prisma.report.findUnique({
@@ -102,7 +78,8 @@ export default async function handler(req, res) {
     res.status(500).json({ 
       error: 'Errore interno del server' 
     })
-  } finally {
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }
+
+export default withAdminAuth(handler)

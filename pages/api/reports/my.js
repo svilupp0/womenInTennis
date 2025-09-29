@@ -1,28 +1,15 @@
 import { prisma } from '../../../lib/prisma'
-import jwt from 'jsonwebtoken'
+import { withAuth } from '../../../lib/middleware/authMiddleware'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Solo metodo GET
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Metodo non consentito' })
   }
 
   try {
-    // Verifica token JWT
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Token di autenticazione richiesto' })
-    }
-
-    const token = authHeader.split(' ')[1]
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-    
-    let decoded
-    try {
-      decoded = jwt.verify(token, jwtSecret)
-    } catch (error) {
-      return res.status(401).json({ error: 'Token non valido' })
-    }
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     const { type = 'given' } = req.query // 'given' o 'received'
 
@@ -32,7 +19,7 @@ export default async function handler(req, res) {
       // Segnalazioni ricevute da questo utente
       reports = await prisma.report.findMany({
         where: {
-          reportedId: decoded.userId
+          reportedId: userId
         },
         include: {
           reporter: {
@@ -50,7 +37,7 @@ export default async function handler(req, res) {
       // Segnalazioni fatte da questo utente (default)
       reports = await prisma.report.findMany({
         where: {
-          reporterId: decoded.userId
+          reporterId: userId
         },
         include: {
           reported: {
@@ -102,8 +89,8 @@ export default async function handler(req, res) {
     res.status(500).json({ 
       error: 'Errore interno del server. Riprova più tardi.' 
     })
-  } finally {
-    // Disconnetti Prisma
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }
+
+export default withAuth(handler)

@@ -1,8 +1,8 @@
 import { prisma } from '../../../lib/prisma'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import { withAdminAuth } from '../../../lib/middleware/authMiddleware'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   // Solo metodo POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Metodo non consentito' })
@@ -21,36 +21,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'La nuova password deve essere di almeno 6 caratteri' })
     }
 
-    // Verifica token JWT
-    const authHeader = req.headers.authorization
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Token di autenticazione mancante' })
-    }
+    // 👑 Admin già autenticato dal middleware withAdminAuth
+    const { userId } = req
 
-    const token = authHeader.substring(7)
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-    
-    let decoded
-    try {
-      decoded = jwt.verify(token, jwtSecret)
-    } catch (error) {
-      return res.status(401).json({ error: 'Token non valido' })
-    }
-
-    // Trova l'utente e verifica che sia admin
+    // Trova l'utente admin
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+      where: { id: userId },
       select: {
         id: true,
         email: true,
-        password: true,
-        isAdmin: true
+        password: true
       }
     })
-
-    if (!user || !user.isAdmin) {
-      return res.status(403).json({ error: 'Accesso negato. Solo gli admin possono accedere.' })
-    }
 
     // Verifica password attuale
     const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password)
@@ -78,7 +60,8 @@ export default async function handler(req, res) {
     res.status(500).json({ 
       error: 'Errore interno del server' 
     })
-  } finally {
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }
+
+export default withAdminAuth(handler)

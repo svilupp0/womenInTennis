@@ -2,9 +2,9 @@
 // PUT /api/users/availability - Aggiorna disponibilità utente
 
 import { prisma } from '../../../lib/prisma'
-import { authenticateToken, getUserIdFromToken } from '../../../lib/auth'
+import { withAuth } from '../../../lib/middleware/authMiddleware'
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   // ✅ Gestisci solo richieste PUT
   if (req.method !== 'PUT') {
     return res.status(405).json({ 
@@ -13,15 +13,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 🔐 Autenticazione e estrazione userId
-    const user = authenticateToken(req)
-    const userId = getUserIdFromToken(user)
-    
-    if (!userId) {
-      return res.status(401).json({ 
-        error: 'Utente non autenticato - ID mancante nel token' 
-      })
-    }
+    // 🔐 userId già validato dal middleware withAuth
+    const { userId } = req
 
     // 📝 Validazione input
     const { available } = req.body
@@ -60,31 +53,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('❌ Errore aggiornamento disponibilità:', error)
 
-    // 🔍 Gestione errori specifici con logging dettagliato
-    if (error.message === 'Token mancante') {
-      return res.status(401).json({ 
-        error: 'Token di autenticazione mancante' 
-      })
-    }
-
-    if (error.message === 'Token scaduto') {
-      return res.status(401).json({ 
-        error: 'Token scaduto. Effettua nuovamente il login.' 
-      })
-    }
-
-    if (error.message === 'Token non valido' || error.message === 'Errore verifica token') {
-      return res.status(401).json({ 
-        error: 'Token non valido. Effettua nuovamente il login.' 
-      })
-    }
-
-    if (error.message === 'JWT_SECRET non configurato') {
-      console.error('🚨 CRITICAL: JWT_SECRET non configurato!')
-      return res.status(500).json({ 
-        error: 'Errore configurazione server' 
-      })
-    }
+    // 🔍 Gestione errori specifici (auth errors già gestiti dal middleware)
 
     // Errori Prisma specifici
     if (error.code === 'P2025') {
@@ -112,6 +81,8 @@ export default async function handler(req, res) {
     })
   }
 }
+
+export default withAuth(handler)
 
 // 📋 Configurazione Next.js API
 export const config = {

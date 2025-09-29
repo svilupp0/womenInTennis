@@ -1,10 +1,8 @@
 // pages/api/auth/reset-password.js
 // API per conferma reset password
 
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../../lib/prisma'
 import bcrypt from 'bcryptjs'
-
-const prisma = new PrismaClient()
 
 export default async function handler(req, res) {
   // Solo metodo POST
@@ -128,7 +126,6 @@ export default async function handler(req, res) {
       success: false,
       error: 'Errore interno del server. Riprova più tardi.'
     })
-  } finally {
-    await prisma.$disconnect()
   }
+  // Nota: Non disconnettiamo il singleton prisma
 }

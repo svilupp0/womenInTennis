@@ -78,7 +78,7 @@
 .calendarWrapper :global(.fc-button) {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: white;
+  color: rgb(0, 0, 0);
   border-radius: var(--border-radius-sm);
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
