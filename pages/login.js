@@ -17,6 +17,7 @@ export default function Login() {
   const [unverifiedEmail, setUnverifiedEmail] = useState('')
   const [isResending, setIsResending] = useState(false)
   const [resendSuccess, setResendSuccess] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleChange = (e) => {
     setFormData({
@@ -237,16 +238,41 @@ export default function Login() {
 
                 <div className={styles.formGroup}>
                   <label htmlFor="password">Password</label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="form-input"
-                    placeholder="La tua password"
-                    required
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="form-input"
+                      placeholder="La tua password"
+                      required
+                      style={{ paddingRight: '3rem' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: 'absolute',
+                        right: '0.75rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '1.2rem',
+                        color: 'var(--gray-500)',
+                        padding: '0.25rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
+                    >
+                      {showPassword ? '🙈' : '👁️'}
+                    </button>
+                  </div>
                 </div>
 
                 <button
