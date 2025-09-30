@@ -248,6 +248,7 @@ export default function Register() {
                     onChange={handleChange}
                     className="form-input"
                     placeholder="la.tua.email@esempio.com"
+                    autocomplete="email"
                     required
                   />
                 </div>
@@ -291,6 +292,7 @@ export default function Register() {
                     onChange={handleChange}
                     className="form-input"
                     placeholder="Es. Milano, Roma, Napoli..."
+                    autocomplete="address-level2"
                   />
                 </div>
 
@@ -320,6 +322,7 @@ export default function Register() {
                     onChange={handleChange}
                     className="form-input"
                     placeholder="Es. +39 123 456 7890"
+                    autocomplete="tel"
                   />
                 </div>
 

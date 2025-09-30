@@ -230,6 +230,7 @@ export default function Login() {
                     onChange={handleChange}
                     className="form-input"
                     placeholder="la.tua.email@esempio.com"
+                    autocomplete="email"
                     required
                   />
                 </div>
