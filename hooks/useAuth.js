@@ -79,6 +79,29 @@ export const useAuth = () => {
         window.location.href = redirectPath
       }
       return result
+    },
+
+    // Registrazione con verifica email e redirect
+    registerAndRedirect: async (userData, redirectPath = '/verify-email') => {
+      const result = await register(userData)
+      
+      // Controlla se la registrazione è avvenuta con successo
+      if (result.success) {
+        // Verifica che l'email sia stata inviata prima di fare il redirect
+        if (result.message && result.message.includes('verifica')) {
+          // Redirect alla pagina di verifica email
+          if (typeof window !== 'undefined') {
+            window.location.href = redirectPath
+          }
+        } else {
+          // Se non c'è bisogno di verifica, vai direttamente alla dashboard
+          if (typeof window !== 'undefined') {
+            window.location.href = '/dashboard'
+          }
+        }
+      }
+      
+      return result
     }
   }
 

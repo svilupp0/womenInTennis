@@ -64,6 +64,3 @@ temp/
 
 # Vercel
 .vercel
-
-# setup-admin
-setup-admin-production.js
