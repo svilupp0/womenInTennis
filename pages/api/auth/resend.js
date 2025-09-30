@@ -79,8 +79,7 @@ export default async function handler(req, res) {
 
     const emailSent = await sendVerificationEmail(
       normalizedEmail, 
-      token, 
-      user.comune || ''
+      token
     )
 
     if (!emailSent) {

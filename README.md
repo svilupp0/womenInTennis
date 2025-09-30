@@ -15,6 +15,8 @@ Una piattaforma web dedicata alle donne appassionate di tennis per trovare partn
 - **Profili personalizzati** con informazioni tennis-specifiche
 - **Sistema di sicurezza** con protezione da attacchi brute force
 - **Gestione password** con reset sicuro
+- **Form intelligenti** con autocomplete per email, telefono e località
+- **Password visibility toggle** per migliorare l'esperienza utente
 
 ### 📅 **Sistema Calendario**
 - **Calendario interattivo** per gestire disponibilità
@@ -39,6 +41,13 @@ Una piattaforma web dedicata alle donne appassionate di tennis per trovare partn
 - **Pannello admin** per moderazione
 - **Security headers** configurati per produzione
 - **Protezione CSRF** e XSS
+
+### 🎨 **Esperienza Utente (UX)**
+- **Autocomplete intelligente** per form di registrazione e login
+- **Password visibility toggle** con icone intuitive
+- **Accessibilità migliorata** con aria-labels e supporto screen reader
+- **Form responsivi** ottimizzati per dispositivi mobili
+- **Feedback visivo** per interazioni utente
 
 ### 📊 **Testing e Qualità**
 - **Test unitari** con Jest
@@ -171,6 +180,16 @@ womenInTennis/
 - **Geocoding API** per conversione indirizzi
 - **Marker personalizzati** con info window
 
+### 🎨 Miglioramenti UX
+- **Autocomplete HTML5** per ottimizzare la compilazione form:
+  - `autocomplete="email"` per campi email
+  - `autocomplete="tel"` per numeri di telefono
+  - `autocomplete="address-level2"` per località/comuni
+- **Password visibility toggle** con icone intuitive (👁️/🙈)
+- **Accessibilità migliorata** con aria-labels per screen reader
+- **Responsive design** ottimizzato per tutti i dispositivi
+- **Feedback visivo** immediato per azioni utente
+
 ## 🧪 Testing
 
 ### Test Unitari
@@ -284,6 +303,14 @@ Usa i template GitHub per:
 - 🗺️ [**Integrazione Google Maps**](GOOGLE_MAPS_INTEGRATION.md) - Setup mappe
 - 🛡️ [**Security Headers**](SECURITY_HEADERS.md) - Configurazione sicurezza
 - 📦 [**Installazione Calendar**](install_calendar_deps.md) - Setup calendario
+
+## 🆕 Aggiornamenti Recenti
+
+### v1.2.0 - Miglioramenti UX Form
+- ✅ **Autocomplete intelligente** aggiunto ai form di registrazione e login
+- ✅ **Password visibility toggle** implementato nel form di login
+- ✅ **Accessibilità migliorata** con aria-labels e supporto screen reader
+- ✅ **Ottimizzazioni mobile** per una migliore esperienza su dispositivi touch
 
 ## 🐛 Troubleshooting
 
