@@ -297,12 +297,6 @@ export default function Login() {
                     Registrati qui
                   </Link>
                 </p>
-                <p style={{ marginTop: '0.5rem' }}>
-                  Problemi con l'accesso?{' '}
-                  <Link href="/verify-email" className={styles.authLink}>
-                    Verifica email
-                  </Link>
-                </p>
               </div>
             </div>
           </div>
