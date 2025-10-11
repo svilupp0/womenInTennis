@@ -84,8 +84,7 @@ export default async function handler(req, res) {
     }
 
     // Genera nuovo token di reset
-    const resetToken = generateResetPasswordToken()
-    const tokenExpiry = new Date(Date.now() + 60 * 60 * 1000) // 1 ora
+    const { token: resetToken, expiry: tokenExpiry } = generateResetPasswordToken()
 
     // Aggiorna utente con nuovo token
     await prisma.user.update({
