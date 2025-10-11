@@ -698,23 +698,32 @@ export default function Dashboard() {
                                     <div className={styles.contactMenu}>
                                       {player.telefono && (
                                         <>
-                                          <button 
+                                          <button
                                             className={styles.contactOption}
-                                            onClick={() => handleWhatsApp(player)}
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              handleWhatsApp(player)
+                                            }}
                                           >
                                             📱 WhatsApp
                                           </button>
-                                          <button 
+                                          <button
                                             className={styles.contactOption}
-                                            onClick={() => handleCall(player)}
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              handleCall(player)
+                                            }}
                                           >
                                             📞 Chiamata
                                           </button>
                                         </>
                                       )}
-                                      <button 
+                                      <button
                                         className={styles.contactOption}
-                                        onClick={() => handleEmail(player)}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleEmail(player)
+                                        }}
                                       >
                                         ✉️ Email
                                       </button>
