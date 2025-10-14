@@ -5,6 +5,9 @@
   box-sizing: border-box;
 }
 
+/* PWA Install Popup Styles */
+@import './PWAInstallPopup.module.css';
+
 html {
   font-size: 16px;
   scroll-behavior: smooth;

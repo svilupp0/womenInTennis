@@ -1,0 +1,21 @@
+{
+  "name": "Women in Net",
+  "short_name": "WinNet",
+  "description": "Piattaforma per donne tenniste: trova partner, organizza partite e scopri campi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#28a745",
+  "icons": [
+    {
+      "src": "/icons/tennis-equipment_2387401.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/tennis-equipment_2387401.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
