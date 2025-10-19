@@ -16,14 +16,9 @@ export default function App({ Component, pageProps }) {
         });
     }
 
-    // Inizializzazione PWA Install Manager
-    const pwaManager = new PWAInstallManager({
-      promptVersion: 'v1.0.3',
-      delayBeforeShow: 5000 // 5 secondi
-    });
-
-    // Esponi globalmente per debug o reset manuale
-    window.pwaManager = pwaManager;
+    // Inizializzazione PWA Install Manager SOLO se autenticato
+    // Il manager verrà inizializzato nella dashboard dopo il login
+    // Questo previene popup su pagine pubbliche come home, login, register
   }, []);
 
   return (

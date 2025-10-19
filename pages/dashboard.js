@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useAvailability } from '../hooks/useAvailability'
 import Calendar from '../components/Calendar'
 import { truncateDisplayName, getInitials, isMobileDevice, getTooltipDisplayName } from '../utils/displayNameUtils'
+import PWAInstallManager from '../lib/pwaInstallManager'
 import styles from '../styles/Dashboard.module.css'
 
 export default function Dashboard() {
@@ -76,6 +77,19 @@ export default function Dashboard() {
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // 🚀 Inizializza PWA Install Manager SOLO nella dashboard (dopo autenticazione)
+  useEffect(() => {
+    if (isAuthenticated() && !loading) {
+      const pwaManager = new PWAInstallManager({
+        promptVersion: 'v1.0.4',
+        delayBeforeShow: 2000 // Ridotto a 2 secondi per utenti autenticati
+      });
+
+      // Esponi globalmente per debug o reset manuale
+      window.pwaManager = pwaManager;
+    }
+  }, [isAuthenticated, loading])
 
   // 🔄 Gestione errori disponibilità
   useEffect(() => {
