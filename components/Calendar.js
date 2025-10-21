@@ -280,7 +280,8 @@ const CreateEventModal = ({ selectedDate, onClose, onSubmit }) => {
     startTime: '',
     endTime: '',
     location: '',
-    description: ''
+    description: '',
+    sport: 'TENNIS' // Default sport
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -305,7 +306,8 @@ const CreateEventModal = ({ selectedDate, onClose, onSubmit }) => {
       start: `${selectedDate}T${formData.startTime}:00`,
       end: `${selectedDate}T${formData.endTime}:00`,
       location: formData.location,
-      description: formData.description
+      description: formData.description,
+      sport: formData.sport
     }
     
     await onSubmit(eventData)
@@ -378,6 +380,19 @@ const CreateEventModal = ({ selectedDate, onClose, onSubmit }) => {
             />
           </div>
           
+          <div className={styles.formGroup}>
+            <label>Sport:</label>
+            <select
+              value={formData.sport}
+              onChange={(e) => setFormData({...formData, sport: e.target.value})}
+              required
+              className={styles.formInput}
+            >
+              <option value="TENNIS">🎾 Tennis</option>
+              <option value="PADEL">🏓 Padel</option>
+            </select>
+          </div>
+
           <div className={styles.formGroup}>
             <label>Note:</label>
             <textarea
