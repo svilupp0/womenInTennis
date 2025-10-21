@@ -12,8 +12,10 @@ export default function Register() {
     password: '',
     confirmPassword: '',
     comune: '',
-    livello: '',
-    telefono: ''
+    sportLevels: [],
+    telefono: '',
+    selectedSport: '',
+    selectedLevel: ''
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -58,7 +60,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
         comune: formData.comune,
-        livello: formData.livello,
+        sportLevels: formData.sportLevels,
         telefono: formData.telefono
       }
 
@@ -349,19 +351,73 @@ export default function Register() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label htmlFor="livello">Livello di gioco</label>
-                  <select
-                    id="livello"
-                    name="livello"
-                    value={formData.livello}
-                    onChange={handleChange}
-                    className="form-input"
-                  >
-                    <option value="">Seleziona il tuo livello</option>
-                    <option value="Principiante">Principiante</option>
-                    <option value="Intermedio">Intermedio</option>
-                    <option value="Avanzato">Avanzato</option>
-                  </select>
+                  <label>Sport e livelli di gioco</label>
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <select
+                        value={formData.selectedSport || ''}
+                        onChange={(e) => setFormData({ ...formData, selectedSport: e.target.value })}
+                        className="form-input"
+                        style={{ flex: 1 }}
+                      >
+                        <option value="">Seleziona sport</option>
+                        <option value="TENNIS">Tennis</option>
+                        <option value="PADEL">Padel</option>
+                      </select>
+                      <select
+                        value={formData.selectedLevel || ''}
+                        onChange={(e) => setFormData({ ...formData, selectedLevel: e.target.value })}
+                        className="form-input"
+                        style={{ flex: 1 }}
+                      >
+                        <option value="">Seleziona livello</option>
+                        <option value="Principiante">Principiante</option>
+                        <option value="Intermedio">Intermedio</option>
+                        <option value="Avanzato">Avanzato</option>
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (formData.selectedSport && formData.selectedLevel) {
+                            const newSportLevel = { sport: formData.selectedSport, livello: formData.selectedLevel }
+                            setFormData({
+                              ...formData,
+                              sportLevels: [...formData.sportLevels, newSportLevel],
+                              selectedSport: '',
+                              selectedLevel: ''
+                            })
+                          }
+                        }}
+                        className="btn btn-secondary"
+                        style={{ padding: '0.5rem 1rem' }}
+                      >
+                        +
+                      </button>
+                    </div>
+                    {formData.sportLevels.length > 0 && (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        {formData.sportLevels.map((sl, index) => (
+                          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                            <span style={{ background: 'var(--gray-100)', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.9rem' }}>
+                              {sl.sport} - {sl.livello}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFormData({
+                                  ...formData,
+                                  sportLevels: formData.sportLevels.filter((_, i) => i !== index)
+                                })
+                              }}
+                              style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', fontSize: '1.2rem' }}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className={styles.formGroup}>

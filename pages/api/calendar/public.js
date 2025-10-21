@@ -63,7 +63,12 @@ async function handler(req, res) {
             id: true,
             email: true,
             comune: true,
-            livello: true,
+            sportLevels: {
+              select: {
+                sport: true,
+                livello: true,
+              },
+            },
             telefono: true
           }
         }

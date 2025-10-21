@@ -36,7 +36,12 @@ async function getEvents(req, res) {
             id: true,
             email: true,
             comune: true,
-            livello: true
+            sportLevels: {
+              select: {
+                sport: true,
+                livello: true,
+              },
+            }
           }
         },
         proposals: {
@@ -46,7 +51,12 @@ async function getEvents(req, res) {
                 id: true,
                 email: true,
                 comune: true,
-                livello: true
+                sportLevels: {
+                  select: {
+                    sport: true,
+                    livello: true,
+                  },
+                }
               }
             }
           }
@@ -124,11 +134,17 @@ async function createEvent(req, res) {
     // 🔐 userId già validato dal middleware withAuth
     const { userId } = req
 
-    const { title, description, start, end, location } = req.body
+    const { title, description, start, end, location, sport } = req.body
 
     // Validazione
     if (!title || !start || !end) {
       return res.status(400).json({ error: 'Campi obbligatori mancanti' })
+    }
+
+    // Validazione sport
+    const validSports = ['TENNIS', 'PADEL']
+    if (sport && !validSports.includes(sport)) {
+      return res.status(400).json({ error: `Sport non valido. Usa: ${validSports.join(', ')}` })
     }
 
     const startDate = new Date(start)
@@ -175,6 +191,7 @@ async function createEvent(req, res) {
         start: startDate,
         end: endDate,
         location,
+        sport: sport || 'TENNIS', // Default tennis se non specificato
         status: 'AVAILABLE',
         color: '#3c70f2'
       },
@@ -184,7 +201,12 @@ async function createEvent(req, res) {
             id: true,
             email: true,
             comune: true,
-            livello: true
+            sportLevels: {
+              select: {
+                sport: true,
+                livello: true,
+              },
+            }
           }
         }
       }

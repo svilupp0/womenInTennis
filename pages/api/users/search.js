@@ -12,7 +12,7 @@ async function handler(req, res) {
     const { userId } = req
 
     // Estrai parametri di ricerca
-    const { comune, livello, disponibilita } = req.query
+    const { comune, sport, livello, disponibilita } = req.query
 
     // Costruisci filtri per Prisma
     const whereClause = {
@@ -27,12 +27,29 @@ async function handler(req, res) {
       whereClause.comune = comune
     }
 
-    if (livello && livello.trim() !== '') {
-      whereClause.livello = livello
-    }
-
     if (disponibilita === 'true') {
       whereClause.disponibilita = true
+    }
+
+    // Filtro per sport e livello - usa relazione sportLevels
+    if (sport && sport.trim() !== '') {
+      whereClause.sportLevels = {
+        some: {
+          sport: sport
+        }
+      }
+
+      // Se specificato anche livello, filtra per livello specifico dello sport
+      if (livello && livello.trim() !== '') {
+        whereClause.sportLevels.some.livello = livello
+      }
+    } else if (livello && livello.trim() !== '') {
+      // Se livello specificato ma sport no, cerca utenti che hanno quel livello in qualsiasi sport
+      whereClause.sportLevels = {
+        some: {
+          livello: livello
+        }
+      }
     }
 
     // Query Prisma per trovare utenti
@@ -42,10 +59,17 @@ async function handler(req, res) {
         id: true,
         email: true,
         comune: true,
-        livello: true,
+        telefono: true,
         disponibilita: true,
-        createdAt: true
-        // Non restituiamo mai la password
+        emailVerified: true,
+        createdAt: true,
+        // NON includere password, verificationToken, resetPasswordToken, ecc.
+        sportLevels: {
+          select: {
+            sport: true,
+            livello: true
+          }
+        }
       },
       orderBy: [
         { disponibilita: 'desc' }, // Prima gli disponibili
@@ -61,6 +85,7 @@ async function handler(req, res) {
       count: users.length,
       filters: {
         comune: comune || null,
+        sport: sport || null,
         livello: livello || null,
         disponibilita: disponibilita === 'true'
       }

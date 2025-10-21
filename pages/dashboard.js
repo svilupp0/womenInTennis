@@ -35,6 +35,7 @@ export default function Dashboard() {
   const [isMobile, setIsMobile] = useState(false)
   const [searchFilters, setSearchFilters] = useState({
     comune: '',
+    sport: '',
     livello: '',
     disponibilita: true
   })
@@ -54,8 +55,10 @@ export default function Dashboard() {
   // 🔧 Stati per modifica profilo
   const [editProfileForm, setEditProfileForm] = useState({
     comune: '',
-    livello: '',
-    telefono: ''
+    sportLevels: [],
+    telefono: '',
+    selectedSport: '',
+    selectedLivello: ''
   })
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
   const [profileUpdateError, setProfileUpdateError] = useState(null)
@@ -104,8 +107,10 @@ export default function Dashboard() {
     if (user && showEditProfile) {
       setEditProfileForm({
         comune: user.comune || '',
-        livello: user.livello || '',
-        telefono: user.telefono || ''
+        sportLevels: user.sportLevels || [],
+        telefono: user.telefono || '',
+        selectedSport: '',
+        selectedLivello: ''
       })
       setProfileUpdateError(null)
     }
@@ -155,6 +160,7 @@ export default function Dashboard() {
     try {
       const queryParams = new URLSearchParams()
       if (searchFilters.comune) queryParams.append('comune', searchFilters.comune)
+      if (searchFilters.sport) queryParams.append('sport', searchFilters.sport)
       if (searchFilters.livello) queryParams.append('livello', searchFilters.livello)
       if (searchFilters.disponibilita) queryParams.append('disponibilita', 'true')
 
@@ -380,10 +386,50 @@ export default function Dashboard() {
     if (user) {
       setEditProfileForm({
         comune: user.comune || '',
-        livello: user.livello || '',
-        telefono: user.telefono || ''
+        sportLevels: user.sportLevels || [],
+        telefono: user.telefono || '',
+        selectedSport: '',
+        selectedLivello: ''
       })
     }
+  }
+
+  // Gestione aggiunta sport-livello
+  const addSportLevel = () => {
+    if (!editProfileForm.selectedSport || !editProfileForm.selectedLivello) {
+      alert('Seleziona sia lo sport che il livello')
+      return
+    }
+
+    const newSportLevel = {
+      sport: editProfileForm.selectedSport,
+      livello: editProfileForm.selectedLivello
+    }
+
+    // Verifica se già presente
+    const exists = editProfileForm.sportLevels.some(
+      sl => sl.sport === newSportLevel.sport && sl.livello === newSportLevel.livello
+    )
+
+    if (exists) {
+      alert('Questa combinazione sport-livello è già presente')
+      return
+    }
+
+    setEditProfileForm(prev => ({
+      ...prev,
+      sportLevels: [...prev.sportLevels, newSportLevel],
+      selectedSport: '',
+      selectedLivello: ''
+    }))
+  }
+
+  // Rimozione sport-livello
+  const removeSportLevel = (index) => {
+    setEditProfileForm(prev => ({
+      ...prev,
+      sportLevels: prev.sportLevels.filter((_, i) => i !== index)
+    }))
   }
 
   // Loading state
@@ -552,21 +598,67 @@ export default function Dashboard() {
                       </div>
                       
                       <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Livello di gioco:</label>
-                        <select 
-                          className="form-input"
-                          value={editProfileForm.livello}
-                          onChange={(e) => handleProfileFormChange('livello', e.target.value)}
-                          disabled={isUpdatingProfile}
-                        >
-                          <option value="">Seleziona il tuo livello</option>
-                          <option value="Principiante">🌱 Principiante</option>
-                          <option value="Intermedio">🌿 Intermedio</option>
-                          <option value="Avanzato">🏆 Avanzato</option>
-                        </select>
+                        <label className={styles.formLabel}>Sport e Livelli:</label>
+                        <div className={styles.sportLevelSelector}>
+                          <select
+                            className="form-input"
+                            value={editProfileForm.selectedSport}
+                            onChange={(e) => handleProfileFormChange('selectedSport', e.target.value)}
+                            disabled={isUpdatingProfile}
+                          >
+                            <option value="">Seleziona sport</option>
+                            <option value="TENNIS">🎾 Tennis</option>
+                            <option value="PADEL">🏓 Padel</option>
+                          </select>
+                          
+                          <select
+                            className="form-input"
+                            value={editProfileForm.selectedLivello}
+                            onChange={(e) => handleProfileFormChange('selectedLivello', e.target.value)}
+                            disabled={isUpdatingProfile || !editProfileForm.selectedSport}
+                          >
+                            <option value="">Seleziona livello</option>
+                            <option value="Principiante">🌱 Principiante</option>
+                            <option value="Intermedio">🌿 Intermedio</option>
+                            <option value="Avanzato">🏆 Avanzato</option>
+                          </select>
+
+                          <button
+                            className="btn btn-primary"
+                            onClick={addSportLevel}
+                            disabled={isUpdatingProfile || !editProfileForm.selectedSport || !editProfileForm.selectedLivello}
+                          >
+                            ➕ Aggiungi
+                          </button>
+                        </div>
+                        
                         <small className={styles.fieldHint}>
-                          🎾 Aiuta le altre giocatrici a trovare partner del loro livello
+                          🎾 Aggiungi i tuoi sport e livelli per trovare partner adatti
                         </small>
+                        
+                        {editProfileForm.sportLevels.length > 0 && (
+                          <div className={styles.sportLevelsList}>
+                            <label className={styles.formLabel}>Livelli aggiunti:</label>
+                            <ul className={styles.levelsList}>
+                              {editProfileForm.sportLevels.map((sl, index) => (
+                                <li key={index} className={styles.levelItem}>
+                                  <span>
+                                    {sl.sport === 'TENNIS' ? '🎾' : '🏓'}
+                                    {sl.sport}: {sl.livello}
+                                  </span>
+                                  <button 
+                                    className={styles.removeLevelBtn}
+                                    onClick={() => removeSportLevel(index)}
+                                    disabled={isUpdatingProfile}
+                                    title="Rimuovi"
+                                  >
+                                    ❌
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     </div>
                     
@@ -630,6 +722,19 @@ export default function Dashboard() {
                           ))}
                         </select>
                       </div>
+
+                      <div className={styles.filterGroup}>
+                        <label className={styles.filterLabel}>Sport:</label>
+                        <select 
+                          className="form-input"
+                          value={searchFilters.sport}
+                          onChange={(e) => handleFilterChange('sport', e.target.value)}
+                        >
+                          <option value="">Tutti gli sport</option>
+                          <option value="TENNIS">🎾 Tennis</option>
+                          <option value="PADEL">🏓 Padel</option>
+                        </select>
+                      </div>
                       
                       <div className={styles.filterGroup}>
                         <label className={styles.filterLabel}>Livello:</label>
@@ -686,7 +791,9 @@ export default function Dashboard() {
                                     {player.email.split('@')[0]}
                                   </h3>
                                   <p className={styles.playerDetails}>
-                                    📍 {player.comune || 'Non specificato'} • 🎾 {player.livello || 'Non specificato'}
+                                    📍 {player.comune || 'Non specificato'} • {player.sportLevels && player.sportLevels.length > 0
+                                      ? player.sportLevels.map(sl => `${sl.sport === 'TENNIS' ? '🎾' : '🏓'} ${sl.sport}: ${sl.livello}`).join(', ')
+                                      : 'Sport non specificato'}
                                   </p>
                                   <div className={styles.playerStatus}>
                                     {player.disponibilita ? (

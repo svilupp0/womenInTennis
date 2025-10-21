@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, password, comune, livello, telefono } = req.body
+    const { email, password, comune, sportLevels, telefono } = req.body
 
     // Validazione email avanzata
     const emailValidation = validateEmail(email)
@@ -45,7 +45,6 @@ export default async function handler(req, res) {
     // Sanitizza input opzionali
     const normalizedEmail = emailValidation.email
     const sanitizedComune = sanitizeInput(comune, 100)
-    const sanitizedLivello = sanitizeInput(livello, 50)
     const sanitizedTelefono = sanitizeInput(telefono, 20)
 
     // Verifica se l'utente esiste già
@@ -82,24 +81,35 @@ export default async function handler(req, res) {
         email: normalizedEmail,
         password: hashedPassword,
         comune: sanitizedComune || null,
-        livello: sanitizedLivello || null,
         telefono: sanitizedTelefono || null,
         disponibilita: true,
         emailVerified: false, // IMPORTANTE: Non verificato
         verificationToken: token,
         verificationTokenExpiry: expiry,
-        lastVerificationSent: new Date()
+        lastVerificationSent: new Date(),
+        // Creazione annidata dei UserSportLevel
+        sportLevels: sportLevels ? {
+          create: sportLevels.map(sl => ({
+            sport: sl.sport,
+            livello: sl.livello,
+          })),
+        } : undefined
       },
       select: {
         id: true,
         email: true,
         comune: true,
-        livello: true,
         telefono: true,
         disponibilita: true,
         isAdmin: true,
         emailVerified: true,
-        createdAt: true
+        createdAt: true,
+        sportLevels: {
+          select: {
+            sport: true,
+            livello: true,
+          },
+        }
         // Non restituiamo mai la password o il token
       }
     })

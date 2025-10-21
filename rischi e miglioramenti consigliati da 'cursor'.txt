@@ -1,0 +1,15 @@
+Rischi e miglioramenti consigliati
+Sicurezza JWT: rimuovere il default 'your-secret-key-change-in-production'; forzare errore se JWT_SECRET mancante anche in login.js.
+Persistenza sessione: considerare refresh token o rotazione per sessioni più lunghe/secure.
+Autorizzazione: aggiungere middleware centralizzato per API protette (role-based, ownership su Event/Proposal).
+Audit log: estendere logging per azioni amministrative e auth critiche.
+Email deliverability: aggiungere retry/backoff e monitoring; configurare provider transazionale.
+CSP dev/prod: validare che 'unsafe-inline' sia davvero necessario; minimizzare inline scripts/styles.
+Error handling client: uniformare messaggi da ERROR_MESSAGES anche lato UI.
+E2E: stabilizzare il test che fallisce (screenshot presente); aggiungere test per verifiche email e reset.
+DB indici: già presenti su Event; valutare indice su User.emailVerified per query frequenti.
+Rate limit storage: assicurarsi che i limiter usino storage condiviso in ambienti multi-instance (se non già fatto).
+Se vuoi, posso:
+Mappare le API calendar/availability e il flusso UI completo del calendario.
+Sistemare il fallback JWT_SECRET e aggiungere middleware di autorizzazione condiviso.
+Indagare e correggere il test E2E di login che fallisce.

@@ -45,7 +45,12 @@ export default async function handler(req, res) {
         email: true,
         password: true,
         comune: true,
-        livello: true,
+        sportLevels: {
+          select: {
+            sport: true,
+            livello: true,
+          },
+        },
         disponibilita: true,
         isAdmin: true,
         emailVerified: true,

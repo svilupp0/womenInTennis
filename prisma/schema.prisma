@@ -13,36 +13,38 @@ model User {
   email        String   @unique
   password     String
   comune       String?       // Comune di residenza
-  livello      String?       // Principiante / Intermedio / Avanzato
   telefono     String?       // opzionale
   disponibilita Boolean?     // Disponibile a giocare o no
   isAdmin      Boolean  @default(false)  // Flag admin
-  
+
   // Email verification
   emailVerified           Boolean   @default(false)
   verificationToken       String?   @unique
   verificationTokenExpiry DateTime?
   lastVerificationSent    DateTime? // Anti-spam
-  
+
   // Password reset
   resetPasswordToken      String?   @unique
   resetPasswordTokenExpiry DateTime?
-  
+
   // Security
   loginAttempts           Int       @default(0)
   lockoutUntil           DateTime?
-  
+
   createdAt    DateTime @default(now())
-  updatedAt    DateTime? @updatedAt 
-  
+  updatedAt    DateTime? @updatedAt
+
   // Relazioni per il sistema di report
   reportsGiven    Report[] @relation("reporter")  // Report fatti da questo utente
   reportsReceived Report[] @relation("reported")  // Report ricevuti da questo utente
-  
+
   // Nuove relazioni per calendario
   events          Event[]           // Eventi/disponibilità create dall'utente
   proposalsSent   MatchProposal[] @relation("proposer")   // Proposte inviate
   proposalsReceived MatchProposal[] @relation("target")   // Proposte ricevute
+
+  // Relazioni per sport e livelli
+  sportLevels     UserSportLevel[]  // Livelli per ogni sport praticato
 }
 
 model Report {
@@ -142,4 +144,27 @@ enum ProposalStatus {
   REJECTED  // Rifiutata
   EXPIRED   // Scaduta
   CANCELLED // Cancellata dal proponente
+}
+
+// MODELLI PER GESTIONE SPORT E LIVELLI
+
+// Enum per gli sport disponibili
+enum Sport {
+  TENNIS
+  PADEL
+}
+
+// Modello per livelli sport dell'utente
+model UserSportLevel {
+  id       Int     @id @default(autoincrement())
+  userId   Int     // Utente
+  sport    Sport   // Sport praticato
+  livello  String  // Principiante / Intermedio / Avanzato
+
+  // Relazioni
+  user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sport]) // Un utente può avere un solo livello per sport
+  @@index([userId])
+  @@index([sport])
 }

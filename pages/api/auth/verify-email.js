@@ -46,7 +46,12 @@ export default async function handler(req, res) {
         verificationToken: true,
         verificationTokenExpiry: true,
         comune: true,
-        livello: true
+        sportLevels: {
+          select: {
+            sport: true,
+            livello: true,
+          },
+        }
       }
     })
 
@@ -113,7 +118,12 @@ export default async function handler(req, res) {
         email: true,
         emailVerified: true,
         comune: true,
-        livello: true,
+        sportLevels: {
+          select: {
+            sport: true,
+            livello: true,
+          },
+        },
         createdAt: true
       }
     })

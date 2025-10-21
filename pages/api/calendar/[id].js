@@ -40,7 +40,12 @@ async function getEvent(req, res, eventId) {
             id: true,
             email: true,
             comune: true,
-            livello: true
+            sportLevels: {
+              select: {
+                sport: true,
+                livello: true,
+              },
+            }
           }
         },
         proposals: {
@@ -50,7 +55,12 @@ async function getEvent(req, res, eventId) {
                 id: true,
                 email: true,
                 comune: true,
-                livello: true
+                sportLevels: {
+                  select: {
+                    sport: true,
+                    livello: true,
+                  },
+                }
               }
             }
           }
@@ -139,7 +149,12 @@ async function updateEvent(req, res, eventId) {
             id: true,
             email: true,
             comune: true,
-            livello: true
+            sportLevels: {
+              select: {
+                sport: true,
+                livello: true,
+              },
+            }
           }
         }
       }

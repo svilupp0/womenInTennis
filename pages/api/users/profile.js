@@ -18,15 +18,40 @@ async function handler(req, res) {
     const { userId } = req
 
     // 2. Valida i dati in input
-    const { comune, livello, telefono, disponibilita } = req.body
+    const { comune, sportLevels, telefono, disponibilita } = req.body
 
-    // Validazione livello se fornito
+    // Validazione sportLevels se fornito
     const validLevels = ['Principiante', 'Intermedio', 'Avanzato']
-    if (livello && !validLevels.includes(livello)) {
-      return res.status(400).json({
-        success: false,
-        error: `Livello non valido. Usa: ${validLevels.join(', ')}`
-      })
+    const validSports = ['TENNIS', 'PADEL']
+
+    if (sportLevels) {
+      if (!Array.isArray(sportLevels)) {
+        return res.status(400).json({
+          success: false,
+          error: 'sportLevels deve essere un array'
+        })
+      }
+
+      for (const sportLevel of sportLevels) {
+        if (!sportLevel.sport || !sportLevel.livello) {
+          return res.status(400).json({
+            success: false,
+            error: 'Ogni sportLevel deve avere sport e livello'
+          })
+        }
+        if (!validSports.includes(sportLevel.sport)) {
+          return res.status(400).json({
+            success: false,
+            error: `Sport non valido. Usa: ${validSports.join(', ')}`
+          })
+        }
+        if (!validLevels.includes(sportLevel.livello)) {
+          return res.status(400).json({
+            success: false,
+            error: `Livello non valido. Usa: ${validLevels.join(', ')}`
+          })
+        }
+      }
     }
 
     // Validazione telefono se fornito (formato base)
@@ -49,12 +74,11 @@ async function handler(req, res) {
     const updateData = {}
     
     if (comune !== undefined) updateData.comune = comune.trim() || null
-    if (livello !== undefined) updateData.livello = livello || null
     if (telefono !== undefined) updateData.telefono = telefono.trim() || null
     if (disponibilita !== undefined) updateData.disponibilita = disponibilita
 
     // Verifica che ci sia almeno un campo da aggiornare
-    if (Object.keys(updateData).length === 0) {
+    if (Object.keys(updateData).length === 0 && !sportLevels) {
       return res.status(400).json({
         success: false,
         error: 'Nessun campo da aggiornare fornito'
@@ -81,21 +105,61 @@ async function handler(req, res) {
         id: true,
         email: true,
         comune: true,
-        livello: true,
         telefono: true,
         disponibilita: true,
         emailVerified: true,
         createdAt: true,
-        updatedAt: true
+        updatedAt: true,
+        sportLevels: {
+          select: {
+            sport: true,
+            livello: true,
+          },
+        }
         // Escludi password e altri campi sensibili
       }
     })
 
-    // 6. Risposta di successo
+    // 6. Gestisci sportLevels se fornito
+    let updatedSportLevels = []
+    if (sportLevels) {
+      // Prima elimina tutti i livelli esistenti per l'utente
+      await prisma.userSportLevel.deleteMany({
+        where: { userId: userId }
+      })
+
+      // Poi crea i nuovi livelli
+      if (sportLevels.length > 0) {
+        const sportLevelData = sportLevels.map(sportLevel => ({
+          userId: userId,
+          sport: sportLevel.sport,
+          livello: sportLevel.livello
+        }))
+
+        updatedSportLevels = await prisma.userSportLevel.createMany({
+          data: sportLevelData,
+          skipDuplicates: true
+        })
+      }
+    }
+
+    // 7. Ottieni i livelli sport aggiornati per la risposta
+    const currentSportLevels = await prisma.userSportLevel.findMany({
+      where: { userId: userId },
+      select: {
+        sport: true,
+        livello: true
+      }
+    })
+
+    // 8. Risposta di successo
     return res.status(200).json({
       success: true,
       message: 'Profilo aggiornato con successo',
-      user: updatedUser
+      user: {
+        ...updatedUser,
+        sportLevels: currentSportLevels
+      }
     })
 
   } catch (error) {
