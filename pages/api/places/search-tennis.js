@@ -1,4 +1,4 @@
-// API route per cercare campi da tennis usando Google Places API (New)
+// API route per cercare campi da tennis e padel usando Google Places API (New)
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
   try {
     console.log(`Searching for sports facilities near lat: ${lat}, lng: ${lng}, radius: ${radiusNum}m`)
-    
+
     const response = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
       method: 'POST',
       headers: {
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         'X-Goog-FieldMask': 'places.displayName.text,places.formattedAddress,places.location,places.nationalPhoneNumber'
       },
       body: JSON.stringify({
-        includedTypes: ['sports_complex', 'sports_club', 'stadium'],
+        includedTypes: ['tennis_court', 'sports_complex', 'sports_club'],
         maxResultCount: 20,
         locationRestriction: {
           circle: {
@@ -60,12 +60,12 @@ export default async function handler(req, res) {
 
     const data = await response.json()
     console.log(`Found ${data.places?.length || 0} places`)
-    
+
     // Log first place for debugging
     if (data.places && data.places.length > 0) {
       console.log('Sample place:', JSON.stringify(data.places[0], null, 2))
     }
-    
+
     // Restituisci solo i dati necessari al client
     res.status(200).json({
       places: data.places || [],
@@ -73,10 +73,10 @@ export default async function handler(req, res) {
     })
 
   } catch (error) {
-    console.error('Error searching tennis courts:', error)
-    res.status(500).json({ 
-      error: 'Failed to search tennis courts',
-      success: false 
+    console.error('Error searching sports facilities:', error)
+    res.status(500).json({
+      error: 'Failed to search sports facilities',
+      success: false
     })
   }
 }

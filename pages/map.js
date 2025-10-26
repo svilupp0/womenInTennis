@@ -39,8 +39,8 @@ export default function Map() {
         
 
 
-        // Funzione per cercare campi da tennis nelle vicinanze usando la nostra API route
-        const searchTennisCourts = async (center, radius = 15000) => {
+        // Funzione per cercare strutture sportive nelle vicinanze usando la nostra API route
+        const searchSportsFacilities = async (center, radius = 15000) => {
           try {
             const response = await fetch('/api/places/search-tennis', {
               method: 'POST',
@@ -117,45 +117,42 @@ export default function Map() {
             })
             
             if (places.length === 0) {
-              console.log('Nessun campo da tennis trovato nelle vicinanze')
+              console.log('Nessuna struttura sportiva trovata nelle vicinanze')
             }
           } catch (error) {
             console.error('Errore nella ricerca dei campi da tennis:', error)
           }
         }
 
-        // Aggiungi marker per Matchpoint Lecce (campo famoso)
+        // Aggiungi marker per Matchpoint Lecce
         const matchpointMarker = new window.google.maps.Marker({
           position: { lat: 40.344500, lng: 18.212694 },
           map: googleMap,
           title: "Matchpoint Lecce",
           icon: {
             url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-              <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="18" cy="18" r="14" fill="#ff6b35" stroke="#fff" stroke-width="3"/>
-                <text x="18" y="22" text-anchor="middle" fill="white" font-size="18">🏆</text>
+              <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="12" fill="#e91e63" stroke="#fff" stroke-width="2"/>
+                <text x="16" y="20" text-anchor="middle" fill="white" font-size="16">🎾</text>
               </svg>
             `),
-            scaledSize: new window.google.maps.Size(36, 36)
+            scaledSize: new window.google.maps.Size(32, 32)
           }
         })
 
         // Info window per Matchpoint Lecce
         const matchpointInfoWindow = new window.google.maps.InfoWindow({
           content: `
-            <div style="padding: 12px; max-width: 280px;">
-              <h3 style="margin: 0 0 8px 0; color: #ff6b35; font-size: 16px; font-weight: bold;">🏆 Matchpoint Lecce</h3>
+            <div style="padding: 12px; max-width: 250px;">
+              <h3 style="margin: 0 0 8px 0; color: #e91e63; font-size: 16px;">Matchpoint Lecce</h3>
               <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
                 📍 Via Provinciale Lecce - Vernole, KM 2, 73100 Lecce LE, Italia
               </p>
-              <p style="margin: 0 0 8px 0; font-size: 13px; color: #666;">
+              <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
                 📞 393 2023863
               </p>
-              <div style="background: #fff3e0; padding: 6px; border-radius: 4px; margin-bottom: 8px; font-size: 12px; color: #e65100;">
-                ⭐ Campo da tennis famoso di Lecce
-              </div>
-              <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=40.344500,18.212694', '_blank')" 
-                      style="margin-top: 8px; padding: 6px 12px; background: #ff6b35; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+              <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=40.344500,18.212694', '_blank')"
+                      style="margin-top: 8px; padding: 6px 12px; background: #e91e63; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
                 🗺️ Visualizza su Google Maps
               </button>
             </div>
@@ -169,8 +166,8 @@ export default function Map() {
         // Salva il marker
         setMarkers(prev => [...prev, matchpointMarker])
 
-        // Cerca campi da tennis nell'area iniziale (Roma)
-        searchTennisCourts({ lat: 41.9028, lng: 12.4964 }, 15000)
+        // Cerca strutture sportive nell'area iniziale (Roma)
+        searchSportsFacilities({ lat: 41.9028, lng: 12.4964 }, 15000)
         
         // Aggiungi listener per cercare campi quando la mappa viene spostata
         let searchTimeout
@@ -180,7 +177,7 @@ export default function Map() {
           searchTimeout = setTimeout(() => {
             const center = googleMap.getCenter()
             if (center) {
-              searchTennisCourts({
+              searchSportsFacilities({
                 lat: center.lat(),
                 lng: center.lng()
               }, 15000)
@@ -286,12 +283,12 @@ export default function Map() {
     }
   }
 
-  const searchTennisInCurrentArea = async () => {
+  const searchSportsInCurrentArea = async () => {
     if (!map) return
-    
+
     setIsSearchingPlaces(true)
     const center = map.getCenter()
-    
+
     try {
       const response = await fetch('/api/places/search-tennis', {
         method: 'POST',
@@ -310,20 +307,20 @@ export default function Map() {
       }
 
       const data = await response.json()
-      
+
       if (!data.success) {
-        throw new Error(data.error || 'Failed to search tennis courts')
+        throw new Error(data.error || 'Failed to search sports facilities')
       }
-      
+
       const places = data.places || []
-      
-      // Pulisci marker precedenti dei campi da tennis (mantieni posizione utente)
+
+      // Pulisci marker precedenti delle strutture sportive (mantieni posizione utente)
       markers.forEach(marker => {
         if (marker.getTitle() !== 'La tua posizione' && !marker.getTitle().includes('📍')) {
           marker.setMap(null)
         }
       })
-      
+
       const newMarkers = []
       places.forEach((place) => {
         if (place.location) {
@@ -333,7 +330,7 @@ export default function Map() {
               lng: place.location.longitude
             },
             map: map,
-            title: place.displayName?.text || 'Campo da tennis',
+            title: place.displayName?.text || 'Struttura sportiva',
             icon: {
               url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -348,7 +345,7 @@ export default function Map() {
           const infoWindow = new window.google.maps.InfoWindow({
             content: `
               <div style="padding: 12px; max-width: 250px;">
-                <h3 style="margin: 0 0 8px 0; color: #e91e63; font-size: 16px;">${place.displayName?.text || 'Campo da tennis'}</h3>
+                <h3 style="margin: 0 0 8px 0; color: #e91e63; font-size: 16px;">${place.displayName?.text || 'Struttura sportiva'}</h3>
                 <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
                   📍 ${place.formattedAddress || 'Indirizzo non disponibile'}
                 </p>
@@ -357,7 +354,7 @@ export default function Map() {
                     📞 ${place.nationalPhoneNumber}
                   </p>
                 ` : ''}
-                <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=${place.location.latitude},${place.location.longitude}', '_blank')" 
+                <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=${place.location.latitude},${place.location.longitude}', '_blank')"
                         style="margin-top: 8px; padding: 6px 12px; background: #e91e63; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
                   🗺️ Visualizza su Google Maps
                 </button>
@@ -372,15 +369,15 @@ export default function Map() {
           newMarkers.push(marker)
         }
       })
-      
+
       setMarkers(prev => [...prev.filter(m => m.getTitle() === 'La tua posizione' || m.getTitle().includes('📍')), ...newMarkers])
-      
+
       if (places.length === 0) {
-        alert('Nessun campo da tennis trovato in questa area. Prova a cercare in una zona diversa.')
+        alert('Nessuna struttura sportiva trovata in questa area. Prova a cercare in una zona diversa.')
       }
     } catch (error) {
-      console.error('Errore nella ricerca dei campi da tennis:', error)
-      alert('Errore nella ricerca dei campi da tennis. Riprova più tardi.')
+      console.error('Errore nella ricerca delle strutture sportive:', error)
+      alert('Errore nella ricerca delle strutture sportive. Riprova più tardi.')
     } finally {
       setIsSearchingPlaces(false)
     }
@@ -389,8 +386,8 @@ export default function Map() {
   return (
     <>
       <Head>
-        <title>Mappa Campi da Tennis - Women in Net</title>
-        <meta name="description" content="Trova campi da tennis e tenniste nella tua zona" />
+        <title>Mappa Campi da Tennis e Padel - Women in Net</title>
+        <meta name="description" content="Trova campi da tennis e padel e tenniste nella tua zona" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -399,12 +396,12 @@ export default function Map() {
         {/* Header */}
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            <h1 className={styles.title}>
-              🎾 Mappa Campi da Tennis
-            </h1>
-            <p className={styles.subtitle}>
-              Trova campi da tennis reali nella tua zona
-            </p>
+          <h1 className={styles.title}>
+            🎾 Mappa Campi da Tennis e Padel
+          </h1>
+          <p className={styles.subtitle}>
+            Trova campi da tennis e padel reali nella tua zona
+          </p>
           </div>
         </header>
 
@@ -418,9 +415,9 @@ export default function Map() {
             📍 Trova la mia posizione
           </button>
           
-          <button 
+          <button
             className={styles.locationBtn}
-            onClick={searchTennisInCurrentArea}
+            onClick={searchSportsInCurrentArea}
             disabled={!isLoaded || isSearchingPlaces}
             style={{ background: '#4caf50' }}
           >
@@ -457,7 +454,7 @@ export default function Map() {
           {!isLoaded && (
             <div className={styles.loading}>
               <div className={styles.spinner}></div>
-              <p>Caricamento mappa e ricerca campi da tennis...</p>
+              <p>Caricamento mappa e ricerca strutture sportive...</p>
             </div>
           )}
         </div>
@@ -467,11 +464,7 @@ export default function Map() {
           <h3>Legenda</h3>
           <div className={styles.legendItem}>
             <span className={styles.legendIcon}>🎾</span>
-            <span>Campi da tennis reali (Google Places)</span>
-          </div>
-          <div className={styles.legendItem}>
-            <span className={styles.legendIcon} style={{color: '#ff6b35'}}>🏆</span>
-            <span>Campi da tennis famosi</span>
+            <span>Campi da tennis e padel</span>
           </div>
           <div className={styles.legendItem}>
             <span className={styles.legendIcon} style={{color: '#4285f4'}}>📍</span>
@@ -482,7 +475,7 @@ export default function Map() {
             <span>Luogo cercato</span>
           </div>
           <div style={{marginTop: '1rem', padding: '0.5rem', background: '#f0f8ff', borderRadius: '4px', fontSize: '0.8rem'}}>
-            💡 <strong>Suggerimento:</strong> Sposta la mappa e clicca "Cerca campi qui" per trovare campi da tennis nell'area visualizzata
+            💡 <strong>Suggerimento:</strong> Sposta la mappa e clicca "Cerca campi qui" per trovare campi da tennis e padel nell'area visualizzata
             <br />📏 <strong>Raggio di ricerca:</strong> 15 km dal centro della mappa
           </div>
         </div>
