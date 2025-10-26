@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useAvailability } from '../hooks/useAvailability'
 import Calendar from '../components/Calendar'
@@ -52,6 +52,8 @@ export default function Dashboard() {
   const [showMyReports, setShowMyReports] = useState(false)
   const [myReports, setMyReports] = useState([])
   const [isLoadingReports, setIsLoadingReports] = useState(false)
+  const playersListRef = useRef(null)
+  const [showScrollIndicator, setShowScrollIndicator] = useState(false)
   
   // 🔧 Stati per modifica profilo
   const [editProfileForm, setEditProfileForm] = useState({
@@ -199,6 +201,24 @@ export default function Dashboard() {
       searchPlayers()
     }
   }, [searchFilters, user, token])
+
+  // Scroll indicator per la lista giocatrici
+  useEffect(() => {
+    const container = playersListRef.current
+    if (!container) return
+
+    const checkScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container
+      const isScrollable = scrollHeight > clientHeight
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 10 // soglia piccola
+      setShowScrollIndicator(isScrollable && !isAtBottom)
+    }
+
+    container.addEventListener('scroll', checkScroll)
+    checkScroll() // controllo iniziale
+
+    return () => container.removeEventListener('scroll', checkScroll)
+  }, [searchResults]) // ricontrolla quando cambia la lista
 
   // Gestione menu contatti
   const toggleContactMenu = (playerId) => {
@@ -773,7 +793,7 @@ export default function Dashboard() {
                       {isSearching && <span className={styles.searchingIndicator}>🔄 Ricerca...</span>}
                     </div>
                     
-                    <div className={styles.playersListContainer}>
+                    <div className={styles.playersListContainer} ref={playersListRef}>
                       {searchResults.length === 0 && !isSearching ? (
                         <div className={styles.noResults}>
                           <p>🎾 Nessuna giocatrice trovata con questi filtri.</p>
@@ -784,9 +804,6 @@ export default function Dashboard() {
                           {searchResults.map((player) => (
                             <div key={player.id} className={styles.playerCard}>
                               <div className={styles.playerHeader}>
-                                <div className={styles.playerAvatar}>
-                                  {player.email.charAt(0).toUpperCase()}
-                                </div>
                                 <div className={styles.playerInfo}>
                                   <h3 className={styles.playerName}>
                                     {player.email.split('@')[0]}
@@ -807,7 +824,7 @@ export default function Dashboard() {
                               </div>
                               <div className={styles.playerActions}>
                                 <div className={styles.contactDropdown}>
-                                  <button 
+                                  <button
                                     className="btn btn-primary"
                                     onClick={(e) => {
                                       e.stopPropagation()
@@ -852,7 +869,7 @@ export default function Dashboard() {
                                     </div>
                                   )}
                                 </div>
-                                <button 
+                                <button
                                   className="btn btn-warning"
                                   onClick={() => handleReportUser(player)}
                                 >
@@ -864,6 +881,13 @@ export default function Dashboard() {
                         </div>
                       )}
                     </div>
+
+                    {/* Scroll Indicator */}
+                    {showScrollIndicator && (
+                      <div className={styles.scrollIndicator}>
+                        <span>⬇️ Scorri per vedere altre giocatrici</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
