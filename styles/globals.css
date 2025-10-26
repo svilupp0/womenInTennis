@@ -69,6 +69,19 @@ body {
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+
+  /* Calendar component colors */
+  --color-primary: var(--primary-green);
+  --color-primary-dark: #007a24;
+  --color-primary-rgb: 0, 163, 46;
+  --color-secondary: var(--accent-orange);
+  --color-border: var(--gray-300);
+  --color-background-secondary: var(--gray-100);
+  --color-text-primary: var(--gray-800);
+  --color-text-secondary: var(--gray-600);
+  --color-danger: var(--accent-red);
+  --color-danger-dark: #c53030;
+  --color-accent-rgb: 14, 165, 233;
 }
 
 /* Typography */

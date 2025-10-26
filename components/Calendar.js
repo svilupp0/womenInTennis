@@ -413,12 +413,12 @@ const CreateEventModal = ({ selectedDate, onClose, onSubmit }) => {
             >
               Annulla
             </button>
-            <button 
+            <button
               type="submit"
               className={styles.btnPrimary}
               disabled={isSubmitting}
             >
-              {isSubmitting ? '⏳ Creazione...' : '🎾 Crea Disponibilità'}
+              {isSubmitting ? '⏳ Salvataggio...' : 'Salva 🎾'}
             </button>
           </div>
         </form>
