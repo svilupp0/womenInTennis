@@ -570,7 +570,7 @@ export default function Dashboard() {
                       ✏️ Modifica Profilo
                     </button>
                     <button 
-                      className="btn btn-outline"
+                      className="btn btn-secondary"
                       onClick={toggleMyReports}
                     >
                       📄 Le mie segnalazioni
@@ -870,7 +870,7 @@ export default function Dashboard() {
                                   )}
                                 </div>
                                 <button
-                                  className="btn btn-warning"
+                                  className="btn btn-primary"
                                   onClick={() => handleReportUser(player)}
                                 >
                                   🚨 Segnala

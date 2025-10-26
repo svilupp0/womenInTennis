@@ -137,46 +137,49 @@ a {
   cursor: not-allowed;
 }
 
-/* Button variants */
+/* Button variants - Trasparenti con bordi sottili per uniformità con sfondo sfumato */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-alpha) 100%);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  box-shadow: var(--shadow-md);
-  border: 2px solid transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--primary-green-alpha) 0%, var(--accent-orange-alpha) 100%);
-  box-shadow: var(--shadow-lg);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--gray-800);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 1);
-  color: var(--primary-green);
-  border-color: var(--primary-green);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
 .btn-accent {
-  background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-orange-alpha) 100%);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  box-shadow: var(--shadow-md);
-  border: 2px solid transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
 }
 
 .btn-accent:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-orange) 100%);
-  box-shadow: var(--shadow-lg);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
