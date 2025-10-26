@@ -119,22 +119,12 @@
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-}
-
-.profileCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary-green) 0%, var(--accent-orange) 100%);
 }
 
 .profileCard:hover {
@@ -485,6 +475,11 @@
   gap: var(--space-sm);
   align-items: center;
   flex-wrap: wrap;
+}
+
+.playerActions .btn {
+  flex: 1;
+  min-width: 0;
 }
 
 .noResults {
@@ -928,8 +923,8 @@
 .editProfileCard {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
   padding: var(--space-xl);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
   position: relative;

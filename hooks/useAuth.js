@@ -31,12 +31,32 @@ export const useAuth = () => {
     getUserEmail: () => user?.email || '',
     getUserLocation: () => user?.comune || 'Non specificato',
     getUserLevel: () => {
-      const levels = {
-        'Principiante': 'Principiante',
-        'Intermedio': 'Intermedio',
-        'Avanzato': 'Avanzato'
+      if (!user?.sportLevels || user.sportLevels.length === 0) {
+        return 'Non specificato'
       }
-      return levels[user?.livello] || 'Non specificato'
+
+      // Prendi il primo livello disponibile (tipicamente tennis)
+      const firstLevel = user.sportLevels[0]
+      return firstLevel.livello || 'Non specificato'
+    },
+
+    // Funzione per ottenere tutti gli sport e livelli
+    getUserSports: () => {
+      if (!user?.sportLevels || user.sportLevels.length === 0) {
+        return []
+      }
+      return user.sportLevels
+    },
+
+    // Funzione per ottenere sport formattati per display
+    getUserSportsDisplay: () => {
+      const sports = helpers.getUserSports()
+      if (sports.length === 0) return 'Sport non specificato'
+
+      return sports.map(sl => {
+        const sportIcon = sl.sport === 'TENNIS' ? '🎾' : '🏓'
+        return `${sportIcon} ${sl.sport}: ${sl.livello}`
+      }).join(', ')
     },
     getUserPhone: () => user?.telefono || 'Non specificato',
     isUserAvailable: () => user?.disponibilita ?? false,

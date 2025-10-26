@@ -9,15 +9,16 @@ import PWAInstallManager from '../lib/pwaInstallManager'
 import styles from '../styles/Dashboard.module.css'
 
 export default function Dashboard() {
-  const { 
-    user, 
+  const {
+    user,
     token,
-    loading, 
-    isAuthenticated, 
+    loading,
+    isAuthenticated,
     logout,
     getDisplayName,
     getUserLevel,
     getUserLocation,
+    getUserSportsDisplay,
     isAvailable,
     isAdmin,
     updateUser // ← NUOVA FUNZIONE per aggiornare dati senza reload
@@ -510,11 +511,11 @@ export default function Dashboard() {
                       >
                         {truncateDisplayName(getDisplayName(), isMobile ? 25 : 30, isMobile)}
                       </h1>
-                      <p 
+                      <p
                         className={styles.profileDetails}
-                        title={isMobile ? `${getUserLocation()} - ${getUserLevel()}` : undefined}
+                        title={isMobile ? `${getUserLocation()} - ${getUserSportsDisplay()}` : undefined}
                       >
-                        📍 {getUserLocation()} • 🎾 {getUserLevel()}
+                        📍 {getUserLocation()} • {getUserSportsDisplay()}
                       </p>
                     </div>
                   </div>

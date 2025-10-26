@@ -10,20 +10,9 @@ const prisma = new PrismaClient()
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
 const question = promisify(rl.question).bind(rl)
 
-async function resetAndCreateAdmin() {
+async function addAdmin() {
   try {
-    // 1️⃣ Conferma prima di cancellare tutto
-    const confirm = await question('⚠️ Sei sicura di voler cancellare tutti gli utenti? (yes/no): ')
-    if (confirm.toLowerCase() !== 'yes') {
-      console.log('❌ Operazione annullata.')
-      return
-    }
-
-    // 2️⃣ Cancella tutti gli utenti
-    await prisma.user.deleteMany({})
-    console.log('🗑️ Tutti gli utenti sono stati cancellati.')
-
-    // 3️⃣ Chiede email e password admin
+    // 1️⃣ Chiede email e password admin
     const adminEmail = await question('📧 Inserisci email admin: ')
     let newPassword = await question('📝 Inserisci la password admin: ')
 
@@ -33,10 +22,31 @@ async function resetAndCreateAdmin() {
       newPassword = await question('📝 Inserisci di nuovo la password admin: ')
     }
 
-    // 4️⃣ Hash della password
+    // 2️⃣ Verifica se l'admin esiste già
+    const existingAdmin = await prisma.user.findUnique({
+      where: { email: adminEmail },
+      select: { id: true, isAdmin: true }
+    })
+
+    if (existingAdmin) {
+      if (existingAdmin.isAdmin) {
+        console.log('⚠️ Un admin con questa email esiste già!')
+        return
+      } else {
+        // Rendi admin l'utente esistente
+        await prisma.user.update({
+          where: { id: existingAdmin.id },
+          data: { isAdmin: true }
+        })
+        console.log('✅ Utente esistente promosso ad admin!')
+        return
+      }
+    }
+
+    // 3️⃣ Hash della password
     const hashedPassword = await bcrypt.hash(newPassword, 10)
 
-    // 5️⃣ Crea admin nel db
+    // 4️⃣ Crea nuovo admin
     await prisma.user.create({
       data: {
         email: adminEmail,
@@ -47,7 +57,7 @@ async function resetAndCreateAdmin() {
       }
     })
 
-    console.log('✅ Admin creato con successo!')
+    console.log('✅ Nuovo admin creato con successo!')
 
   } catch (error) {
     console.error('❌ Errore:', error.message)
@@ -57,4 +67,4 @@ async function resetAndCreateAdmin() {
   }
 }
 
-resetAndCreateAdmin()
+addAdmin()
