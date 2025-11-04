@@ -279,7 +279,7 @@ export default function Login() {
                   type="submit"
                   className="btn btn-primary"
                   disabled={isLoading || authLoading}
-                  style={{ width: '100%', marginTop: '1rem' }}
+                  style={{ width: '100%', marginTop: '1rem', background: 'var(--primary-green)', color: 'white' }}
                 >
                   {(isLoading || authLoading) ? '⏳ Accesso...' : '🚀 Accedi'}
                 </button>
