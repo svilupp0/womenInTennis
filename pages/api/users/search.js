@@ -19,7 +19,9 @@ async function handler(req, res) {
       // Escludi l'utente corrente dai risultati
       id: {
         not: userId
-      }
+      },
+      // Escludi gli admin dalla ricerca
+      isAdmin: false
     }
 
     // Aggiungi filtri se specificati
