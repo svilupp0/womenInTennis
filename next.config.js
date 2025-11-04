@@ -24,7 +24,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(self), payment=()'
+            value: 'camera=(), microphone=(), geolocation=(self), payment=(self "https://www.buymeacoffee.com" "https://api.stripe.com")'
           },
           // HSTS solo in produzione
           ...(process.env.NODE_ENV === 'production' ? [{
@@ -38,17 +38,17 @@ const nextConfig = {
               // Script sources
               // In sviluppo, 'unsafe-eval' è necessario per React Fast Refresh.
               // In produzione, è rimosso per maggiore sicurezza.
-              `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ""} https://maps.googleapis.com https://maps.gstatic.com`,
+              `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ""} https://maps.googleapis.com https://maps.gstatic.com https://cdnjs.buymeacoffee.com`,
               // Style sources - permetti Google Fonts e inline per styled-components
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               // Font sources
               "font-src 'self' https://fonts.gstatic.com data:",
               // Image sources - includi Google Maps e data URLs (CORRETTO)
-              "img-src 'self' blob: data: https://maps.googleapis.com https://maps.gstatic.com https://lh3.googleusercontent.com",
+              "img-src 'self' blob: data: https://maps.googleapis.com https://maps.gstatic.com https://lh3.googleusercontent.com https://cdn.buymeacoffee.com",
               // Connect sources per API calls
-              "connect-src 'self' https://maps.googleapis.com",
+              "connect-src 'self' https://maps.googleapis.com https://www.buymeacoffee.com https://api.stripe.com",
               // Frame sources per Google Maps embed (se necessario)
-              "frame-src 'self' https://www.google.com",
+              "frame-src 'self' https://www.google.com https://www.buymeacoffee.com https://buymeacoffee.com",
               // Object e base
               "object-src 'none'",
               "base-uri 'self'",
