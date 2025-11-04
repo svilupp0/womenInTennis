@@ -42,7 +42,7 @@ export default function Map() {
         // Funzione per cercare strutture sportive nelle vicinanze usando la nostra API route
         const searchSportsFacilities = async (center, radius = 15000) => {
           try {
-            const response = await fetch('/api/places/search-tennis', {
+            const response = await fetch('/api/places/search-sports', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -290,7 +290,7 @@ export default function Map() {
     const center = map.getCenter()
 
     try {
-      const response = await fetch('/api/places/search-tennis', {
+      const response = await fetch('/api/places/search-sports', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

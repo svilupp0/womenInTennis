@@ -30,7 +30,7 @@ export default async function handler(req, res) {
   try {
     console.log(`Searching for sports facilities near lat: ${lat}, lng: ${lng}, radius: ${radiusNum}m`)
 
-    const response = await fetch('https://places.googleapis.com/v1/places:searchNearby', {
+    const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,9 +38,9 @@ export default async function handler(req, res) {
         'X-Goog-FieldMask': 'places.displayName.text,places.formattedAddress,places.location,places.nationalPhoneNumber'
       },
       body: JSON.stringify({
-        includedTypes: ['tennis_court', 'sports_complex', 'sports_club'],
+        textQuery: 'campi da tennis',
         maxResultCount: 20,
-        locationRestriction: {
+        locationBias: {
           circle: {
             center: {
               latitude: lat,
