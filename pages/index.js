@@ -72,7 +72,7 @@ export default function Home() {
                 <p className={styles.featureDescription}>
                   Cerca tenniste nella tua città o comune. Filtra per distanza e trova partner comode da raggiungere.
                 </p>
-                <Link href="/map" className="btn btn-secondary" style={{marginTop: '1rem', display: 'inline-block'}}>
+                <Link href="/map" className="btn btn-secondary" style={{marginTop: '1rem', display: 'inline-block', background: 'linear-gradient(135deg, #744040 0%, #27537f 50%, var(--gray-200) 100%)', color: 'white'}}>
                   🗺️ Visualizza mappa
                 </Link>
               </div>
