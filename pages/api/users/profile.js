@@ -18,7 +18,7 @@ async function handler(req, res) {
     const { userId } = req
 
     // 2. Valida i dati in input
-    const { comune, sportLevels, telefono, disponibilita } = req.body
+    const { comune, sportLevels, telefono, disponibilita, name } = req.body
 
     // Validazione sportLevels se fornito
     const validLevels = ['Principiante', 'Intermedio', 'Avanzato']
@@ -72,7 +72,8 @@ async function handler(req, res) {
 
     // 3. Costruisci oggetto di aggiornamento (solo campi forniti)
     const updateData = {}
-    
+
+    if (name !== undefined) updateData.name = name.trim() || null
     if (comune !== undefined) updateData.comune = comune.trim() || null
     if (telefono !== undefined) updateData.telefono = telefono.trim() || null
     if (disponibilita !== undefined) updateData.disponibilita = disponibilita
@@ -104,6 +105,7 @@ async function handler(req, res) {
       select: {
         id: true,
         email: true,
+        name: true,
         comune: true,
         telefono: true,
         disponibilita: true,

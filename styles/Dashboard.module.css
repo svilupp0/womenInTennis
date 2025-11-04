@@ -1023,7 +1023,7 @@
 }
 
 .fieldHint {
-  color: var(--gray-500);
+  color: black;
   font-size: 0.75rem;
   font-style: italic;
   margin-top: var(--space-xs);

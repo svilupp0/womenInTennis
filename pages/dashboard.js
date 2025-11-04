@@ -57,6 +57,7 @@ export default function Dashboard() {
   
   // 🔧 Stati per modifica profilo
   const [editProfileForm, setEditProfileForm] = useState({
+    name: '',
     comune: '',
     sportLevels: [],
     telefono: '',
@@ -109,6 +110,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (user && showEditProfile) {
       setEditProfileForm({
+        name: user.name || '',
         comune: user.comune || '',
         sportLevels: user.sportLevels || [],
         telefono: user.telefono || '',
@@ -406,6 +408,7 @@ export default function Dashboard() {
     // Reset form ai valori originali
     if (user) {
       setEditProfileForm({
+        name: user.name || '',
         comune: user.comune || '',
         sportLevels: user.sportLevels || [],
         telefono: user.telefono || '',
@@ -604,8 +607,23 @@ export default function Dashboard() {
                   <div className={styles.editProfileForm}>
                     <div className={styles.formRow}>
                       <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Nome completo:</label>
+                        <input
+                          type="text"
+                          className="form-input"
+                          placeholder="Es: Maria Rossi"
+                          value={editProfileForm.name}
+                          onChange={(e) => handleProfileFormChange('name', e.target.value)}
+                          disabled={isUpdatingProfile}
+                        />
+                        <small className={styles.fieldHint}>
+                          👤 Il tuo nome completo (opzionale)
+                        </small>
+                      </div>
+
+                      <div className={styles.formGroup}>
                         <label className={styles.formLabel}>Comune di residenza:</label>
-                        <input 
+                        <input
                           type="text"
                           className="form-input"
                           placeholder="Es: Milano, Roma, Napoli..."

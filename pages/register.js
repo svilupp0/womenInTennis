@@ -436,7 +436,7 @@ export default function Register() {
 
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className=".btn.btn-primary"
                   disabled={isLoading || authLoading}
                   style={{ width: '100%', marginTop: '1rem' }}
                 >

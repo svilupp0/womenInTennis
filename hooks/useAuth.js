@@ -65,7 +65,7 @@ export const useAuth = () => {
 
     // Backward compatibility
     getDisplayName: () => {
-      return user?.nome || user?.email?.split('@')[0] || 'Utente'
+      return user?.name || user?.email?.split('@')[0] || 'Utente'
     },
     isAvailable: () => {
       return user?.disponibilita === true

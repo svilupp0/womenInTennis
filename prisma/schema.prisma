@@ -12,6 +12,7 @@ model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   password     String
+  name      String?
   comune       String?       // Comune di residenza
   telefono     String?       // opzionale
   disponibilita Boolean?     // Disponibile a giocare o no

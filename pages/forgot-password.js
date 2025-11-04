@@ -121,7 +121,7 @@ export default function ForgotPassword() {
 
                     <button
                       type="submit"
-                      className="btn btn-primary"
+                      className=".btn.btn-primary.reset-password-btn"
                       disabled={isLoading}
                       style={{ width: '100%', marginTop: '1rem' }}
                     >

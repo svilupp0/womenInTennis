@@ -154,7 +154,7 @@ export default function Login() {
                   <button
                     onClick={handleResendVerification}
                     disabled={isResending}
-                    className="btn btn-accent"
+                    className=".btn.btn-accent"
                     style={{ marginBottom: '1rem', width: '100%' }}
                   >
                     {isResending ? '📤 Invio...' : '📧 Reinvia Email di Verifica'}
@@ -162,7 +162,7 @@ export default function Login() {
 
                   <button
                     onClick={handleBackToLogin}
-                    className="btn btn-secondary"
+                    className=".btn.btn-secondary"
                     style={{ width: '100%' }}
                   >
                     🔙 Torna al Login

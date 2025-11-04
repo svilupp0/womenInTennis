@@ -125,7 +125,7 @@
 }
 
 .calendarWrapper :global(.fc-day-today) {
-  background-color: rgba(var(--color-accent-rgb), 0.1) !important;
+  background-color: rgba(var(--color-accent-rgb), 0.5) !important;
 }
 
 /* Legenda compatta */
@@ -345,7 +345,7 @@
 
 /* Event Details */
 .eventDetails {
-  space-y: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
 .eventDetails h4 {
