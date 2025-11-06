@@ -32,7 +32,7 @@ export default function App({ Component, pageProps }) {
         data-cfasync="false"
         data-id="winwomenina"
         data-description="Support me on Buy me a coffee!"
-        data-message="Women in Net: Il Tuo Supporto, il Nostro Futuro! 🎾 Ami giocare a tennis e apprezzi la comodità di Women in Net per trovare partner e campi? Aiutaci a farla crescere! Questa piattaforma è stata creata con passione per te, ma ha costi vivi reali: le API di Google Maps per le nostre mappe fantastiche e il database su Railway per mantenere tutto attivo e sicuro. Il tuo contributo ci permette di coprire queste spese e di continuare a sviluppare nuove, entusiasmanti funzionalità. Offrici un caffè e sostieni il tennis femminile digitale! Grazie per far parte della nostra rete!"
+        data-message="🎾 Questa piattaforma è stata creata con passione per te, ma ha costi vivi reali. Offrimi un caffè e sostieni il tennis femminile digitale!"
         data-color="#40DCA5"
         data-position="Right"
         data-x_margin="18"
