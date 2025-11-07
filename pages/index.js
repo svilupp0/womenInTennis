@@ -6,8 +6,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Women in Net - Trova la tua partner di tennis</title>
-        <meta name="description" content="Connetti con altre tenniste nella tua zona. Trova la partner perfetta per i tuoi match!" />
+        <title>Women in Net - Trova la tua partner di gioco</title>
+        <meta name="description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match!" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
 
@@ -40,10 +40,10 @@ export default function Home() {
           <div className="container">
             <div className={styles.heroContent}>
               <h1 className={styles.heroTitle}>
-                Trova la tua partner di tennis
+                Trova la tua partner di gioco
               </h1>
               <p className={styles.heroSubtitle}>
-                Connetti con altre tenniste nella tua zona. Organizza match, migliora il tuo gioco e fai nuove amicizie nel mondo del tennis femminile.
+                Connetti con altre giocatrici nella tua zona. Organizza match, migliora il tuo gioco e fai nuove amicizie nel mondo dello sport femminile.
               </p>
               
               <div className={styles.heroActions}>
@@ -70,7 +70,7 @@ export default function Home() {
                 <div className={styles.featureIcon}>📍</div>
                 <h3 className={styles.featureTitle}>Trova vicino a te</h3>
                 <p className={styles.featureDescription}>
-                  Cerca tenniste nella tua città o comune. Filtra per distanza e trova partner comode da raggiungere.
+                  Cerca giocatrici nella tua città o comune. Filtra per distanza e trova partner comode da raggiungere.
                 </p>
                 <Link href="/map" className="btn btn-secondary" style={{marginTop: '1rem', display: 'inline-block', background: 'linear-gradient(135deg, #744040 0%, #27537f 50%, var(--gray-200) 100%)', color: 'white'}}>
                   🗺️ Visualizza mappa
@@ -89,7 +89,7 @@ export default function Home() {
                 <div className={styles.featureIcon}>💬</div>
                 <h3 className={styles.featureTitle}>Connessioni sicure</h3>
                 <p className={styles.featureDescription}>
-                  Profili verificati e community femminile. Ambiente sicuro e supportivo per tutte le tenniste.
+                  Profili verificati e community femminile. Ambiente sicuro e supportivo per tutte le giocatrici.
                 </p>
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function Home() {
                 Women in Net
               </div>
               <p className={styles.footerText}>
-                © 2024 Women in Net. La community delle tenniste italiane.
+                © 2024 Women in Net. La community delle giocatrici italiane.
               </p>
             </div>
           </div>

@@ -205,7 +205,7 @@ export default function Register() {
     <>
       <Head>
         <title>Registrati - Women in Net</title>
-        <meta name="description" content="Registrati a Women in Net e trova la tua partner di tennis ideale" />
+        <meta name="description" content="Registrati a Women in Net e trova la tua partner di gioco ideale" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -226,7 +226,7 @@ export default function Register() {
             <div className={styles.authCard}>
               <div className={styles.authHeader}>
                 <h1>Unisciti alla community</h1>
-                <p>Crea il tuo account e inizia a trovare partner di net nella tua zona</p>
+                <p>Crea il tuo account e inizia a trovare partner di gioco nella tua zona</p>
               </div>
 
               {error && (

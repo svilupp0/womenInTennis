@@ -24,14 +24,14 @@ export default function Document() {
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Women in Net - Trova la tua partner di tennis" />
-        <meta property="og:description" content="Connetti con altre tenniste nella tua zona. Trova la partner perfetta per i tuoi match!" />
+        <meta property="og:title" content="Women in Net - Trova la tua partner di gioco" />
+        <meta property="og:description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match!" />
         <meta property="og:image" content="/og-image.jpg" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Women in Net - Trova la tua partner di tennis" />
-        <meta name="twitter:description" content="Connetti con altre tenniste nella tua zona. Trova la partner perfetta per i tuoi match!" />
+        <meta name="twitter:title" content="Women in Net - Trova la tua partner di gioco" />
+        <meta name="twitter:description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match!" />
       </Head>
       <body>
         <Main />
