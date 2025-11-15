@@ -1,21 +1,34 @@
 {
-  "name": "Women in Net",
-  "short_name": "WinNet",
-  "description": "Piattaforma per donne tenniste: trova partner, organizza partite e scopri campi.",
+  "name": "Women in Net - Trova la tua partner di gioco",
+  "short_name": "Women in Net",
+  "description": "Connetti con altre giocatrici di tennis e padel nella tua zona. Trova la partner perfetta per i tuoi match!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#28a745",
+  "theme_color": "#744040",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "it",
+  "dir": "ltr",
   "icons": [
     {
-      "src": "/icons/tennis-equipment_2387401.png",
+      "src": "/icons/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/tennis-equipment_2387401.png",
+      "src": "/icons/android-chrome-512x512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
-  ]
+  ],
+  "categories": ["sports", "social", "lifestyle"],
+  "screenshots": []
 }
