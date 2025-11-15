@@ -6,11 +6,68 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Women in Net - Trova la tua partner di gioco</title>
-        <meta name="description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match!" />
+        {/* Meta Tags Base */}
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#744040" />
+        
+        {/* Title e Description */}
+        <title>Women in Net - Trova la tua partner di gioco</title>
+        <meta name="description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match di tennis e padel!" />
+        <meta name="keywords" content="tennis femminile, padel femminile, giocatrici femminili, matching tennis, partite tennis, partner tennis, sport femminile italia" />
+        <meta name="author" content="Francesca - svilupp0" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://women-in-tennis.vercel.app" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://women-in-tennis.vercel.app" />
+        <meta property="og:title" content="Women in Net - Trova la tua partner di gioco" />
+        <meta property="og:description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match di tennis e padel!" />
+        <meta property="og:image" content="https://women-in-tennis.vercel.app/icons/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="Women in Net" />
+        <meta property="og:locale" content="it_IT" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://women-in-tennis.vercel.app" />
+        <meta name="twitter:title" content="Women in Net - Trova la tua partner di gioco" />
+        <meta name="twitter:description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match di tennis e padel!" />
+        <meta name="twitter:image" content="https://women-in-tennis.vercel.app/icons/og-image.jpg" />
+        
+        {/* Favicon e Icons */}
         <link rel="icon" href="/favicon.ico" />
-
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+        
+        {/* Manifest per PWA */}
+        <link rel="manifest" href="/manifest.json" />
+        
+        {/* Robots */}
+        <meta name="robots" content="index, follow" />
+        
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Women in Net",
+              "url": "https://women-in-tennis.vercel.app",
+              "description": "Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match di tennis e padel!",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://women-in-tennis.vercel.app/map?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
       </Head>
 
       <div className={styles.homepage}>
