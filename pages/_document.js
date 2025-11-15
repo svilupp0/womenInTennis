@@ -26,12 +26,16 @@ export default function Document() {
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Women in Net - Trova la tua partner di gioco" />
         <meta property="og:description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match!" />
-        <meta property="og:image" content="/og-image.jpg" />
-        
+        <meta property="og:image" content="https://women-in-tennis.vercel.app/icons/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://women-in-tennis.vercel.app" />
+
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Women in Net - Trova la tua partner di gioco" />
         <meta name="twitter:description" content="Connetti con altre giocatrici nella tua zona. Trova la partner perfetta per i tuoi match!" />
+        <meta name="twitter:image" content="https://women-in-tennis.vercel.app/icons/og-image.jpg" />
       </Head>
       <body>
         <Main />
