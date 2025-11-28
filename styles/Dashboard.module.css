@@ -1074,3 +1074,93 @@
     width: 100%;
   }
 }
+
+/* ========================================
+   DISPONIBILITÀ SPECIFICHE - SLOT CALENDARIO
+   ======================================== */
+
+.availableSlots {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border-color);
+}
+
+.slotsTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.slotsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.slotItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.slotItem:hover {
+  background: var(--bg-tertiary);
+}
+
+.slotDay {
+  font-weight: 600;
+  color: var(--primary-color);
+  min-width: 85px;
+  text-transform: capitalize;
+}
+
+.slotTime {
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.slotLocation {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  margin-left: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.moreSlots {
+  margin-top: var(--space-xs);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  text-align: center;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .slotItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .slotDay {
+    min-width: auto;
+  }
+  
+  .slotLocation {
+    margin-left: 0;
+    max-width: 100%;
+  }
+}

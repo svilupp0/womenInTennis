@@ -838,6 +838,52 @@ export default function Dashboard() {
                                       <span className={styles.unavailable}>❌ Non disponibile</span>
                                     )}
                                   </div>
+
+                                  {/* 🆕 VISUALIZZAZIONE SLOT DISPONIBILI */}
+                                  {player.events && player.events.length > 0 && (
+                                    <div className={styles.availableSlots}>
+                                      <p className={styles.slotsTitle}>📅 Prossimi slot disponibili:</p>
+                                      <div className={styles.slotsList}>
+                                        {player.events.slice(0, 3).map((event) => {
+                                          const startDate = new Date(event.start)
+                                          const endDate = new Date(event.end)
+                                          
+                                          return (
+                                            <div key={event.id} className={styles.slotItem}>
+                                              <span className={styles.slotDay}>
+                                                {startDate.toLocaleDateString('it-IT', { 
+                                                  weekday: 'short', 
+                                                  day: 'numeric', 
+                                                  month: 'short' 
+                                                })}
+                                              </span>
+                                              <span className={styles.slotTime}>
+                                                {startDate.toLocaleTimeString('it-IT', { 
+                                                  hour: '2-digit', 
+                                                  minute: '2-digit' 
+                                                })}
+                                                {' - '}
+                                                {endDate.toLocaleTimeString('it-IT', { 
+                                                  hour: '2-digit', 
+                                                  minute: '2-digit' 
+                                                })}
+                                              </span>
+                                              {event.location && (
+                                                <span className={styles.slotLocation}>
+                                                  📍 {event.location}
+                                                </span>
+                                              )}
+                                            </div>
+                                          )
+                                        })}
+                                        {player.events.length > 3 && (
+                                          <p className={styles.moreSlots}>
+                                            +{player.events.length - 3} {player.events.length - 3 === 1 ? 'altro slot' : 'altri slot'}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                               <div className={styles.playerActions}>

@@ -92,6 +92,7 @@ model Event {
   start       DateTime // Data/ora inizio
   end         DateTime // Data/ora fine
   location    String?  // Luogo (campo, circolo, etc.)
+  sport       Sport    @default(TENNIS) 
   status      EventStatus @default(AVAILABLE) // Stato evento
   color       String?  // Colore per calendario (hex)
   createdAt   DateTime @default(now())

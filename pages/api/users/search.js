@@ -65,19 +65,39 @@ async function handler(req, res) {
         disponibilita: true,
         emailVerified: true,
         createdAt: true,
-        // NON includere password, verificationToken, resetPasswordToken, ecc.
         sportLevels: {
           select: {
             sport: true,
             livello: true
           }
+        },
+        // 🆕 AGGIUNGI QUESTO BLOCCO - Eventi disponibili
+        events: {
+          where: {
+            status: 'AVAILABLE',
+            start: { 
+              gte: new Date(),
+              // Limita ai prossimi 7 giorni per performance
+              lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+            }
+          },
+          select: {
+            id: true,
+            title: true,
+            start: true,
+            end: true,
+            location: true
+          },
+          orderBy: { start: 'asc' },
+          take: 5 // Max 5 slot per utente
         }
       },
+      // 🆕 AGGIUNGI QUESTO - Ordinamento utenti
       orderBy: [
-        { disponibilita: 'desc' }, // Prima gli disponibili
+        { disponibilita: 'desc' }, // Prima i disponibili
         { createdAt: 'desc' }      // Poi i più recenti
       ],
-      take: 50 // Limite massimo risultati
+      take: 50 // Limite massimo risultati per performance
     })
 
     // Risposta di successo
