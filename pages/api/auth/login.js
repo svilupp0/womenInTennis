@@ -56,8 +56,8 @@ export default async function handler(req, res) {
         emailVerified: true,
         loginAttempts: true,
         lockoutUntil: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     })
 
     if (!user) {
@@ -66,13 +66,13 @@ export default async function handler(req, res) {
 
     if (user.lockoutUntil && new Date() < user.lockoutUntil) {
       const lockoutMinutes = Math.ceil((user.lockoutUntil - new Date()) / (1000 * 60))
-      return res.status(423).json({ 
-        error: `Account temporaneamente bloccato. Riprova tra ${lockoutMinutes} minuti.` 
+      return res.status(423).json({
+        error: `Account temporaneamente bloccato. Riprova tra ${lockoutMinutes} minuti.`,
       })
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password)
-    
+
     if (!isPasswordValid) {
       const newAttempts = (user.loginAttempts || 0) + 1
       const lockoutUntil = newAttempts >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null
@@ -81,13 +81,13 @@ export default async function handler(req, res) {
         where: { id: user.id },
         data: {
           loginAttempts: newAttempts,
-          lockoutUntil: lockoutUntil
-        }
+          lockoutUntil: lockoutUntil,
+        },
       })
 
       if (lockoutUntil) {
-        return res.status(423).json({ 
-          error: 'Troppi tentativi falliti. Account bloccato per 15 minuti.' 
+        return res.status(423).json({
+          error: 'Troppi tentativi falliti. Account bloccato per 15 minuti.',
         })
       }
 
@@ -99,7 +99,7 @@ export default async function handler(req, res) {
       return res.status(403).json({
         error: ERROR_MESSAGES.EMAIL_NOT_VERIFIED,
         code: ERROR_CODES.EMAIL_NOT_VERIFIED,
-        email: user.email
+        email: user.email,
       })
     }
 
@@ -107,23 +107,31 @@ export default async function handler(req, res) {
       where: { id: user.id },
       data: {
         loginAttempts: 0,
-        lockoutUntil: null
-      }
+        lockoutUntil: null,
+      },
     })
 
     const { password: _, loginAttempts, lockoutUntil, ...userWithoutPassword } = user
 
-    const jwtSecret = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+    // 🔐 SECURITY FIX: JWT_SECRET obbligatorio - no fallback insicuri
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      console.error('❌ CRITICAL: JWT_SECRET non configurato!')
+      return res.status(500).json({
+        error: "Configurazione server non valida. Contatta l'amministratore.",
+      })
+    }
+
     const token = jwt.sign(
-      { 
+      {
         userId: user.id,
         email: user.email,
         isAdmin: user.isAdmin,
-        emailVerified: user.emailVerified
+        emailVerified: user.emailVerified,
       },
       jwtSecret,
-      { 
-        expiresIn: '24h'
+      {
+        expiresIn: '24h',
       }
     )
 
@@ -131,14 +139,13 @@ export default async function handler(req, res) {
       success: true,
       message: ERROR_MESSAGES.LOGIN_SUCCESS,
       user: userWithoutPassword,
-      token: token
+      token: token,
     })
-
   } catch (error) {
     console.error('Errore login:', error)
 
-    res.status(500).json({ 
-      error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR 
+    res.status(500).json({
+      error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

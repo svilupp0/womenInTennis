@@ -6,10 +6,10 @@ import styles from '../styles/Auth.module.css'
 
 export default function Login() {
   const { loginAndRedirect, resendVerification, loading: authLoading } = useAuth()
-  
+
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -22,7 +22,7 @@ export default function Login() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     })
     // Clear errors when user starts typing
     if (error) setError('')
@@ -44,11 +44,7 @@ export default function Login() {
 
     try {
       // Usa il hook useAuth per login con redirect automatico
-      const result = await loginAndRedirect(
-        formData.email, 
-        formData.password, 
-        '/dashboard'
-      )
+      const result = await loginAndRedirect(formData.email, formData.password, '/dashboard')
 
       if (!result.success) {
         // Gestione specifica per email non verificata
@@ -76,7 +72,7 @@ export default function Login() {
 
     try {
       const result = await resendVerification(unverifiedEmail)
-      
+
       if (result.success) {
         setResendSuccess(result.message)
       } else {
@@ -123,20 +119,15 @@ export default function Login() {
                 <div className={styles.authHeader}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚠️</div>
                   <h1>Email non verificata</h1>
-                  <p>Devi verificare la tua email <strong>{unverifiedEmail}</strong> prima di poter accedere.</p>
+                  <p>
+                    Devi verificare la tua email <strong>{unverifiedEmail}</strong> prima di poter
+                    accedere.
+                  </p>
                 </div>
 
-                {error && (
-                  <div className={styles.errorMessage}>
-                    {error}
-                  </div>
-                )}
+                {error && <div className={styles.errorMessage}>{error}</div>}
 
-                {resendSuccess && (
-                  <div className={styles.successMessage}>
-                    {resendSuccess}
-                  </div>
-                )}
+                {resendSuccess && <div className={styles.successMessage}>{resendSuccess}</div>}
 
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                   <h3 style={{ marginBottom: '1rem', color: 'var(--gray-700)' }}>
@@ -214,13 +205,9 @@ export default function Login() {
                 <p>Accedi al tuo account per trovare nuove partner di net</p>
               </div>
 
-              {error && (
-                <div className={styles.errorMessage}>
-                  {error}
-                </div>
-              )}
+              {error && <div className={styles.errorMessage}>{error}</div>}
 
-              <form onSubmit={handleSubmit} className={styles.authForm}>
+              <form onSubmit={handleSubmit} className={styles.authForm} data-testid="login-form">
                 <div className={styles.formGroup}>
                   <label htmlFor="email">Email</label>
                   <input
@@ -231,8 +218,9 @@ export default function Login() {
                     onChange={handleChange}
                     className="form-input"
                     placeholder="la.tua.email@esempio.com"
-                    autocomplete="email"
+                    autoComplete="email"
                     required
+                    data-testid="email-input"
                   />
                 </div>
 
@@ -249,6 +237,7 @@ export default function Login() {
                       placeholder="La tua password"
                       required
                       style={{ paddingRight: '3rem' }}
+                      data-testid="password-input"
                     />
                     <button
                       type="button"
@@ -266,7 +255,7 @@ export default function Login() {
                         padding: '0.25rem',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
                       }}
                       aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
                     >
@@ -279,9 +268,14 @@ export default function Login() {
                   type="submit"
                   className="btn btn-primary"
                   disabled={isLoading || authLoading}
-                  style={{ width: '100%', marginTop: '1rem', background: 'var(--primary-green)', color: 'white' }}
+                  style={{
+                    width: '100%',
+                    marginTop: '1rem',
+                    background: 'var(--primary-green)',
+                    color: 'white',
+                  }}
                 >
-                  {(isLoading || authLoading) ? '⏳ Accesso...' : '🚀 Accedi'}
+                  {isLoading || authLoading ? '⏳ Accesso...' : '🚀 Accedi'}
                 </button>
               </form>
 

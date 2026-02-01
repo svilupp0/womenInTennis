@@ -25,12 +25,23 @@ async function getEvents(req, res) {
     // 🔐 userId già validato dal middleware withAuth
     const { userId } = req
 
-    // Ottieni eventi dell'utente
+    // ⚡ PERFORMANCE: Ottieni solo i campi necessari
     const events = await prisma.event.findMany({
       where: {
-        userId: userId
+        userId: userId,
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        start: true,
+        end: true,
+        location: true,
+        sport: true,
+        status: true,
+        userId: true,
+        createdAt: true,
+        // Include solo dati essenziali di user
         user: {
           select: {
             id: true,
@@ -41,11 +52,16 @@ async function getEvents(req, res) {
                 sport: true,
                 livello: true,
               },
-            }
-          }
+            },
+          },
         },
+        // Include proposals con dati essenziali
         proposals: {
-          include: {
+          select: {
+            id: true,
+            status: true,
+            message: true,
+            createdAt: true,
             proposer: {
               select: {
                 id: true,
@@ -56,40 +72,38 @@ async function getEvents(req, res) {
                     sport: true,
                     livello: true,
                   },
-                }
-              }
-            }
-          }
-        }
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: {
-        start: 'asc'
-      }
+        start: 'asc',
+      },
     })
 
     // Aggiorna stati scaduti
     const now = new Date()
-    const eventsToUpdate = events.filter(event => 
-      event.end < now && event.status === 'AVAILABLE'
-    )
+    const eventsToUpdate = events.filter((event) => event.end < now && event.status === 'AVAILABLE')
 
     if (eventsToUpdate.length > 0) {
       await prisma.event.updateMany({
         where: {
           id: {
-            in: eventsToUpdate.map(e => e.id)
-          }
+            in: eventsToUpdate.map((e) => e.id),
+          },
         },
         data: {
-          status: 'EXPIRED'
-        }
+          status: 'EXPIRED',
+        },
       })
     }
 
     // Assegna colori in base allo stato (come nel codice open source)
-    const eventsWithColors = events.map(event => {
+    const eventsWithColors = events.map((event) => {
       let color = '#3c70f2' // Default blu
-      
+
       switch (event.status) {
         case 'AVAILABLE':
           color = '#3c70f2' // Blu
@@ -113,15 +127,14 @@ async function getEvents(req, res) {
 
       return {
         ...event,
-        color
+        color,
       }
     })
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       events: eventsWithColors,
-      count: eventsWithColors.length
+      count: eventsWithColors.length,
     })
-
   } catch (error) {
     console.error('Errore caricamento calendario:', error)
     return res.status(500).json({ error: 'Errore interno del server' })
@@ -163,26 +176,26 @@ async function createEvent(req, res) {
       where: {
         userId: userId,
         status: {
-          in: ['AVAILABLE', 'PROPOSED', 'CONFIRMED']
+          in: ['AVAILABLE', 'PROPOSED', 'CONFIRMED'],
         },
         OR: [
           {
             start: {
-              lt: endDate
+              lt: endDate,
             },
             end: {
-              gt: startDate
-            }
-          }
-        ]
-      }
+              gt: startDate,
+            },
+          },
+        ],
+      },
     })
 
     if (overlappingEvents.length > 0) {
       return res.status(400).json({ error: 'Hai già un evento in questo orario' })
     }
 
-    // Crea evento
+    // ⚡ PERFORMANCE: Crea evento selezionando solo campi necessari
     const newEvent = await prisma.event.create({
       data: {
         userId,
@@ -193,9 +206,20 @@ async function createEvent(req, res) {
         location,
         sport: sport || 'TENNIS', // Default tennis se non specificato
         status: 'AVAILABLE',
-        color: '#3c70f2'
+        color: '#3c70f2',
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        start: true,
+        end: true,
+        location: true,
+        sport: true,
+        status: true,
+        color: true,
+        userId: true,
+        createdAt: true,
         user: {
           select: {
             id: true,
@@ -206,17 +230,16 @@ async function createEvent(req, res) {
                 sport: true,
                 livello: true,
               },
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     })
 
-    return res.status(201).json({ 
+    return res.status(201).json({
       event: newEvent,
-      message: 'Evento creato con successo'
+      message: 'Evento creato con successo',
     })
-
   } catch (error) {
     console.error('Errore creazione evento:', error)
     return res.status(500).json({ error: 'Errore interno del server' })

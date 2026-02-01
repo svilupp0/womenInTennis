@@ -2,11 +2,12 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import TennisQuiz from '../components/TennisQuiz'
 import styles from '../styles/Auth.module.css'
 
 export default function Register() {
   const { registerAndRedirect, resendVerification, loading: authLoading } = useAuth()
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -15,7 +16,7 @@ export default function Register() {
     sportLevels: [],
     telefono: '',
     selectedSport: '',
-    selectedLevel: ''
+    selectedLevel: '',
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -25,14 +26,64 @@ export default function Register() {
   const [isResending, setIsResending] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isTennisQuizActive, setIsTennisQuizActive] = useState(false)
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     })
     // Clear errors when user starts typing
     if (error) setError('')
+  }
+
+  const handleSportSelect = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedSport: value,
+      selectedLevel: value === 'TENNIS' ? '' : prev.selectedLevel,
+    }))
+    setIsTennisQuizActive(value === 'TENNIS')
+  }
+
+  const handlePadelAdd = () => {
+    if (formData.selectedSport === 'PADEL' && formData.selectedLevel) {
+      const newSportLevel = {
+        sport: 'PADEL',
+        livello: formData.selectedLevel,
+      }
+      setFormData((prev) => ({
+        ...prev,
+        sportLevels: [...prev.sportLevels, newSportLevel],
+        selectedSport: '',
+        selectedLevel: '',
+      }))
+    }
+  }
+
+  const handleTennisQuizComplete = ({ livello, score }) => {
+    const newSportLevel = {
+      sport: 'TENNIS',
+      livello,
+      score,
+      quizDate: new Date().toISOString(),
+    }
+    setFormData((prev) => ({
+      ...prev,
+      sportLevels: [...prev.sportLevels, newSportLevel],
+      selectedSport: '',
+      selectedLevel: '',
+    }))
+    setIsTennisQuizActive(false)
+  }
+
+  const handleTennisQuizCancel = () => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedSport: '',
+      selectedLevel: '',
+    }))
+    setIsTennisQuizActive(false)
   }
 
   const handleSubmit = async (e) => {
@@ -61,7 +112,7 @@ export default function Register() {
         password: formData.password,
         comune: formData.comune,
         sportLevels: formData.sportLevels,
-        telefono: formData.telefono
+        telefono: formData.telefono,
       }
 
       // Usa il hook useAuth per registrazione
@@ -93,7 +144,7 @@ export default function Register() {
 
     try {
       const result = await resendVerification(registeredEmail)
-      
+
       if (result.success) {
         setSuccess(result.message)
       } else {
@@ -113,7 +164,10 @@ export default function Register() {
       <>
         <Head>
           <title>Verifica Email - Women in Net</title>
-          <meta name="description" content="Verifica la tua email per completare la registrazione" />
+          <meta
+            name="description"
+            content="Verifica la tua email per completare la registrazione"
+          />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
 
@@ -133,20 +187,14 @@ export default function Register() {
                 <div className={styles.authHeader}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📧</div>
                   <h1>Controlla la tua email!</h1>
-                  <p>Abbiamo inviato un link di verifica a <strong>{registeredEmail}</strong></p>
+                  <p>
+                    Abbiamo inviato un link di verifica a <strong>{registeredEmail}</strong>
+                  </p>
                 </div>
 
-                {error && (
-                  <div className={styles.errorMessage}>
-                    {error}
-                  </div>
-                )}
+                {error && <div className={styles.errorMessage}>{error}</div>}
 
-                {success && (
-                  <div className={styles.successMessage}>
-                    {success}
-                  </div>
-                )}
+                {success && <div className={styles.successMessage}>{success}</div>}
 
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                   <h3 style={{ marginBottom: '1rem', color: 'var(--gray-700)' }}>
@@ -177,15 +225,15 @@ export default function Register() {
                 <div className={styles.authFooter}>
                   <p>
                     Non hai ricevuto l'email? Controlla la cartella spam o{' '}
-                    <button 
+                    <button
                       onClick={handleResendVerification}
                       disabled={isResending}
-                      style={{ 
-                        background: 'none', 
-                        border: 'none', 
-                        color: 'var(--primary-green)', 
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--primary-green)',
                         textDecoration: 'underline',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
                       }}
                     >
                       richiedi un nuovo invio
@@ -205,7 +253,10 @@ export default function Register() {
     <>
       <Head>
         <title>Registrati - Women in Net</title>
-        <meta name="description" content="Registrati a Women in Net e trova la tua partner di gioco ideale" />
+        <meta
+          name="description"
+          content="Registrati a Women in Net e trova la tua partner di gioco ideale"
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -229,17 +280,9 @@ export default function Register() {
                 <p>Crea il tuo account e inizia a trovare partner di gioco nella tua zona</p>
               </div>
 
-              {error && (
-                <div className={styles.errorMessage}>
-                  {error}
-                </div>
-              )}
+              {error && <div className={styles.errorMessage}>{error}</div>}
 
-              {success && (
-                <div className={styles.successMessage}>
-                  {success}
-                </div>
-              )}
+              {success && <div className={styles.successMessage}>{success}</div>}
 
               <form onSubmit={handleSubmit} className={styles.authForm}>
                 <div className={styles.formGroup}>
@@ -288,7 +331,7 @@ export default function Register() {
                         padding: '0.25rem',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
                       }}
                       aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
                     >
@@ -327,9 +370,13 @@ export default function Register() {
                         padding: '0.25rem',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
                       }}
-                      aria-label={showConfirmPassword ? 'Nascondi conferma password' : 'Mostra conferma password'}
+                      aria-label={
+                        showConfirmPassword
+                          ? 'Nascondi conferma password'
+                          : 'Mostra conferma password'
+                      }
                     >
                       {showConfirmPassword ? '🙈' : '👁️'}
                     </button>
@@ -356,7 +403,7 @@ export default function Register() {
                     <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       <select
                         value={formData.selectedSport || ''}
-                        onChange={(e) => setFormData({ ...formData, selectedSport: e.target.value })}
+                        onChange={(e) => handleSportSelect(e.target.value)}
                         className="form-input"
                         style={{ flex: 1 }}
                       >
@@ -364,52 +411,87 @@ export default function Register() {
                         <option value="TENNIS">Tennis</option>
                         <option value="PADEL">Padel</option>
                       </select>
-                      <select
-                        value={formData.selectedLevel || ''}
-                        onChange={(e) => setFormData({ ...formData, selectedLevel: e.target.value })}
-                        className="form-input"
-                        style={{ flex: 1 }}
-                      >
-                        <option value="">Seleziona livello</option>
-                        <option value="Principiante">Principiante</option>
-                        <option value="Intermedio">Intermedio</option>
-                        <option value="Avanzato">Avanzato</option>
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (formData.selectedSport && formData.selectedLevel) {
-                            const newSportLevel = { sport: formData.selectedSport, livello: formData.selectedLevel }
-                            setFormData({
-                              ...formData,
-                              sportLevels: [...formData.sportLevels, newSportLevel],
-                              selectedSport: '',
-                              selectedLevel: ''
-                            })
-                          }
-                        }}
-                        className="btn btn-secondary"
-                        style={{ padding: '0.5rem 1rem' }}
-                      >
-                        +
-                      </button>
+                      {!isTennisQuizActive && formData.selectedSport === 'PADEL' && (
+                        <>
+                          <select
+                            value={formData.selectedLevel || ''}
+                            onChange={(e) =>
+                              setFormData({ ...formData, selectedLevel: e.target.value })
+                            }
+                            className="form-input"
+                            style={{ flex: 1 }}
+                          >
+                            <option value="">Seleziona livello</option>
+                            <option value="Principiante">Principiante</option>
+                            <option value="Intermedio">Intermedio</option>
+                            <option value="Avanzato">Avanzato</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={handlePadelAdd}
+                            className="btn btn-secondary"
+                            style={{ padding: '0.5rem 1rem' }}
+                            disabled={!formData.selectedLevel}
+                          >
+                            +
+                          </button>
+                        </>
+                      )}
                     </div>
+                    {isTennisQuizActive && (
+                      <TennisQuiz
+                        onComplete={handleTennisQuizComplete}
+                        onCancel={handleTennisQuizCancel}
+                      />
+                    )}
                     {formData.sportLevels.length > 0 && (
                       <div style={{ marginTop: '0.5rem' }}>
                         {formData.sportLevels.map((sl, index) => (
-                          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                            <span style={{ background: 'var(--gray-100)', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.9rem' }}>
+                          <div
+                            key={`${sl.sport}-${index}`}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.5rem',
+                              marginBottom: '0.25rem',
+                            }}
+                          >
+                            <span
+                              style={{
+                                background: 'var(--gray-100)',
+                                padding: '0.25rem 0.5rem',
+                                borderRadius: '4px',
+                                fontSize: '0.9rem',
+                              }}
+                            >
                               {sl.sport} - {sl.livello}
+                              {sl.score !== undefined && (
+                                <span
+                                  style={{
+                                    marginLeft: '0.5rem',
+                                    fontSize: '0.8rem',
+                                    color: 'var(--gray-600)',
+                                  }}
+                                >
+                                  ({sl.score}/100)
+                                </span>
+                              )}
                             </span>
                             <button
                               type="button"
                               onClick={() => {
                                 setFormData({
                                   ...formData,
-                                  sportLevels: formData.sportLevels.filter((_, i) => i !== index)
+                                  sportLevels: formData.sportLevels.filter((_, i) => i !== index),
                                 })
                               }}
-                              style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer', fontSize: '1.2rem' }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: 'var(--error)',
+                                cursor: 'pointer',
+                                fontSize: '1.2rem',
+                              }}
                             >
                               ×
                             </button>
@@ -440,7 +522,7 @@ export default function Register() {
                   disabled={isLoading || authLoading}
                   style={{ width: '100%', marginTop: '1rem' }}
                 >
-                  {(isLoading || authLoading) ? '⏳ Registrazione...' : '🚀 Crea Account'}
+                  {isLoading || authLoading ? '⏳ Registrazione...' : '🚀 Crea Account'}
                 </button>
               </form>
 

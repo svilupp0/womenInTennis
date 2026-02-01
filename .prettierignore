@@ -1,0 +1,40 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Misc
+.DS_Store
+*.pem
+.env*.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage
+
+# Testing
+cypress/screenshots
+cypress/videos
+
+# Prisma
+prisma/migrations
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Corrupted/Legacy files
+components/AvailabilityDebugPanel.js
+components/UserProfileHeader.js
+scripts/test-email-timing.js
