@@ -7,9 +7,9 @@ import bcrypt from 'bcryptjs'
 export default async function handler(req, res) {
   // Solo metodo POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Metodo non consentito. Usa POST.' 
+    return res.status(405).json({
+      success: false,
+      error: 'Metodo non consentito. Usa POST.',
     })
   }
 
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     if (!token || !email || !password || !confirmPassword) {
       return res.status(400).json({
         success: false,
-        error: 'Tutti i campi sono obbligatori'
+        error: 'Tutti i campi sono obbligatori',
       })
     }
 
@@ -28,14 +28,14 @@ export default async function handler(req, res) {
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        error: 'Le password non coincidono'
+        error: 'Le password non coincidono',
       })
     }
 
     if (password.length < 8) {
       return res.status(400).json({
         success: false,
-        error: 'La password deve essere di almeno 8 caratteri'
+        error: 'La password deve essere di almeno 8 caratteri',
       })
     }
 
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     if (!emailRegex.test(email.trim())) {
       return res.status(400).json({
         success: false,
-        error: 'Formato email non valido'
+        error: 'Formato email non valido',
       })
     }
 
@@ -56,23 +56,23 @@ export default async function handler(req, res) {
         email: normalizedEmail,
         resetPasswordToken: token,
         resetPasswordTokenExpiry: {
-          gt: new Date() // Token non scaduto
-        }
+          gt: new Date(), // Token non scaduto
+        },
       },
       select: {
         id: true,
         email: true,
         resetPasswordToken: true,
         resetPasswordTokenExpiry: true,
-        loginAttempts: true
-      }
+        loginAttempts: true,
+      },
     })
 
     if (!user) {
       console.log(`🚫 Token reset non valido o scaduto per: ${normalizedEmail}`)
       return res.status(400).json({
         success: false,
-        error: 'Token non valido o scaduto. Richiedi un nuovo reset password.'
+        error: 'Token non valido o scaduto. Richiedi un nuovo reset password.',
       })
     }
 
@@ -90,8 +90,8 @@ export default async function handler(req, res) {
         // Reset anche i tentativi di login falliti
         loginAttempts: 0,
         lockoutUntil: null,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     })
 
     // Log per audit
@@ -100,9 +100,8 @@ export default async function handler(req, res) {
     // Risposta di successo
     return res.status(200).json({
       success: true,
-      message: 'Password aggiornata con successo. Ora puoi effettuare il login.'
+      message: 'Password aggiornata con successo. Ora puoi effettuare il login.',
     })
-
   } catch (error) {
     console.error('❌ Errore reset password:', error)
 
@@ -110,7 +109,7 @@ export default async function handler(req, res) {
     if (error.code === 'P2025') {
       return res.status(404).json({
         success: false,
-        error: 'Utente non trovato'
+        error: 'Utente non trovato',
       })
     }
 
@@ -118,13 +117,13 @@ export default async function handler(req, res) {
       console.error('🗄️ Errore database Prisma:', error.code, error.message)
       return res.status(500).json({
         success: false,
-        error: 'Errore database. Riprova più tardi.'
+        error: 'Errore database. Riprova più tardi.',
       })
     }
 
     return res.status(500).json({
       success: false,
-      error: 'Errore interno del server. Riprova più tardi.'
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

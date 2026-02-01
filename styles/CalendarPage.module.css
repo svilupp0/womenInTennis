@@ -145,7 +145,11 @@
 }
 
 .tipsCard {
-  background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.1), rgba(var(--color-primary-rgb), 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(var(--color-accent-rgb), 0.1),
+    rgba(var(--color-primary-rgb), 0.05)
+  );
   border-radius: var(--border-radius);
   padding: var(--space-lg);
   border: 1px solid rgba(var(--color-accent-rgb), 0.2);
@@ -186,18 +190,18 @@
     flex-direction: column;
     gap: var(--space-md);
   }
-  
+
   .navigation {
     order: -1;
     width: 100%;
     justify-content: center;
   }
-  
+
   .userMenu {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .instructionsList {
     grid-template-columns: 1fr;
   }

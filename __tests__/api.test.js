@@ -51,7 +51,11 @@ const { prisma } = require('../lib/prisma')
 const bcrypt = require('bcryptjs')
 const { sendVerificationEmail } = require('../lib/services/emailService')
 const { validateEmail, validatePassword, sanitizeInput } = require('../lib/security/emailValidator')
-const { generateVerificationToken, secureTokenCompare, isTokenExpired } = require('../lib/security/tokenUtils')
+const {
+  generateVerificationToken,
+  secureTokenCompare,
+  isTokenExpired,
+} = require('../lib/security/tokenUtils')
 
 describe('/api/auth/login', () => {
   beforeEach(() => {
@@ -67,7 +71,7 @@ describe('/api/auth/login', () => {
 
     expect(res._getStatusCode()).toBe(405)
     expect(JSON.parse(res._getData())).toEqual({
-      error: 'Metodo non consentito'
+      error: 'Metodo non consentito',
     })
   })
 
@@ -76,13 +80,13 @@ describe('/api/auth/login', () => {
       method: 'POST',
       body: {
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       },
     })
 
     // Mock validations
     validateEmail.mockReturnValue({ isValid: true, email: 'test@example.com' })
-    
+
     // Mock user found and verified
     prisma.user.findUnique.mockResolvedValue({
       id: 1,
@@ -113,12 +117,12 @@ describe('/api/auth/login', () => {
       method: 'POST',
       body: {
         email: 'unverified@example.com',
-        password: 'password123'
+        password: 'password123',
       },
     })
 
     validateEmail.mockReturnValue({ isValid: true, email: 'unverified@example.com' })
-    
+
     prisma.user.findUnique.mockResolvedValue({
       id: 1,
       email: 'unverified@example.com',
@@ -143,12 +147,12 @@ describe('/api/auth/login', () => {
       method: 'POST',
       body: {
         email: 'test@example.com',
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       },
     })
 
     validateEmail.mockReturnValue({ isValid: true, email: 'test@example.com' })
-    
+
     prisma.user.findUnique.mockResolvedValue({
       id: 1,
       email: 'test@example.com',
@@ -180,7 +184,7 @@ describe('/api/auth/register', () => {
         email: 'new@example.com',
         password: 'password123',
         comune: 'Milano',
-        livello: 'Intermedio'
+        livello: 'Intermedio',
       },
     })
 
@@ -195,7 +199,7 @@ describe('/api/auth/register', () => {
     // Mock token generation
     generateVerificationToken.mockReturnValue({
       token: 'verification-token',
-      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
     })
 
     // Mock user creation
@@ -204,7 +208,7 @@ describe('/api/auth/register', () => {
       email: 'new@example.com',
       emailVerified: false,
       comune: 'Milano',
-      livello: 'Intermedio'
+      livello: 'Intermedio',
     })
 
     // Mock email sending
@@ -216,7 +220,11 @@ describe('/api/auth/register', () => {
     const data = JSON.parse(res._getData())
     expect(data.success).toBe(true)
     expect(data.nextStep).toBe('EMAIL_VERIFICATION_REQUIRED')
-    expect(sendVerificationEmail).toHaveBeenCalledWith('new@example.com', 'verification-token', 'Milano')
+    expect(sendVerificationEmail).toHaveBeenCalledWith(
+      'new@example.com',
+      'verification-token',
+      'Milano'
+    )
   })
 
   it('should return error if user already exists', async () => {
@@ -224,7 +232,7 @@ describe('/api/auth/register', () => {
       method: 'POST',
       body: {
         email: 'existing@example.com',
-        password: 'password123'
+        password: 'password123',
       },
     })
 
@@ -235,7 +243,7 @@ describe('/api/auth/register', () => {
     prisma.user.findUnique.mockResolvedValue({
       id: 1,
       email: 'existing@example.com',
-      emailVerified: true
+      emailVerified: true,
     })
 
     await registerHandler(req, res)
@@ -256,7 +264,7 @@ describe('/api/auth/verify-email', () => {
       method: 'GET',
       query: {
         token: 'valid-token',
-        email: 'test@example.com'
+        email: 'test@example.com',
       },
     })
 
@@ -293,7 +301,7 @@ describe('/api/auth/verify-email', () => {
       method: 'GET',
       query: {
         token: 'expired-token',
-        email: 'test@example.com'
+        email: 'test@example.com',
       },
     })
 

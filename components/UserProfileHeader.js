@@ -2,18 +2,18 @@
 // Componente ottimizzato per la sezione profilo della dashboard
 
 import React, { useState, useEffect } from 'react';
-import { 
-  truncateDisplayName, 
-  getTooltipDisplayName, 
+import {
+  truncateDisplayName,
+  getTooltipDisplayName,
   getInitials,
-  isMobileDevice 
+  isMobileDevice
 } from '../utils/displayNameUtils';
 import styles from '../styles/Dashboard.module.css';
 
-const UserProfileHeader = ({ 
-  user, 
-  getDisplayName, 
-  getUserLocation, 
+const UserProfileHeader = ({
+  user,
+  getDisplayName,
+  getUserLocation,
   getUserLevel,
   availability,
   onAvailabilityToggle,
@@ -30,7 +30,7 @@ const UserProfileHeader = ({
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -45,7 +45,7 @@ const UserProfileHeader = ({
   const location = getUserLocation();
   const level = getUserLevel();
   const details = `📍 ${location} • 🎾 ${level}`;
-  const truncatedDetails = isMobile && details.length > 30 
+  const truncatedDetails = isMobile && details.length > 30
     ? `📍 ${location.substring(0, 10)}... • 🎾 ${level}`
     : details;
 
@@ -59,14 +59,14 @@ const UserProfileHeader = ({
               {initials}
             </div>
             <div className={styles.profileInfo}>
-              <h1 
+              <h1
                 className={styles.profileName}
                 title={needsTooltip ? tooltipName : undefined}
                 aria-label={`Nome utente: ${originalName}`}
               >
                 {displayName}
               </h1>
-              <p 
+              <p
                 className={styles.profileDetails}
                 title={isMobile ? details : undefined}
                 aria-label={`Posizione: ${location}, Livello: ${level}`}
@@ -83,7 +83,7 @@ const UserProfileHeader = ({
               <span className={styles.toggleLabel}>
                 {isMobile ? 'Disp.' : 'Disponibile'}:
               </span>
-              <div 
+              <div
                 className={`${styles.toggle} ${availability ? styles.active : ''}`}
                 onClick={onAvailabilityToggle}
                 role="switch"
@@ -102,21 +102,22 @@ const UserProfileHeader = ({
             </div>
 
             {/* Bottoni Azione */}
-            <button 
-              className=\"btn btn-secondary\"
+            <button
+              className="btn btn-secondary"
               onClick={onEditProfile}
-              aria-label=\"Modifica profilo utente\"
+              aria-label="Modifica profilo utente"
             >
               {isMobile ? '✏️' : '✏️ Modifica Profilo'}
             </button>
-            
-            <button 
-              className=\"btn btn-outline\"
+
+            <button
+              className="btn btn-outline"
               onClick={onShowReports}
-              aria-label=\"Visualizza le mie segnalazioni\"
+              aria-label="Visualizza le mie segnalazioni"
             >
               {isMobile ? '📄' : '📄 Le mie segnalazioni'}
             </button>
+
           </div>
         </div>
 

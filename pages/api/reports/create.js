@@ -25,7 +25,7 @@ async function handler(req, res) {
 
     // Verifica che l'utente segnalato esista
     const reportedUser = await prisma.user.findUnique({
-      where: { id: parseInt(reportedId) }
+      where: { id: parseInt(reportedId) },
     })
 
     if (!reportedUser) {
@@ -37,9 +37,9 @@ async function handler(req, res) {
       where: {
         reporterId_reportedId: {
           reporterId: userId,
-          reportedId: parseInt(reportedId)
-        }
-      }
+          reportedId: parseInt(reportedId),
+        },
+      },
     })
 
     if (existingReport) {
@@ -49,11 +49,11 @@ async function handler(req, res) {
     // Validazione reason (deve essere uno dei valori enum)
     const validReasons = [
       'INAPPROPRIATE_BEHAVIOR',
-      'FAKE_PROFILE', 
+      'FAKE_PROFILE',
       'HARASSMENT',
       'SPAM',
       'NO_SHOW',
-      'OTHER'
+      'OTHER',
     ]
 
     if (!validReasons.includes(reason)) {
@@ -67,22 +67,22 @@ async function handler(req, res) {
         reportedId: parseInt(reportedId),
         reason: reason,
         description: description || null,
-        status: 'PENDING'
+        status: 'PENDING',
       },
       include: {
         reporter: {
           select: {
             id: true,
-            email: true
-          }
+            email: true,
+          },
         },
         reported: {
           select: {
             id: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     })
 
     // Risposta di successo
@@ -97,11 +97,10 @@ async function handler(req, res) {
         createdAt: newReport.createdAt,
         reported: {
           id: newReport.reported.id,
-          email: newReport.reported.email.split('@')[0] // Solo username per privacy
-        }
-      }
+          email: newReport.reported.email.split('@')[0], // Solo username per privacy
+        },
+      },
     })
-
   } catch (error) {
     console.error('Errore creazione segnalazione:', error)
 
@@ -111,8 +110,8 @@ async function handler(req, res) {
     }
 
     // Errore generico
-    res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+    res.status(500).json({
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

@@ -18,11 +18,13 @@
   right: -30%;
   width: 80%;
   height: 100%;
-  background: linear-gradient(45deg, 
-    transparent 0%, 
-    rgba(168, 235, 131, 0.1) 30%, 
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(168, 235, 131, 0.1) 30%,
     rgba(235, 105, 49, 0.1) 70%,
-    transparent 100%);
+    transparent 100%
+  );
   transform: rotate(15deg);
   z-index: 0;
   pointer-events: none;
@@ -257,8 +259,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .updating {
@@ -425,7 +432,11 @@
 .playerAvatar {
   width: 55px;
   height: 55px;
-  background: linear-gradient(135deg, var(--primary-green-medium) 0%, var(--primary-green-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-green-medium) 0%,
+    var(--primary-green-light) 100%
+  );
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -510,7 +521,11 @@
 }
 
 .playersListContainer::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--primary-green-alpha) 0%, var(--accent-orange-alpha) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-green-alpha) 0%,
+    var(--accent-orange-alpha) 100%
+  );
   border-radius: 4px;
 }
 
@@ -810,19 +825,19 @@
   .userInfo {
     display: flex;
   }
-  
+
   .filtersGrid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .profileHeader {
     flex-wrap: nowrap;
   }
-  
+
   .profileActions {
     flex-wrap: nowrap;
   }
-  
+
   .playersListContainer {
     max-height: 400px;
   }
@@ -832,21 +847,21 @@
   .filtersGrid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .avatar {
     width: 100px;
     height: 100px;
     font-size: 2.5rem;
   }
-  
+
   .profileName {
     font-size: 2.25rem;
   }
-  
+
   .row2Grid {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .playersListContainer {
     max-height: 500px;
   }
@@ -856,12 +871,12 @@
   .main {
     padding: var(--space-2xl) 0;
   }
-  
+
   .row2Grid {
     grid-template-columns: 1fr 1fr !important;
     min-width: 600px;
   }
-  
+
   .playersListContainer {
     max-height: 700px;
   }
@@ -872,29 +887,29 @@
   .row2Grid {
     grid-template-columns: 1fr;
   }
-  
+
   .playersListContainer {
     max-height: 300px;
   }
-  
+
   .filtersGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .modal {
     margin: var(--space-md);
     max-height: calc(100vh - 2rem);
   }
-  
+
   .modalFooter {
     flex-direction: column;
   }
-  
+
   .reportTargetInfo {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .reportsHeader {
     flex-direction: column;
     align-items: stretch;
@@ -1054,7 +1069,7 @@
   .formRow {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .formActions {
     justify-content: flex-end;
   }
@@ -1065,11 +1080,11 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .formActions {
     flex-direction: column;
   }
-  
+
   .formActions .btn {
     width: 100%;
   }
@@ -1154,11 +1169,11 @@
     align-items: flex-start;
     gap: 4px;
   }
-  
+
   .slotDay {
     min-width: auto;
   }
-  
+
   .slotLocation {
     margin-left: 0;
     max-width: 100%;

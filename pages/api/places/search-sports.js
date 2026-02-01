@@ -24,18 +24,23 @@ export default async function handler(req, res) {
   }
 
   if (isNaN(radiusNum) || radiusNum <= 0 || radiusNum > 50000) {
-    return res.status(400).json({ error: 'Radius must be a valid number between 1 and 50000 meters' })
+    return res
+      .status(400)
+      .json({ error: 'Radius must be a valid number between 1 and 50000 meters' })
   }
 
   try {
-    console.log(`Searching for sports facilities near lat: ${lat}, lng: ${lng}, radius: ${radiusNum}m`)
+    console.log(
+      `Searching for sports facilities near lat: ${lat}, lng: ${lng}, radius: ${radiusNum}m`
+    )
 
     const response = await fetch('https://places.googleapis.com/v1/places:searchText', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': process.env.GOOGLE_MAPS_API_KEY,
-        'X-Goog-FieldMask': 'places.displayName.text,places.formattedAddress,places.location,places.nationalPhoneNumber'
+        'X-Goog-FieldMask':
+          'places.displayName.text,places.formattedAddress,places.location,places.nationalPhoneNumber',
       },
       body: JSON.stringify({
         textQuery: 'campi da tennis',
@@ -44,12 +49,12 @@ export default async function handler(req, res) {
           circle: {
             center: {
               latitude: lat,
-              longitude: lng
+              longitude: lng,
             },
-            radius: radiusNum
-          }
-        }
-      })
+            radius: radiusNum,
+          },
+        },
+      }),
     })
 
     if (!response.ok) {
@@ -69,14 +74,13 @@ export default async function handler(req, res) {
     // Restituisci solo i dati necessari al client
     res.status(200).json({
       places: data.places || [],
-      success: true
+      success: true,
     })
-
   } catch (error) {
     console.error('Error searching sports facilities:', error)
     res.status(500).json({
       error: 'Failed to search sports facilities',
-      success: false
+      success: false,
     })
   }
 }

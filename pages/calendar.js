@@ -10,14 +10,7 @@ import styles from '../styles/CalendarPage.module.css'
 import calendarStyles from '../styles/Calendar.module.css'
 
 export default function CalendarPage() {
-  const { 
-    user, 
-    loading, 
-    isAuthenticated, 
-    logout,
-    getDisplayName,
-    isAdmin
-  } = useAuth()
+  const { user, loading, isAuthenticated, logout, getDisplayName, isAdmin } = useAuth()
 
   // Redirect se non autenticato o se admin
   useEffect(() => {
@@ -41,9 +34,7 @@ export default function CalendarPage() {
   if (loading) {
     return (
       <div className={styles.loadingPage}>
-        <div className={styles.loadingContent}>
-          ⏳ Caricamento calendario...
-        </div>
+        <div className={styles.loadingContent}>⏳ Caricamento calendario...</div>
       </div>
     )
   }
@@ -52,9 +43,7 @@ export default function CalendarPage() {
   if (!isAuthenticated()) {
     return (
       <div className={styles.errorPage}>
-        <div className={styles.errorContent}>
-          🔒 Accesso non autorizzato. Reindirizzamento...
-        </div>
+        <div className={styles.errorContent}>🔒 Accesso non autorizzato. Reindirizzamento...</div>
       </div>
     )
   }
@@ -63,7 +52,10 @@ export default function CalendarPage() {
     <>
       <Head>
         <title>Calendario - Women in Net</title>
-        <meta name="description" content="Gestisci le tue disponibilità e organizza partite di tennis" />
+        <meta
+          name="description"
+          content="Gestisci le tue disponibilità e organizza partite di tennis"
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -76,7 +68,7 @@ export default function CalendarPage() {
                 <div className={styles.logoIcon}>🎾</div>
                 <span>Women in Net</span>
               </Link>
-              
+
               <nav className={styles.navigation}>
                 <Link href="/dashboard" className={styles.navLink}>
                   🏠 Dashboard
@@ -85,13 +77,13 @@ export default function CalendarPage() {
                   📅 Calendario
                 </Link>
               </nav>
-              
+
               <div className={styles.userMenu}>
                 <div className={styles.userInfo}>
                   <span className={styles.userName}>{getDisplayName()}</span>
                   <span className={styles.userEmail}>{user?.email}</span>
                 </div>
-                <button 
+                <button
                   onClick={handleLogout}
                   className="btn btn-secondary"
                   style={{ padding: 'var(--space-xs) var(--space-md)', fontSize: '0.875rem' }}
@@ -126,7 +118,8 @@ export default function CalendarPage() {
                   <div className={styles.instructionItem}>
                     <span className={styles.instructionIcon}>🔵</span>
                     <div>
-                      <strong>Eventi blu</strong> sono le tue disponibilità visibili ad altre giocatrici
+                      <strong>Eventi blu</strong> sono le tue disponibilità visibili ad altre
+                      giocatrici
                     </div>
                   </div>
                   <div className={styles.instructionItem}>

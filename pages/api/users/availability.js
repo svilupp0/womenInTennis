@@ -7,8 +7,8 @@ import { withAuth } from '../../../lib/middleware/authMiddleware'
 async function handler(req, res) {
   // ✅ Gestisci solo richieste PUT
   if (req.method !== 'PUT') {
-    return res.status(405).json({ 
-      error: 'Metodo non consentito. Usa PUT.' 
+    return res.status(405).json({
+      error: 'Metodo non consentito. Usa PUT.',
     })
   }
 
@@ -18,10 +18,10 @@ async function handler(req, res) {
 
     // 📝 Validazione input
     const { available } = req.body
-    
+
     if (typeof available !== 'boolean') {
-      return res.status(400).json({ 
-        error: 'Parametro "available" deve essere un boolean' 
+      return res.status(400).json({
+        error: 'Parametro "available" deve essere un boolean',
       })
     }
 
@@ -29,14 +29,14 @@ async function handler(req, res) {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        disponibilita: available
+        disponibilita: available,
       },
       select: {
         id: true,
         email: true,
         disponibilita: true,
-        updatedAt: true
-      }
+        updatedAt: true,
+      },
     })
 
     // 📊 Log per debug e analytics
@@ -47,9 +47,8 @@ async function handler(req, res) {
       id: updatedUser.id,
       email: updatedUser.email,
       disponibilita: updatedUser.disponibilita,
-      updatedAt: updatedUser.updatedAt
+      updatedAt: updatedUser.updatedAt,
     })
-
   } catch (error) {
     console.error('❌ Errore aggiornamento disponibilità:', error)
 
@@ -57,27 +56,27 @@ async function handler(req, res) {
 
     // Errori Prisma specifici
     if (error.code === 'P2025') {
-      return res.status(404).json({ 
-        error: 'Utente non trovato' 
+      return res.status(404).json({
+        error: 'Utente non trovato',
       })
     }
 
     if (error.code === 'P2002') {
-      return res.status(409).json({ 
-        error: 'Conflitto dati utente' 
+      return res.status(409).json({
+        error: 'Conflitto dati utente',
       })
     }
 
     if (error.code?.startsWith('P')) {
       console.error('🗄️ Errore database Prisma:', error.code, error.message)
-      return res.status(500).json({ 
-        error: 'Errore database. Riprova più tardi.' 
+      return res.status(500).json({
+        error: 'Errore database. Riprova più tardi.',
       })
     }
 
     // Errore generico
-    return res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+    return res.status(500).json({
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
 }

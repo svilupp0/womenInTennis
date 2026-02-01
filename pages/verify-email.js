@@ -7,7 +7,7 @@ import styles from '../styles/Auth.module.css'
 export default function VerifyEmail() {
   const router = useRouter()
   const { token, email } = router.query
-  
+
   const [status, setStatus] = useState('loading') // loading, success, error, already_verified
   const [message, setMessage] = useState('')
   const [isResending, setIsResending] = useState(false)
@@ -20,7 +20,9 @@ export default function VerifyEmail() {
 
   const verifyEmail = async (verificationToken, userEmail) => {
     try {
-      const response = await fetch(`/api/auth/verify-email?token=${verificationToken}&email=${encodeURIComponent(userEmail)}`)
+      const response = await fetch(
+        `/api/auth/verify-email?token=${verificationToken}&email=${encodeURIComponent(userEmail)}`
+      )
       const data = await response.json()
 
       if (response.ok) {
@@ -58,9 +60,9 @@ export default function VerifyEmail() {
       const response = await fetch('/api/auth/resend', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email }),
       })
 
       const data = await response.json()
@@ -69,7 +71,7 @@ export default function VerifyEmail() {
         setMessage('Nuova email di verifica inviata! Controlla la tua casella di posta.')
         setStatus('success')
       } else {
-        setMessage(data.error || 'Errore nell\'invio dell\'email.')
+        setMessage(data.error || "Errore nell'invio dell'email.")
       }
     } catch (error) {
       console.error('Errore reinvio:', error)
@@ -121,20 +123,16 @@ export default function VerifyEmail() {
 
           <div className={styles.content}>
             <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-              <div style={{ fontSize: '4rem', marginBottom: '20px' }}>
-                {getStatusIcon()}
-              </div>
-              
+              <div style={{ fontSize: '4rem', marginBottom: '20px' }}>{getStatusIcon()}</div>
+
               <h3 style={{ color: getStatusColor(), marginBottom: '15px' }}>
                 {status === 'loading' && 'Verifica in corso...'}
                 {status === 'success' && 'Verifica completata!'}
                 {status === 'already_verified' && 'Email già verificata!'}
                 {status === 'error' && 'Errore di verifica'}
               </h3>
-              
-              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>
-                {message}
-              </p>
+
+              <p style={{ marginBottom: '20px', lineHeight: '1.6' }}>{message}</p>
             </div>
 
             {(status === 'success' || status === 'already_verified') && (
@@ -150,7 +148,7 @@ export default function VerifyEmail() {
 
             {status === 'error' && email && (
               <div style={{ textAlign: 'center' }}>
-                <button 
+                <button
                   onClick={resendVerification}
                   disabled={isResending}
                   className={styles.button}
@@ -158,7 +156,7 @@ export default function VerifyEmail() {
                 >
                   {isResending ? '📤 Invio...' : '📧 Invia Nuovo Link'}
                 </button>
-                
+
                 <div>
                   <Link href="/login" className={styles.linkButton}>
                     🔙 Torna al Login
@@ -182,8 +180,7 @@ export default function VerifyEmail() {
 
           <div className={styles.footer}>
             <p>
-              Problemi con la verifica?{' '}
-              <Link href="/register">Registrati di nuovo</Link>
+              Problemi con la verifica? <Link href="/register">Registrati di nuovo</Link>
             </p>
           </div>
         </div>

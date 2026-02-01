@@ -24,8 +24,8 @@ async function handler(req, res) {
                 livello: true,
               },
             },
-            createdAt: true
-          }
+            createdAt: true,
+          },
         },
         reported: {
           select: {
@@ -38,24 +38,23 @@ async function handler(req, res) {
                 livello: true,
               },
             },
-            createdAt: true
-          }
-        }
+            createdAt: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: 'desc',
+      },
     })
 
     res.status(200).json({
       success: true,
-      reports: reports
+      reports: reports,
     })
-
   } catch (error) {
     console.error('Errore API admin reports:', error)
-    res.status(500).json({ 
-      error: 'Errore interno del server' 
+    res.status(500).json({
+      error: 'Errore interno del server',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

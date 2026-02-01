@@ -10,7 +10,7 @@ export default function ResetPassword() {
 
   const [formData, setFormData] = useState({
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -32,7 +32,7 @@ export default function ResetPassword() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     })
     // Pulisci errori quando l'utente inizia a digitare
     if (error) setError('')
@@ -89,7 +89,7 @@ export default function ResetPassword() {
           token,
           email,
           password: formData.password,
-          confirmPassword: formData.confirmPassword
+          confirmPassword: formData.confirmPassword,
         }),
       })
 
@@ -159,17 +159,17 @@ export default function ResetPassword() {
                   <p>Il link di reset password non è valido o è scaduto.</p>
                 </div>
 
-                {error && (
-                  <div className={styles.errorMessage}>
-                    {error}
-                  </div>
-                )}
+                {error && <div className={styles.errorMessage}>{error}</div>}
 
                 <div style={{ textAlign: 'center' }}>
-                  <Link href="/forgot-password" className="btn btn-primary" style={{ marginBottom: '1rem', width: '100%' }}>
+                  <Link
+                    href="/forgot-password"
+                    className="btn btn-primary"
+                    style={{ marginBottom: '1rem', width: '100%' }}
+                  >
                     🔐 Richiedi Nuovo Reset
                   </Link>
-                  
+
                   <Link href="/login" className="btn btn-secondary" style={{ width: '100%' }}>
                     🔙 Torna al Login
                   </Link>
@@ -259,16 +259,10 @@ export default function ResetPassword() {
                 <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔐</div>
                 <h1>Imposta Nuova Password</h1>
                 <p>Scegli una password sicura per il tuo account</p>
-                <small style={{ color: 'var(--gray-500)' }}>
-                  Account: {email}
-                </small>
+                <small style={{ color: 'var(--gray-500)' }}>Account: {email}</small>
               </div>
 
-              {error && (
-                <div className={styles.errorMessage}>
-                  {error}
-                </div>
-              )}
+              {error && <div className={styles.errorMessage}>{error}</div>}
 
               <form onSubmit={handleSubmit} className={styles.authForm}>
                 <div className={styles.formGroup}>

@@ -5,15 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import styles from '../styles/Admin.module.css'
 
 export default function AdminDashboard() {
-  const { 
-    user, 
-    token,
-    loading, 
-    isAuthenticated, 
-    logout,
-    getDisplayName,
-    isAdmin
-  } = useAuth()
+  const { user, token, loading, isAuthenticated, logout, getDisplayName, isAdmin } = useAuth()
 
   const [reports, setReports] = useState([])
   const [isLoadingReports, setIsLoadingReports] = useState(false)
@@ -23,7 +15,7 @@ export default function AdminDashboard() {
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   })
   const [isChangingPassword, setIsChangingPassword] = useState(false)
 
@@ -43,8 +35,8 @@ export default function AdminDashboard() {
     try {
       const response = await fetch('/api/admin/reports', {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
 
       if (response.ok) {
@@ -79,16 +71,20 @@ export default function AdminDashboard() {
 
   // Gestione form cambio password
   const handlePasswordFormChange = (field, value) => {
-    setPasswordForm(prev => ({
+    setPasswordForm((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }
 
   // Cambio password
   const handleChangePassword = async () => {
     // Validazioni
-    if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
+    if (
+      !passwordForm.currentPassword ||
+      !passwordForm.newPassword ||
+      !passwordForm.confirmPassword
+    ) {
       alert('Tutti i campi sono obbligatori')
       return
     }
@@ -109,12 +105,12 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           currentPassword: passwordForm.currentPassword,
-          newPassword: passwordForm.newPassword
-        })
+          newPassword: passwordForm.newPassword,
+        }),
       })
 
       const data = await response.json()
@@ -147,9 +143,9 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ action })
+        body: JSON.stringify({ action }),
       })
 
       if (response.ok) {
@@ -158,7 +154,7 @@ export default function AdminDashboard() {
         setShowReportDetail(false)
       } else {
         const data = await response.json()
-        alert(data.error || 'Errore durante l\'azione')
+        alert(data.error || "Errore durante l'azione")
       }
     } catch (error) {
       console.error('Errore azione segnalazione:', error)
@@ -170,9 +166,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className={styles.adminPage}>
-        <div className={styles.loading}>
-          ⏳ Caricamento dashboard admin...
-        </div>
+        <div className={styles.loading}>⏳ Caricamento dashboard admin...</div>
       </div>
     )
   }
@@ -181,9 +175,7 @@ export default function AdminDashboard() {
   if (!isAuthenticated() || !isAdmin()) {
     return (
       <div className={styles.adminPage}>
-        <div className={styles.error}>
-          🔒 Accesso non autorizzato. Reindirizzamento...
-        </div>
+        <div className={styles.error}>🔒 Accesso non autorizzato. Reindirizzamento...</div>
       </div>
     )
   }
@@ -205,21 +197,21 @@ export default function AdminDashboard() {
                 <div className={styles.logoIcon}>🎾</div>
                 <span>Women in Net - Admin</span>
               </Link>
-              
+
               <div className={styles.userMenu}>
                 <div className={styles.userInfo}>
                   <span className={styles.userName}>👑 {getDisplayName()}</span>
                   <span className={styles.userRole}>Amministratrice</span>
                 </div>
                 <div className={styles.userActions}>
-                  <button 
+                  <button
                     onClick={() => setShowChangePassword(true)}
                     className="btn btn-outline"
                     style={{ padding: 'var(--space-xs) var(--space-md)', fontSize: '0.875rem' }}
                   >
                     🔑 Cambia Password
                   </button>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="btn btn-secondary"
                     style={{ padding: 'var(--space-xs) var(--space-md)', fontSize: '0.875rem' }}
@@ -256,7 +248,7 @@ export default function AdminDashboard() {
                   <div className={styles.statInfo}>
                     <h3>In Attesa</h3>
                     <p className={styles.statNumber}>
-                      {reports.filter(r => r.status === 'PENDING').length}
+                      {reports.filter((r) => r.status === 'PENDING').length}
                     </p>
                   </div>
                 </div>
@@ -265,7 +257,7 @@ export default function AdminDashboard() {
                   <div className={styles.statInfo}>
                     <h3>Risolte</h3>
                     <p className={styles.statNumber}>
-                      {reports.filter(r => r.status === 'RESOLVED').length}
+                      {reports.filter((r) => r.status === 'RESOLVED').length}
                     </p>
                   </div>
                 </div>
@@ -274,7 +266,7 @@ export default function AdminDashboard() {
                   <div className={styles.statInfo}>
                     <h3>Respinte</h3>
                     <p className={styles.statNumber}>
-                      {reports.filter(r => r.status === 'DISMISSED').length}
+                      {reports.filter((r) => r.status === 'DISMISSED').length}
                     </p>
                   </div>
                 </div>
@@ -285,7 +277,7 @@ export default function AdminDashboard() {
             <section className={styles.reportsSection}>
               <div className={styles.reportsHeader}>
                 <h2>📋 Segnalazioni</h2>
-                <button 
+                <button
                   className="btn btn-primary"
                   onClick={loadReports}
                   disabled={isLoadingReports}
@@ -314,12 +306,8 @@ export default function AdminDashboard() {
                   {reports.map((report) => (
                     <div key={report.id} className={styles.tableRow}>
                       <div className={styles.reportId}>#{report.id}</div>
-                      <div className={styles.reportUser}>
-                        {report.reporter.email.split('@')[0]}
-                      </div>
-                      <div className={styles.reportUser}>
-                        {report.reported.email.split('@')[0]}
-                      </div>
+                      <div className={styles.reportUser}>{report.reporter.email.split('@')[0]}</div>
+                      <div className={styles.reportUser}>{report.reported.email.split('@')[0]}</div>
                       <div className={styles.reportReason}>
                         {report.reason.replace(/_/g, ' ').toLowerCase()}
                       </div>
@@ -327,7 +315,9 @@ export default function AdminDashboard() {
                         {new Date(report.createdAt).toLocaleDateString('it-IT')}
                       </div>
                       <div className={styles.reportStatus}>
-                        <span className={`${styles.statusBadge} ${styles[report.status.toLowerCase()]}`}>
+                        <span
+                          className={`${styles.statusBadge} ${styles[report.status.toLowerCase()]}`}
+                        >
                           {report.status === 'PENDING' && '⏳ In attesa'}
                           {report.status === 'REVIEWED' && '👁️ Revisionata'}
                           {report.status === 'RESOLVED' && '✅ Risolta'}
@@ -335,7 +325,7 @@ export default function AdminDashboard() {
                         </span>
                       </div>
                       <div className={styles.reportActions}>
-                        <button 
+                        <button
                           className="btn btn-outline"
                           onClick={() => viewReportDetail(report)}
                         >
@@ -356,18 +346,15 @@ export default function AdminDashboard() {
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
               <div className={styles.modalHeader}>
                 <h3>🔑 Cambia Password</h3>
-                <button 
-                  className={styles.modalClose}
-                  onClick={() => setShowChangePassword(false)}
-                >
+                <button className={styles.modalClose} onClick={() => setShowChangePassword(false)}>
                   ✕
                 </button>
               </div>
-              
+
               <div className={styles.modalBody}>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Password Attuale *</label>
-                  <input 
+                  <input
                     type="password"
                     className="form-input"
                     placeholder="Inserisci la password attuale"
@@ -378,7 +365,7 @@ export default function AdminDashboard() {
 
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Nuova Password *</label>
-                  <input 
+                  <input
                     type="password"
                     className="form-input"
                     placeholder="Inserisci la nuova password (min 6 caratteri)"
@@ -389,7 +376,7 @@ export default function AdminDashboard() {
 
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Conferma Nuova Password *</label>
-                  <input 
+                  <input
                     type="password"
                     className="form-input"
                     placeholder="Conferma la nuova password"
@@ -402,19 +389,24 @@ export default function AdminDashboard() {
                   📝 <strong>Suggerimento:</strong> Usa una password sicura con almeno 6 caratteri
                 </div>
               </div>
-              
+
               <div className={styles.modalFooter}>
-                <button 
+                <button
                   className="btn btn-secondary"
                   onClick={() => setShowChangePassword(false)}
                   disabled={isChangingPassword}
                 >
                   Annulla
                 </button>
-                <button 
+                <button
                   className="btn btn-primary"
                   onClick={handleChangePassword}
-                  disabled={isChangingPassword || !passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword}
+                  disabled={
+                    isChangingPassword ||
+                    !passwordForm.currentPassword ||
+                    !passwordForm.newPassword ||
+                    !passwordForm.confirmPassword
+                  }
                 >
                   {isChangingPassword ? '⏳ Aggiornamento...' : '🔑 Cambia Password'}
                 </button>
@@ -429,14 +421,11 @@ export default function AdminDashboard() {
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
               <div className={styles.modalHeader}>
                 <h3>🔍 Dettaglio Segnalazione #{selectedReport.id}</h3>
-                <button 
-                  className={styles.modalClose}
-                  onClick={() => setShowReportDetail(false)}
-                >
+                <button className={styles.modalClose} onClick={() => setShowReportDetail(false)}>
                   ✕
                 </button>
               </div>
-              
+
               <div className={styles.modalBody}>
                 <div className={styles.reportDetailGrid}>
                   <div className={styles.reportDetailSection}>
@@ -446,10 +435,21 @@ export default function AdminDashboard() {
                         {selectedReport.reporter.email.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p><strong>Email:</strong> {selectedReport.reporter.email}</p>
-                        <p><strong>Comune:</strong> {selectedReport.reporter.comune || 'Non specificato'}</p>
-                        <p><strong>Livello:</strong> {selectedReport.reporter.livello || 'Non specificato'}</p>
-                        <p><strong>Membro dal:</strong> {new Date(selectedReport.reporter.createdAt).toLocaleDateString('it-IT')}</p>
+                        <p>
+                          <strong>Email:</strong> {selectedReport.reporter.email}
+                        </p>
+                        <p>
+                          <strong>Comune:</strong>{' '}
+                          {selectedReport.reporter.comune || 'Non specificato'}
+                        </p>
+                        <p>
+                          <strong>Livello:</strong>{' '}
+                          {selectedReport.reporter.livello || 'Non specificato'}
+                        </p>
+                        <p>
+                          <strong>Membro dal:</strong>{' '}
+                          {new Date(selectedReport.reporter.createdAt).toLocaleDateString('it-IT')}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -461,10 +461,21 @@ export default function AdminDashboard() {
                         {selectedReport.reported.email.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p><strong>Email:</strong> {selectedReport.reported.email}</p>
-                        <p><strong>Comune:</strong> {selectedReport.reported.comune || 'Non specificato'}</p>
-                        <p><strong>Livello:</strong> {selectedReport.reported.livello || 'Non specificato'}</p>
-                        <p><strong>Membro dal:</strong> {new Date(selectedReport.reported.createdAt).toLocaleDateString('it-IT')}</p>
+                        <p>
+                          <strong>Email:</strong> {selectedReport.reported.email}
+                        </p>
+                        <p>
+                          <strong>Comune:</strong>{' '}
+                          {selectedReport.reported.comune || 'Non specificato'}
+                        </p>
+                        <p>
+                          <strong>Livello:</strong>{' '}
+                          {selectedReport.reported.livello || 'Non specificato'}
+                        </p>
+                        <p>
+                          <strong>Membro dal:</strong>{' '}
+                          {new Date(selectedReport.reported.createdAt).toLocaleDateString('it-IT')}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -473,37 +484,44 @@ export default function AdminDashboard() {
                 <div className={styles.reportDetailSection}>
                   <h4>📋 Dettagli Segnalazione</h4>
                   <div className={styles.reportInfo}>
-                    <p><strong>Motivo:</strong> {selectedReport.reason.replace(/_/g, ' ').toLowerCase()}</p>
-                    <p><strong>Data:</strong> {new Date(selectedReport.createdAt).toLocaleDateString('it-IT')} alle {new Date(selectedReport.createdAt).toLocaleTimeString('it-IT')}</p>
-                    <p><strong>Stato:</strong> {selectedReport.status}</p>
+                    <p>
+                      <strong>Motivo:</strong>{' '}
+                      {selectedReport.reason.replace(/_/g, ' ').toLowerCase()}
+                    </p>
+                    <p>
+                      <strong>Data:</strong>{' '}
+                      {new Date(selectedReport.createdAt).toLocaleDateString('it-IT')} alle{' '}
+                      {new Date(selectedReport.createdAt).toLocaleTimeString('it-IT')}
+                    </p>
+                    <p>
+                      <strong>Stato:</strong> {selectedReport.status}
+                    </p>
                     {selectedReport.description && (
                       <div>
                         <strong>Descrizione:</strong>
-                        <div className={styles.description}>
-                          {selectedReport.description}
-                        </div>
+                        <div className={styles.description}>{selectedReport.description}</div>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-              
+
               <div className={styles.modalFooter}>
                 {selectedReport.status === 'PENDING' && (
                   <>
-                    <button 
+                    <button
                       className="btn btn-success"
                       onClick={() => handleReportAction(selectedReport.id, 'warn')}
                     >
                       ⚠️ Avvisa Utente
                     </button>
-                    <button 
+                    <button
                       className="btn btn-danger"
                       onClick={() => handleReportAction(selectedReport.id, 'suspend')}
                     >
                       🚫 Sospendi Utente
                     </button>
-                    <button 
+                    <button
                       className="btn btn-secondary"
                       onClick={() => handleReportAction(selectedReport.id, 'dismiss')}
                     >
@@ -511,10 +529,7 @@ export default function AdminDashboard() {
                     </button>
                   </>
                 )}
-                <button 
-                  className="btn btn-outline"
-                  onClick={() => setShowReportDetail(false)}
-                >
+                <button className="btn btn-outline" onClick={() => setShowReportDetail(false)}>
                   Chiudi
                 </button>
               </div>

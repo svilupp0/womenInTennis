@@ -8,9 +8,9 @@ import { sendResetPasswordEmail } from '../../../lib/services/emailService'
 export default async function handler(req, res) {
   // Solo metodo POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Metodo non consentito. Usa POST.' 
+    return res.status(405).json({
+      success: false,
+      error: 'Metodo non consentito. Usa POST.',
     })
   }
 
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     if (!email || !email.trim()) {
       return res.status(400).json({
         success: false,
-        error: 'Email è obbligatoria'
+        error: 'Email è obbligatoria',
       })
     }
 
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     if (!emailRegex.test(email.trim())) {
       return res.status(400).json({
         success: false,
-        error: 'Formato email non valido'
+        error: 'Formato email non valido',
       })
     }
 
@@ -44,8 +44,8 @@ export default async function handler(req, res) {
         email: true,
         emailVerified: true,
         resetPasswordToken: true,
-        resetPasswordTokenExpiry: true
-      }
+        resetPasswordTokenExpiry: true,
+      },
     })
 
     // ⚠️ SICUREZZA: Non rivelare se l'email esiste o no
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
       console.log(`🔍 Tentativo reset per email inesistente: ${normalizedEmail}`)
       return res.status(200).json({
         success: true,
-        message: 'Se l\'email esiste nel sistema, riceverai le istruzioni per il reset'
+        message: "Se l'email esiste nel sistema, riceverai le istruzioni per il reset",
       })
     }
 
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
       console.log(`⚠️ Tentativo reset per email non verificata: ${normalizedEmail}`)
       return res.status(400).json({
         success: false,
-        error: 'Devi prima verificare la tua email prima di poter resettare la password'
+        error: 'Devi prima verificare la tua email prima di poter resettare la password',
       })
     }
 
@@ -71,14 +71,14 @@ export default async function handler(req, res) {
     if (user.resetPasswordToken && user.resetPasswordTokenExpiry) {
       const now = new Date()
       const tokenExpiry = new Date(user.resetPasswordTokenExpiry)
-      
+
       // Se il token è ancora valido (non scaduto), limita le richieste
       if (tokenExpiry > now) {
         const minutesLeft = Math.ceil((tokenExpiry - now) / (1000 * 60))
         console.log(`🚫 Rate limit: Token ancora valido per ${minutesLeft} minuti`)
         return res.status(429).json({
           success: false,
-          error: `Hai già richiesto un reset. Riprova tra ${minutesLeft} minuti o controlla la tua email.`
+          error: `Hai già richiesto un reset. Riprova tra ${minutesLeft} minuti o controlla la tua email.`,
         })
       }
     }
@@ -91,8 +91,8 @@ export default async function handler(req, res) {
       where: { id: user.id },
       data: {
         resetPasswordToken: resetToken,
-        resetPasswordTokenExpiry: tokenExpiry
-      }
+        resetPasswordTokenExpiry: tokenExpiry,
+      },
     })
 
     // Invia email di reset
@@ -104,13 +104,13 @@ export default async function handler(req, res) {
         where: { id: user.id },
         data: {
           resetPasswordToken: null,
-          resetPasswordTokenExpiry: null
-        }
+          resetPasswordTokenExpiry: null,
+        },
       })
 
       return res.status(500).json({
         success: false,
-        error: 'Errore durante l\'invio dell\'email. Riprova più tardi.'
+        error: "Errore durante l'invio dell'email. Riprova più tardi.",
       })
     }
 
@@ -120,9 +120,8 @@ export default async function handler(req, res) {
     // Risposta di successo
     return res.status(200).json({
       success: true,
-      message: 'Se l\'email esiste nel sistema, riceverai le istruzioni per il reset'
+      message: "Se l'email esiste nel sistema, riceverai le istruzioni per il reset",
     })
-
   } catch (error) {
     console.error('❌ Errore richiesta reset password:', error)
 
@@ -130,13 +129,13 @@ export default async function handler(req, res) {
     if (error.code === 'P2002') {
       return res.status(500).json({
         success: false,
-        error: 'Errore database. Riprova più tardi.'
+        error: 'Errore database. Riprova più tardi.',
       })
     }
 
     return res.status(500).json({
       success: false,
-      error: 'Errore interno del server. Riprova più tardi.'
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

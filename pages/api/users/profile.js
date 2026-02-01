@@ -7,9 +7,9 @@ import { withAuth } from '../../../lib/middleware/authMiddleware'
 async function handler(req, res) {
   // Solo metodo PUT accettato
   if (req.method !== 'PUT') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Metodo non consentito. Usa PUT.' 
+    return res.status(405).json({
+      success: false,
+      error: 'Metodo non consentito. Usa PUT.',
     })
   }
 
@@ -28,7 +28,7 @@ async function handler(req, res) {
       if (!Array.isArray(sportLevels)) {
         return res.status(400).json({
           success: false,
-          error: 'sportLevels deve essere un array'
+          error: 'sportLevels deve essere un array',
         })
       }
 
@@ -36,19 +36,19 @@ async function handler(req, res) {
         if (!sportLevel.sport || !sportLevel.livello) {
           return res.status(400).json({
             success: false,
-            error: 'Ogni sportLevel deve avere sport e livello'
+            error: 'Ogni sportLevel deve avere sport e livello',
           })
         }
         if (!validSports.includes(sportLevel.sport)) {
           return res.status(400).json({
             success: false,
-            error: `Sport non valido. Usa: ${validSports.join(', ')}`
+            error: `Sport non valido. Usa: ${validSports.join(', ')}`,
           })
         }
         if (!validLevels.includes(sportLevel.livello)) {
           return res.status(400).json({
             success: false,
-            error: `Livello non valido. Usa: ${validLevels.join(', ')}`
+            error: `Livello non valido. Usa: ${validLevels.join(', ')}`,
           })
         }
       }
@@ -58,7 +58,7 @@ async function handler(req, res) {
     if (telefono && telefono.trim() && telefono.length < 8) {
       return res.status(400).json({
         success: false,
-        error: 'Numero di telefono troppo corto'
+        error: 'Numero di telefono troppo corto',
       })
     }
 
@@ -66,7 +66,7 @@ async function handler(req, res) {
     if (disponibilita !== undefined && typeof disponibilita !== 'boolean') {
       return res.status(400).json({
         success: false,
-        error: 'Il campo disponibilita deve essere true o false'
+        error: 'Il campo disponibilita deve essere true o false',
       })
     }
 
@@ -82,19 +82,19 @@ async function handler(req, res) {
     if (Object.keys(updateData).length === 0 && !sportLevels) {
       return res.status(400).json({
         success: false,
-        error: 'Nessun campo da aggiornare fornito'
+        error: 'Nessun campo da aggiornare fornito',
       })
     }
 
     // 4. Verifica che l'utente esista
     const existingUser = await prisma.user.findUnique({
-      where: { id: userId }
+      where: { id: userId },
     })
 
     if (!existingUser) {
       return res.status(404).json({
         success: false,
-        error: 'Utente non trovato'
+        error: 'Utente non trovato',
       })
     }
 
@@ -117,9 +117,9 @@ async function handler(req, res) {
             sport: true,
             livello: true,
           },
-        }
+        },
         // Escludi password e altri campi sensibili
-      }
+      },
     })
 
     // 6. Gestisci sportLevels se fornito
@@ -127,20 +127,20 @@ async function handler(req, res) {
     if (sportLevels) {
       // Prima elimina tutti i livelli esistenti per l'utente
       await prisma.userSportLevel.deleteMany({
-        where: { userId: userId }
+        where: { userId: userId },
       })
 
       // Poi crea i nuovi livelli
       if (sportLevels.length > 0) {
-        const sportLevelData = sportLevels.map(sportLevel => ({
+        const sportLevelData = sportLevels.map((sportLevel) => ({
           userId: userId,
           sport: sportLevel.sport,
-          livello: sportLevel.livello
+          livello: sportLevel.livello,
         }))
 
         updatedSportLevels = await prisma.userSportLevel.createMany({
           data: sportLevelData,
-          skipDuplicates: true
+          skipDuplicates: true,
         })
       }
     }
@@ -150,8 +150,8 @@ async function handler(req, res) {
       where: { userId: userId },
       select: {
         sport: true,
-        livello: true
-      }
+        livello: true,
+      },
     })
 
     // 8. Risposta di successo
@@ -160,24 +160,23 @@ async function handler(req, res) {
       message: 'Profilo aggiornato con successo',
       user: {
         ...updatedUser,
-        sportLevels: currentSportLevels
-      }
+        sportLevels: currentSportLevels,
+      },
     })
-
   } catch (error) {
     console.error('Errore aggiornamento profilo:', error)
-    
+
     // Gestione errori specifici di Prisma
     if (error.code === 'P2002') {
       return res.status(400).json({
         success: false,
-        error: 'Violazione di vincolo univoco'
+        error: 'Violazione di vincolo univoco',
       })
     }
 
     return res.status(500).json({
       success: false,
-      error: 'Errore interno del server'
+      error: 'Errore interno del server',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

@@ -32,7 +32,7 @@ async function getEvent(req, res, eventId) {
     const event = await prisma.event.findFirst({
       where: {
         id: eventId,
-        userId: userId
+        userId: userId,
       },
       include: {
         user: {
@@ -45,8 +45,8 @@ async function getEvent(req, res, eventId) {
                 sport: true,
                 livello: true,
               },
-            }
-          }
+            },
+          },
         },
         proposals: {
           include: {
@@ -60,12 +60,12 @@ async function getEvent(req, res, eventId) {
                     sport: true,
                     livello: true,
                   },
-                }
-              }
-            }
-          }
-        }
-      }
+                },
+              },
+            },
+          },
+        },
+      },
     })
 
     if (!event) {
@@ -73,7 +73,6 @@ async function getEvent(req, res, eventId) {
     }
 
     return res.status(200).json({ event })
-
   } catch (error) {
     console.error('Errore caricamento evento:', error)
     return res.status(500).json({ error: 'Errore interno del server' })
@@ -92,8 +91,8 @@ async function updateEvent(req, res, eventId) {
     const existingEvent = await prisma.event.findFirst({
       where: {
         id: eventId,
-        userId: userId
-      }
+        userId: userId,
+      },
     })
 
     if (!existingEvent) {
@@ -104,13 +103,13 @@ async function updateEvent(req, res, eventId) {
     const pendingProposals = await prisma.matchProposal.findMany({
       where: {
         eventId: eventId,
-        status: 'PENDING'
-      }
+        status: 'PENDING',
+      },
     })
 
     if (pendingProposals.length > 0) {
-      return res.status(400).json({ 
-        error: 'Non puoi modificare un evento con proposte in attesa' 
+      return res.status(400).json({
+        error: 'Non puoi modificare un evento con proposte in attesa',
       })
     }
 
@@ -133,7 +132,7 @@ async function updateEvent(req, res, eventId) {
     // Aggiorna evento
     const updatedEvent = await prisma.event.update({
       where: {
-        id: eventId
+        id: eventId,
       },
       data: {
         ...(title && { title }),
@@ -141,7 +140,7 @@ async function updateEvent(req, res, eventId) {
         ...(start && { start: new Date(start) }),
         ...(end && { end: new Date(end) }),
         ...(location !== undefined && { location }),
-        ...(status && { status })
+        ...(status && { status }),
       },
       include: {
         user: {
@@ -154,17 +153,16 @@ async function updateEvent(req, res, eventId) {
                 sport: true,
                 livello: true,
               },
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     })
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       event: updatedEvent,
-      message: 'Evento aggiornato con successo'
+      message: 'Evento aggiornato con successo',
     })
-
   } catch (error) {
     console.error('Errore aggiornamento evento:', error)
     return res.status(500).json({ error: 'Errore interno del server' })
@@ -181,8 +179,8 @@ async function deleteEvent(req, res, eventId) {
     const existingEvent = await prisma.event.findFirst({
       where: {
         id: eventId,
-        userId: userId
-      }
+        userId: userId,
+      },
     })
 
     if (!existingEvent) {
@@ -192,14 +190,13 @@ async function deleteEvent(req, res, eventId) {
     // Elimina evento (le proposte collegate verranno eliminate automaticamente per CASCADE)
     await prisma.event.delete({
       where: {
-        id: eventId
-      }
+        id: eventId,
+      },
     })
 
-    return res.status(200).json({ 
-      message: 'Evento eliminato con successo'
+    return res.status(200).json({
+      message: 'Evento eliminato con successo',
     })
-
   } catch (error) {
     console.error('Errore eliminazione evento:', error)
     return res.status(500).json({ error: 'Errore interno del server' })

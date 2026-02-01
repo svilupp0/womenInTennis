@@ -23,21 +23,19 @@ export default function Map() {
             {
               featureType: 'poi',
               elementType: 'labels',
-              stylers: [{ visibility: 'off' }]
-            }
-          ]
+              stylers: [{ visibility: 'off' }],
+            },
+          ],
         }
 
         const googleMap = new window.google.maps.Map(mapRef.current, mapOptions)
         setMap(googleMap)
         setIsLoaded(true)
-        
+
         // Forza il resize della mappa dopo un breve delay
         setTimeout(() => {
           window.google.maps.event.trigger(googleMap, 'resize')
         }, 100)
-        
-
 
         // Funzione per cercare strutture sportive nelle vicinanze usando la nostra API route
         const searchSportsFacilities = async (center, radius = 15000) => {
@@ -45,13 +43,13 @@ export default function Map() {
             const response = await fetch('/api/places/search-sports', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 latitude: center.lat,
                 longitude: center.lng,
-                radius: radius
-              })
+                radius: radius,
+              }),
             })
 
             if (!response.ok) {
@@ -59,31 +57,33 @@ export default function Map() {
             }
 
             const data = await response.json()
-            
+
             if (!data.success) {
               throw new Error(data.error || 'Failed to search tennis courts')
             }
-            
+
             const places = data.places || []
-            
+
             places.forEach((place) => {
               if (place.location) {
                 const marker = new window.google.maps.Marker({
                   position: {
                     lat: place.location.latitude,
-                    lng: place.location.longitude
+                    lng: place.location.longitude,
                   },
                   map: googleMap,
                   title: place.displayName?.text || 'Campo da tennis',
                   icon: {
-                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                    url:
+                      'data:image/svg+xml;charset=UTF-8,' +
+                      encodeURIComponent(`
                       <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="16" cy="16" r="12" fill="#e91e63" stroke="#fff" stroke-width="2"/>
                         <text x="16" y="20" text-anchor="middle" fill="white" font-size="16">🎾</text>
                       </svg>
                     `),
-                    scaledSize: new window.google.maps.Size(32, 32)
-                  }
+                    scaledSize: new window.google.maps.Size(32, 32),
+                  },
                 })
 
                 // Info window con dettagli del posto reale
@@ -94,17 +94,21 @@ export default function Map() {
                       <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
                         📍 ${place.formattedAddress || 'Indirizzo non disponibile'}
                       </p>
-                      ${place.nationalPhoneNumber ? `
+                      ${
+                        place.nationalPhoneNumber
+                          ? `
                         <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
                           📞 ${place.nationalPhoneNumber}
                         </p>
-                      ` : ''}
+                      `
+                          : ''
+                      }
                       <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=${place.location.latitude},${place.location.longitude}', '_blank')" 
                               style="margin-top: 8px; padding: 6px 12px; background: #e91e63; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
                         🗺️ Visualizza su Google Maps
                       </button>
                     </div>
-                  `
+                  `,
                 })
 
                 marker.addListener('click', () => {
@@ -112,10 +116,10 @@ export default function Map() {
                 })
 
                 // Salva il marker per eventuale pulizia futura
-                setMarkers(prev => [...prev, marker])
+                setMarkers((prev) => [...prev, marker])
               }
             })
-            
+
             if (places.length === 0) {
               console.log('Nessuna struttura sportiva trovata nelle vicinanze')
             }
@@ -126,18 +130,20 @@ export default function Map() {
 
         // Aggiungi marker per Matchpoint Lecce
         const matchpointMarker = new window.google.maps.Marker({
-          position: { lat: 40.344500, lng: 18.212694 },
+          position: { lat: 40.3445, lng: 18.212694 },
           map: googleMap,
-          title: "Matchpoint Lecce",
+          title: 'Matchpoint Lecce',
           icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+            url:
+              'data:image/svg+xml;charset=UTF-8,' +
+              encodeURIComponent(`
               <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="16" cy="16" r="12" fill="#e91e63" stroke="#fff" stroke-width="2"/>
                 <text x="16" y="20" text-anchor="middle" fill="white" font-size="16">🎾</text>
               </svg>
             `),
-            scaledSize: new window.google.maps.Size(32, 32)
-          }
+            scaledSize: new window.google.maps.Size(32, 32),
+          },
         })
 
         // Info window per Matchpoint Lecce
@@ -156,7 +162,7 @@ export default function Map() {
                 🗺️ Visualizza su Google Maps
               </button>
             </div>
-          `
+          `,
         })
 
         matchpointMarker.addListener('click', () => {
@@ -164,11 +170,11 @@ export default function Map() {
         })
 
         // Salva il marker
-        setMarkers(prev => [...prev, matchpointMarker])
+        setMarkers((prev) => [...prev, matchpointMarker])
 
         // Cerca strutture sportive nell'area iniziale (Roma)
         searchSportsFacilities({ lat: 41.9028, lng: 12.4964 }, 15000)
-        
+
         // Aggiungi listener per cercare campi quando la mappa viene spostata
         let searchTimeout
         googleMap.addListener('idle', () => {
@@ -177,10 +183,13 @@ export default function Map() {
           searchTimeout = setTimeout(() => {
             const center = googleMap.getCenter()
             if (center) {
-              searchSportsFacilities({
-                lat: center.lat(),
-                lng: center.lng()
-              }, 15000)
+              searchSportsFacilities(
+                {
+                  lat: center.lat(),
+                  lng: center.lng(),
+                },
+                15000
+              )
             }
           }, 1000)
         })
@@ -216,26 +225,28 @@ export default function Map() {
         (position) => {
           const userLocation = {
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           }
-          
+
           map.setCenter(userLocation)
           map.setZoom(12)
-          
+
           // Aggiungi marker per la posizione dell'utente
           new window.google.maps.Marker({
             position: userLocation,
             map: map,
-            title: "La tua posizione",
+            title: 'La tua posizione',
             icon: {
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+              url:
+                'data:image/svg+xml;charset=UTF-8,' +
+                encodeURIComponent(`
                 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="12" cy="12" r="8" fill="#4285f4" stroke="#fff" stroke-width="2"/>
                   <circle cx="12" cy="12" r="3" fill="#fff"/>
                 </svg>
               `),
-              scaledSize: new window.google.maps.Size(24, 24)
-            }
+              scaledSize: new window.google.maps.Size(24, 24),
+            },
           })
         },
         (error) => {
@@ -255,21 +266,23 @@ export default function Map() {
         const location = results[0].geometry.location
         map.setCenter(location)
         map.setZoom(12)
-        
+
         // Aggiungi marker per il luogo cercato
         new window.google.maps.Marker({
           position: location,
           map: map,
           title: searchInput,
           icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+            url:
+              'data:image/svg+xml;charset=UTF-8,' +
+              encodeURIComponent(`
               <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="16" cy="16" r="12" fill="#ff9800" stroke="#fff" stroke-width="2"/>
                 <text x="16" y="20" text-anchor="middle" fill="white" font-size="16">📍</text>
               </svg>
             `),
-            scaledSize: new window.google.maps.Size(32, 32)
-          }
+            scaledSize: new window.google.maps.Size(32, 32),
+          },
         })
       } else {
         alert('Luogo non trovato. Prova con un indirizzo più specifico.')
@@ -293,13 +306,13 @@ export default function Map() {
       const response = await fetch('/api/places/search-sports', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           latitude: center.lat(),
           longitude: center.lng(),
-          radius: 15000
-        })
+          radius: 15000,
+        }),
       })
 
       if (!response.ok) {
@@ -315,7 +328,7 @@ export default function Map() {
       const places = data.places || []
 
       // Pulisci marker precedenti delle strutture sportive (mantieni posizione utente)
-      markers.forEach(marker => {
+      markers.forEach((marker) => {
         if (marker.getTitle() !== 'La tua posizione' && !marker.getTitle().includes('📍')) {
           marker.setMap(null)
         }
@@ -327,19 +340,21 @@ export default function Map() {
           const marker = new window.google.maps.Marker({
             position: {
               lat: place.location.latitude,
-              lng: place.location.longitude
+              lng: place.location.longitude,
             },
             map: map,
             title: place.displayName?.text || 'Struttura sportiva',
             icon: {
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+              url:
+                'data:image/svg+xml;charset=UTF-8,' +
+                encodeURIComponent(`
                 <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="16" cy="16" r="12" fill="#e91e63" stroke="#fff" stroke-width="2"/>
                   <text x="16" y="20" text-anchor="middle" fill="white" font-size="16">🎾</text>
                 </svg>
               `),
-              scaledSize: new window.google.maps.Size(32, 32)
-            }
+              scaledSize: new window.google.maps.Size(32, 32),
+            },
           })
 
           const infoWindow = new window.google.maps.InfoWindow({
@@ -349,17 +364,21 @@ export default function Map() {
                 <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
                   📍 ${place.formattedAddress || 'Indirizzo non disponibile'}
                 </p>
-                ${place.nationalPhoneNumber ? `
+                ${
+                  place.nationalPhoneNumber
+                    ? `
                   <p style="margin: 0 0 6px 0; font-size: 13px; color: #666;">
                     📞 ${place.nationalPhoneNumber}
                   </p>
-                ` : ''}
+                `
+                    : ''
+                }
                 <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=${place.location.latitude},${place.location.longitude}', '_blank')"
                         style="margin-top: 8px; padding: 6px 12px; background: #e91e63; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
                   🗺️ Visualizza su Google Maps
                 </button>
               </div>
-            `
+            `,
           })
 
           marker.addListener('click', () => {
@@ -370,10 +389,15 @@ export default function Map() {
         }
       })
 
-      setMarkers(prev => [...prev.filter(m => m.getTitle() === 'La tua posizione' || m.getTitle().includes('📍')), ...newMarkers])
+      setMarkers((prev) => [
+        ...prev.filter((m) => m.getTitle() === 'La tua posizione' || m.getTitle().includes('📍')),
+        ...newMarkers,
+      ])
 
       if (places.length === 0) {
-        alert('Nessuna struttura sportiva trovata in questa area. Prova a cercare in una zona diversa.')
+        alert(
+          'Nessuna struttura sportiva trovata in questa area. Prova a cercare in una zona diversa.'
+        )
       }
     } catch (error) {
       console.error('Errore nella ricerca delle strutture sportive:', error)
@@ -387,7 +411,10 @@ export default function Map() {
     <>
       <Head>
         <title>Mappa Campi da Tennis e Padel - Women in Net</title>
-        <meta name="description" content="Trova campi da tennis e padel e tenniste nella tua zona" />
+        <meta
+          name="description"
+          content="Trova campi da tennis e padel e tenniste nella tua zona"
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -396,25 +423,21 @@ export default function Map() {
         {/* Header */}
         <header className={styles.header}>
           <div className={styles.headerContent}>
-          <h1 className={styles.title}>
-            🎾 Mappa Campi da Tennis e Padel
-          </h1>
-          <p className={styles.subtitle}>
-            Trova campi da tennis e padel reali nella tua zona
-          </p>
+            <h1 className={styles.title}>🎾 Mappa Campi da Tennis e Padel</h1>
+            <p className={styles.subtitle}>Trova campi da tennis e padel reali nella tua zona</p>
           </div>
         </header>
 
         {/* Controls */}
         <div className={styles.controls}>
-          <button 
+          <button
             className={styles.locationBtn}
             onClick={handleLocationSearch}
             disabled={!isLoaded}
           >
             📍 Trova la mia posizione
           </button>
-          
+
           <button
             className={styles.locationBtn}
             onClick={searchSportsInCurrentArea}
@@ -423,17 +446,17 @@ export default function Map() {
           >
             {isSearchingPlaces ? '⏳ Cercando...' : '🎾 Cerca campi qui'}
           </button>
-          
+
           <div className={styles.searchBox}>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Cerca città o indirizzo..."
               className={styles.searchInput}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyPress={handleKeyPress}
             />
-            <button 
+            <button
               className={styles.searchBtn}
               onClick={handleSearch}
               disabled={!isLoaded || !searchInput.trim()}
@@ -445,12 +468,8 @@ export default function Map() {
 
         {/* Map Container */}
         <div className={styles.mapContainer}>
-          <div 
-            ref={mapRef} 
-            className={styles.map}
-            style={{ width: '100%', height: '100%' }}
-          />
-          
+          <div ref={mapRef} className={styles.map} style={{ width: '100%', height: '100%' }} />
+
           {!isLoaded && (
             <div className={styles.loading}>
               <div className={styles.spinner}></div>
@@ -467,16 +486,30 @@ export default function Map() {
             <span>Campi da tennis e padel</span>
           </div>
           <div className={styles.legendItem}>
-            <span className={styles.legendIcon} style={{color: '#4285f4'}}>📍</span>
+            <span className={styles.legendIcon} style={{ color: '#4285f4' }}>
+              📍
+            </span>
             <span>La tua posizione</span>
           </div>
           <div className={styles.legendItem}>
-            <span className={styles.legendIcon} style={{color: '#ff9800'}}>📍</span>
+            <span className={styles.legendIcon} style={{ color: '#ff9800' }}>
+              📍
+            </span>
             <span>Luogo cercato</span>
           </div>
-          <div style={{marginTop: '1rem', padding: '0.5rem', background: '#f0f8ff', borderRadius: '4px', fontSize: '0.8rem'}}>
-            💡 <strong>Suggerimento:</strong> Sposta la mappa e clicca "Cerca campi qui" per trovare campi da tennis e padel nell'area visualizzata
-            <br />📏 <strong>Raggio di ricerca:</strong> 15 km dal centro della mappa
+          <div
+            style={{
+              marginTop: '1rem',
+              padding: '0.5rem',
+              background: '#f0f8ff',
+              borderRadius: '4px',
+              fontSize: '0.8rem',
+            }}
+          >
+            💡 <strong>Suggerimento:</strong> Sposta la mappa e clicca "Cerca campi qui" per trovare
+            campi da tennis e padel nell'area visualizzata
+            <br />
+            📏 <strong>Raggio di ricerca:</strong> 15 km dal centro della mappa
           </div>
         </div>
       </div>

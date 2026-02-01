@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const readline = require('readline')
 const { promisify } = require('util')
 
-console.log("📡 DATABASE_URL:", process.env.DATABASE_URL)
+console.log('📡 DATABASE_URL:', process.env.DATABASE_URL)
 
 // Inizializza Prisma e readline
 const prisma = new PrismaClient()
@@ -43,12 +43,11 @@ async function resetAndCreateAdmin() {
         password: hashedPassword,
         isAdmin: true,
         emailVerified: true,
-        disponibilita: true
-      }
+        disponibilita: true,
+      },
     })
 
     console.log('✅ Admin creato con successo!')
-
   } catch (error) {
     console.error('❌ Errore:', error.message)
   } finally {

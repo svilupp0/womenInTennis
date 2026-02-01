@@ -114,7 +114,7 @@ Related to #(issue number)
 - [ ] Richiede env vars update
 - [ ] Richiede cache clear
 - [ ] Richiede deploy order specifico
-- [ ] Altro: ******\_\_\_******
+- [ ] Altro: **\*\***\_\_\_**\*\***
 
 ## 📊 Performance Impact
 

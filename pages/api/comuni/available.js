@@ -16,38 +16,37 @@ async function handler(req, res) {
       by: ['comune'],
       where: {
         comune: {
-          not: null // Escludi utenti senza comune
-        }
+          not: null, // Escludi utenti senza comune
+        },
       },
       _count: {
-        comune: true
+        comune: true,
       },
       orderBy: {
         _count: {
-          comune: 'desc' // Ordina per numero di giocatrici (più popolati prima)
-        }
-      }
+          comune: 'desc', // Ordina per numero di giocatrici (più popolati prima)
+        },
+      },
     })
 
     // Trasforma i dati per il frontend
-    const comuni = comuniData.map(item => ({
+    const comuni = comuniData.map((item) => ({
       nome: item.comune,
-      count: item._count.comune
+      count: item._count.comune,
     }))
 
     // Risposta di successo
     res.status(200).json({
       success: true,
       comuni: comuni,
-      total: comuni.length
+      total: comuni.length,
     })
-
   } catch (error) {
     console.error('Errore recupero comuni:', error)
 
     // Errore generico
-    res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+    res.status(500).json({
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

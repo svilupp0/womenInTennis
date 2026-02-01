@@ -19,9 +19,9 @@ async function handler(req, res) {
     // Costruisci filtri per utenti
     const userFilters = {
       id: {
-        not: userId // Escludi eventi dell'utente corrente
+        not: userId, // Escludi eventi dell'utente corrente
       },
-      disponibilita: true // Solo utenti disponibili
+      disponibilita: true, // Solo utenti disponibili
     }
 
     if (comune) {
@@ -36,18 +36,18 @@ async function handler(req, res) {
     const eventFilters = {
       status: 'AVAILABLE', // Solo eventi disponibili
       start: {
-        gte: new Date() // Solo eventi futuri
-      }
+        gte: new Date(), // Solo eventi futuri
+      },
     }
 
     if (date) {
       const selectedDate = new Date(date)
       const nextDay = new Date(selectedDate)
       nextDay.setDate(nextDay.getDate() + 1)
-      
+
       eventFilters.start = {
         gte: selectedDate,
-        lt: nextDay
+        lt: nextDay,
       }
     }
 
@@ -55,7 +55,7 @@ async function handler(req, res) {
     const availableEvents = await prisma.event.findMany({
       where: {
         ...eventFilters,
-        user: userFilters
+        user: userFilters,
       },
       include: {
         user: {
@@ -69,42 +69,41 @@ async function handler(req, res) {
                 livello: true,
               },
             },
-            telefono: true
-          }
-        }
+            telefono: true,
+          },
+        },
       },
       orderBy: [
         {
-          start: 'asc'
+          start: 'asc',
         },
         {
-          createdAt: 'desc'
-        }
-      ]
+          createdAt: 'desc',
+        },
+      ],
     })
 
     // Aggiungi colore e formatta per il frontend
-    const formattedEvents = availableEvents.map(event => ({
+    const formattedEvents = availableEvents.map((event) => ({
       ...event,
       color: '#3c70f2', // Blu per disponibili
       // Nascondi informazioni sensibili se necessario
       user: {
         ...event.user,
         // Mostra solo prime lettere dell'email per privacy
-        displayName: event.user.email.split('@')[0]
-      }
+        displayName: event.user.email.split('@')[0],
+      },
     }))
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       events: formattedEvents,
       count: formattedEvents.length,
       filters: {
         comune,
         livello,
-        date
-      }
+        date,
+      },
     })
-
   } catch (error) {
     console.error('Errore caricamento eventi pubblici:', error)
     return res.status(500).json({ error: 'Errore interno del server' })

@@ -14,64 +14,66 @@ async function handler(req, res) {
     const { type = 'given' } = req.query // 'given' o 'received'
 
     let reports
-    
+
     if (type === 'received') {
       // Segnalazioni ricevute da questo utente
       reports = await prisma.report.findMany({
         where: {
-          reportedId: userId
+          reportedId: userId,
         },
         include: {
           reporter: {
             select: {
               id: true,
-              email: true
-            }
-          }
+              email: true,
+            },
+          },
         },
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       })
     } else {
       // Segnalazioni fatte da questo utente (default)
       reports = await prisma.report.findMany({
         where: {
-          reporterId: userId
+          reporterId: userId,
         },
         include: {
           reported: {
             select: {
               id: true,
-              email: true
-            }
-          }
+              email: true,
+            },
+          },
         },
         orderBy: {
-          createdAt: 'desc'
-        }
+          createdAt: 'desc',
+        },
       })
     }
 
     // Trasforma i dati per il frontend (privacy-friendly)
-    const formattedReports = reports.map(report => ({
+    const formattedReports = reports.map((report) => ({
       id: report.id,
       reason: report.reason,
       description: report.description,
       status: report.status,
       createdAt: report.createdAt,
       updatedAt: report.updatedAt,
-      ...(type === 'received' ? {
-        reporter: {
-          id: report.reporter.id,
-          username: report.reporter.email.split('@')[0]
-        }
-      } : {
-        reported: {
-          id: report.reported.id,
-          username: report.reported.email.split('@')[0]
-        }
-      })
+      ...(type === 'received'
+        ? {
+            reporter: {
+              id: report.reporter.id,
+              username: report.reporter.email.split('@')[0],
+            },
+          }
+        : {
+            reported: {
+              id: report.reported.id,
+              username: report.reported.email.split('@')[0],
+            },
+          }),
     }))
 
     // Risposta di successo
@@ -79,15 +81,14 @@ async function handler(req, res) {
       success: true,
       reports: formattedReports,
       count: formattedReports.length,
-      type: type
+      type: type,
     })
-
   } catch (error) {
     console.error('Errore recupero segnalazioni:', error)
 
     // Errore generico
-    res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+    res.status(500).json({
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

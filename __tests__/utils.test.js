@@ -1,13 +1,17 @@
 // __tests__/utils.test.js
 import { validateEmail, validatePassword, sanitizeInput } from '../lib/security/emailValidator'
-import { generateVerificationToken, secureTokenCompare, isTokenExpired } from '../lib/security/tokenUtils'
+import {
+  generateVerificationToken,
+  secureTokenCompare,
+  isTokenExpired,
+} from '../lib/security/tokenUtils'
 
 // Mock crypto for consistent testing
 jest.mock('crypto', () => ({
   randomBytes: jest.fn(() => ({
-    toString: jest.fn(() => 'mocked-random-string')
+    toString: jest.fn(() => 'mocked-random-string'),
   })),
-  timingSafeEqual: jest.fn()
+  timingSafeEqual: jest.fn(),
 }))
 
 describe('Email Validator', () => {
@@ -102,10 +106,10 @@ describe('Token Utils', () => {
   describe('generateVerificationToken', () => {
     it('should generate token with correct expiry', () => {
       const result = generateVerificationToken(24)
-      
+
       expect(result.token).toBe('mocked-random-string')
       expect(result.expiry).toBeInstanceOf(Date)
-      
+
       // Check expiry is approximately 24 hours from now
       const expectedExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000)
       const timeDiff = Math.abs(result.expiry.getTime() - expectedExpiry.getTime())
@@ -114,15 +118,17 @@ describe('Token Utils', () => {
 
     it('should generate different tokens', () => {
       const crypto = require('crypto')
-      crypto.randomBytes.mockReturnValueOnce({
-        toString: () => 'token1'
-      }).mockReturnValueOnce({
-        toString: () => 'token2'
-      })
+      crypto.randomBytes
+        .mockReturnValueOnce({
+          toString: () => 'token1',
+        })
+        .mockReturnValueOnce({
+          toString: () => 'token2',
+        })
 
       const result1 = generateVerificationToken(1)
       const result2 = generateVerificationToken(1)
-      
+
       expect(result1.token).toBe('token1')
       expect(result2.token).toBe('token2')
     })
@@ -153,7 +159,7 @@ describe('Token Utils', () => {
       crypto.timingSafeEqual.mockReturnValue(true)
 
       const result = secureTokenCompare('token1', 'token1')
-      
+
       expect(crypto.timingSafeEqual).toHaveBeenCalled()
       expect(result).toBe(true)
     })

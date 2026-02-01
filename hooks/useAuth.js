@@ -3,7 +3,7 @@ import { AuthContext } from '../contexts/AuthContext'
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
-  
+
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
@@ -22,7 +22,7 @@ export const useAuth = () => {
     getAuthHeader,
     saveAuthData,
     clearAuthData,
-    updateUser // <- IMPORTATO dal context
+    updateUser, // <- IMPORTATO dal context
   } = context
 
   // Funzioni helper aggiuntive
@@ -53,10 +53,12 @@ export const useAuth = () => {
       const sports = helpers.getUserSports()
       if (sports.length === 0) return 'Sport non specificato'
 
-      return sports.map(sl => {
-        const sportIcon = sl.sport === 'TENNIS' ? '🎾' : '🏓'
-        return `${sportIcon} ${sl.sport}: ${sl.livello}`
-      }).join(', ')
+      return sports
+        .map((sl) => {
+          const sportIcon = sl.sport === 'TENNIS' ? '🎾' : '🏓'
+          return `${sportIcon} ${sl.sport}: ${sl.livello}`
+        })
+        .join(', ')
     },
     getUserPhone: () => user?.telefono || 'Non specificato',
     isUserAvailable: () => user?.disponibilita ?? false,
@@ -73,22 +75,22 @@ export const useAuth = () => {
 
     // Informazioni auth
     hasValidToken: () => !!token && !loading,
-    
+
     // Informazioni profilo
     hasCompleteProfile: () => {
       return !!(user?.comune && user?.livello)
     },
-    
+
     getProfileCompleteness: () => {
       if (!user) return 0
-      
+
       let completed = 0
       const fields = ['email', 'comune', 'livello', 'telefono']
-      
-      fields.forEach(field => {
+
+      fields.forEach((field) => {
         if (user[field]) completed++
       })
-      
+
       return Math.round((completed / fields.length) * 100)
     },
 
@@ -104,7 +106,7 @@ export const useAuth = () => {
     // Registrazione con verifica email e redirect
     registerAndRedirect: async (userData, redirectPath = '/verify-email') => {
       const result = await register(userData)
-      
+
       // Controlla se la registrazione è avvenuta con successo
       if (result.success) {
         // Verifica che l'email sia stata inviata prima di fare il redirect
@@ -120,9 +122,9 @@ export const useAuth = () => {
           }
         }
       }
-      
+
       return result
-    }
+    },
   }
 
   return {
@@ -130,7 +132,7 @@ export const useAuth = () => {
     user,
     token,
     loading,
-    
+
     // Funzioni auth
     login,
     logout,
@@ -143,9 +145,9 @@ export const useAuth = () => {
     saveAuthData,
     clearAuthData,
     updateUser, // <- ESPORTATO per l'uso nei componenti
-    
+
     // Helper functions
-    ...helpers
+    ...helpers,
   }
 }
 

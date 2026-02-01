@@ -8,29 +8,34 @@ const nextConfig = {
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'X-XSS-Protection',
-            value: '1; mode=block'
+            value: '1; mode=block',
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin',
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(self), payment=(self "https://www.buymeacoffee.com" "https://api.stripe.com")'
+            value:
+              'camera=(), microphone=(), geolocation=(self), payment=(self "https://www.buymeacoffee.com" "https://api.stripe.com")',
           },
           // HSTS solo in produzione
-          ...(process.env.NODE_ENV === 'production' ? [{
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains; preload'
-          }] : []),
+          ...(process.env.NODE_ENV === 'production'
+            ? [
+                {
+                  key: 'Strict-Transport-Security',
+                  value: 'max-age=31536000; includeSubDomains; preload',
+                },
+              ]
+            : []),
           {
             key: 'Content-Security-Policy',
             value: [
@@ -38,7 +43,7 @@ const nextConfig = {
               // Script sources
               // In sviluppo, 'unsafe-eval' è necessario per React Fast Refresh.
               // In produzione, è rimosso per maggiore sicurezza.
-              `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ""} https://maps.googleapis.com https://maps.gstatic.com https://cdnjs.buymeacoffee.com`,
+              `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} https://maps.googleapis.com https://maps.gstatic.com https://cdnjs.buymeacoffee.com`,
               // Style sources - permetti Google Fonts e inline per styled-components
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               // Font sources
@@ -55,10 +60,10 @@ const nextConfig = {
               "form-action 'self'",
               "frame-ancestors 'none'",
               // Upgrade insecure requests solo in produzione
-              ...(process.env.NODE_ENV === 'production' ? ["upgrade-insecure-requests"] : [])
-            ].join('; ')
-          }
-        ]
+              ...(process.env.NODE_ENV === 'production' ? ['upgrade-insecure-requests'] : []),
+            ].join('; '),
+          },
+        ],
       },
       {
         // Headers specifici per API routes
@@ -66,17 +71,17 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'no-store, no-cache, must-revalidate, proxy-revalidate'
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
-          }
-        ]
+            value: 'DENY',
+          },
+        ],
       },
       {
         // Headers per assets statici
@@ -84,10 +89,10 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable'
-          }
-        ]
-      }
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ]
   },
 
@@ -99,10 +104,10 @@ const nextConfig = {
     domains: [
       'maps.googleapis.com',
       'maps.gstatic.com',
-      'lh3.googleusercontent.com' // Per foto profilo Google se implementi OAuth
+      'lh3.googleusercontent.com', // Per foto profilo Google se implementi OAuth
     ],
     formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 60
+    minimumCacheTTL: 60,
   },
 
   // Configurazione per produzione
@@ -110,9 +115,9 @@ const nextConfig = {
     compress: true,
     generateEtags: true,
     httpAgentOptions: {
-      keepAlive: true
-    }
-  })
+      keepAlive: true,
+    },
+  }),
 }
 
 export default nextConfig

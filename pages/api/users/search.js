@@ -18,10 +18,10 @@ async function handler(req, res) {
     const whereClause = {
       // Escludi l'utente corrente dai risultati
       id: {
-        not: userId
+        not: userId,
       },
       // Escludi gli admin dalla ricerca
-      isAdmin: false
+      isAdmin: false,
     }
 
     // Aggiungi filtri se specificati
@@ -37,8 +37,8 @@ async function handler(req, res) {
     if (sport && sport.trim() !== '') {
       whereClause.sportLevels = {
         some: {
-          sport: sport
-        }
+          sport: sport,
+        },
       }
 
       // Se specificato anche livello, filtra per livello specifico dello sport
@@ -49,8 +49,8 @@ async function handler(req, res) {
       // Se livello specificato ma sport no, cerca utenti che hanno quel livello in qualsiasi sport
       whereClause.sportLevels = {
         some: {
-          livello: livello
-        }
+          livello: livello,
+        },
       }
     }
 
@@ -68,36 +68,36 @@ async function handler(req, res) {
         sportLevels: {
           select: {
             sport: true,
-            livello: true
-          }
+            livello: true,
+          },
         },
         // 🆕 AGGIUNGI QUESTO BLOCCO - Eventi disponibili
         events: {
           where: {
             status: 'AVAILABLE',
-            start: { 
+            start: {
               gte: new Date(),
               // Limita ai prossimi 7 giorni per performance
-              lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-            }
+              lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            },
           },
           select: {
             id: true,
             title: true,
             start: true,
             end: true,
-            location: true
+            location: true,
           },
           orderBy: { start: 'asc' },
-          take: 5 // Max 5 slot per utente
-        }
+          take: 5, // Max 5 slot per utente
+        },
       },
       // 🆕 AGGIUNGI QUESTO - Ordinamento utenti
       orderBy: [
         { disponibilita: 'desc' }, // Prima i disponibili
-        { createdAt: 'desc' }      // Poi i più recenti
+        { createdAt: 'desc' }, // Poi i più recenti
       ],
-      take: 50 // Limite massimo risultati per performance
+      take: 50, // Limite massimo risultati per performance
     })
 
     // Risposta di successo
@@ -109,16 +109,15 @@ async function handler(req, res) {
         comune: comune || null,
         sport: sport || null,
         livello: livello || null,
-        disponibilita: disponibilita === 'true'
-      }
+        disponibilita: disponibilita === 'true',
+      },
     })
-
   } catch (error) {
     console.error('Errore ricerca utenti:', error)
 
     // Errore generico
-    res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+    res.status(500).json({
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

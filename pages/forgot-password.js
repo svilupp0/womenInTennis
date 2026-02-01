@@ -91,14 +91,13 @@ export default function ForgotPassword() {
                   <div className={styles.authHeader}>
                     <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔐</div>
                     <h1>Password Dimenticata?</h1>
-                    <p>Inserisci la tua email e ti invieremo le istruzioni per reimpostare la password</p>
+                    <p>
+                      Inserisci la tua email e ti invieremo le istruzioni per reimpostare la
+                      password
+                    </p>
                   </div>
 
-                  {error && (
-                    <div className={styles.errorMessage}>
-                      {error}
-                    </div>
-                  )}
+                  {error && <div className={styles.errorMessage}>{error}</div>}
 
                   <form onSubmit={handleSubmit} className={styles.authForm}>
                     <div className={styles.formGroup}>
@@ -166,10 +165,14 @@ export default function ForgotPassword() {
                   </div>
 
                   <div style={{ textAlign: 'center' }}>
-                    <Link href="/login" className="btn btn-primary" style={{ marginBottom: '1rem', width: '100%' }}>
+                    <Link
+                      href="/login"
+                      className="btn btn-primary"
+                      style={{ marginBottom: '1rem', width: '100%' }}
+                    >
                       🔙 Torna al Login
                     </Link>
-                    
+
                     <button
                       onClick={() => {
                         setIsSuccess(false)

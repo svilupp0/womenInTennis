@@ -9,8 +9,8 @@ Cypress.Commands.add('login', (email = 'test@example.com', password = 'password1
     url: '/api/auth/login',
     body: {
       email,
-      password
-    }
+      password,
+    },
   }).then((response) => {
     if (response.body.success) {
       // Store token and user in localStorage
@@ -27,15 +27,15 @@ Cypress.Commands.add('register', (userData) => {
     email: 'newuser@example.com',
     password: 'password123',
     comune: 'Milano',
-    livello: 'Intermedio'
+    livello: 'Intermedio',
   }
-  
+
   const user = { ...defaultUserData, ...userData }
-  
+
   cy.request({
     method: 'POST',
     url: '/api/auth/register',
-    body: user
+    body: user,
   })
 })
 
@@ -54,11 +54,11 @@ Cypress.Commands.add('createVerifiedUser', (email = 'verified@example.com') => {
     email,
     emailVerified: true,
     comune: 'Milano',
-    livello: 'Intermedio'
+    livello: 'Intermedio',
   }
-  
+
   const mockToken = 'mock-jwt-token-for-testing'
-  
+
   window.localStorage.setItem('token', mockToken)
   window.localStorage.setItem('user', JSON.stringify(mockUser))
 })
@@ -83,21 +83,21 @@ Cypress.Commands.add('fillRegistrationForm', (userData) => {
     confirmPassword = 'password123',
     comune = 'Milano',
     livello = 'Intermedio',
-    telefono = ''
+    telefono = '',
   } = userData
 
   cy.get('input[name="email"]').clear().type(email)
   cy.get('input[name="password"]').clear().type(password)
   cy.get('input[name="confirmPassword"]').clear().type(confirmPassword)
-  
+
   if (comune) {
     cy.get('input[name="comune"]').clear().type(comune)
   }
-  
+
   if (livello) {
     cy.get('select[name="livello"]').select(livello)
   }
-  
+
   if (telefono) {
     cy.get('input[name="telefono"]').clear().type(telefono)
   }

@@ -48,11 +48,11 @@ export const AuthProvider = ({ children }) => {
       } else {
         // Gestione specifica per email non verificata
         if (data.code === 'EMAIL_NOT_VERIFIED') {
-          return { 
-            success: false, 
+          return {
+            success: false,
             error: data.error,
             code: 'EMAIL_NOT_VERIFIED',
-            email: data.email 
+            email: data.email,
           }
         }
         return { success: false, error: data.error }
@@ -78,11 +78,11 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         // NON salvare auth data se richiede verifica email
         if (data.nextStep === 'EMAIL_VERIFICATION_REQUIRED') {
-          return { 
-            success: true, 
-            user: data.user, 
+          return {
+            success: true,
+            user: data.user,
             requiresEmailVerification: true,
-            message: data.message 
+            message: data.message,
           }
         } else {
           // Fallback per registrazioni già verificate
@@ -211,21 +211,21 @@ export const AuthProvider = ({ children }) => {
     // 🔄 MERGE con i dati esistenti (non sovrascrivere!)
     const mergedUserData = {
       ...user, // ← MANTIENI tutti i dati esistenti
-      ...updatedUserData // ← SOVRASCRIVI solo i campi forniti
+      ...updatedUserData, // ← SOVRASCRIVI solo i campi forniti
     }
 
     // Aggiorna localStorage con i dati completi
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(mergedUserData))
     }
-    
+
     // Aggiorna React state
     setUser(mergedUserData)
-    
+
     console.log('🔄 User data updated:', {
       before: user,
-      received: updatedUserData, 
-      after: mergedUserData
+      received: updatedUserData,
+      after: mergedUserData,
     })
   }
 
@@ -244,12 +244,8 @@ export const AuthProvider = ({ children }) => {
     getAuthHeader,
     saveAuthData,
     clearAuthData,
-    updateUser // ← NUOVA FUNZIONE ESPOSTA
+    updateUser, // ← NUOVA FUNZIONE ESPOSTA
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

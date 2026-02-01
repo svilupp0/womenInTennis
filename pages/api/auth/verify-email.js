@@ -30,9 +30,9 @@ export default async function handler(req, res) {
 
     // Validazione input
     if (!token || !email) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'Token e email sono obbligatori',
-        code: 'MISSING_PARAMS'
+        code: 'MISSING_PARAMS',
       })
     }
 
@@ -51,15 +51,15 @@ export default async function handler(req, res) {
             sport: true,
             livello: true,
           },
-        }
-      }
+        },
+      },
     })
 
     // Verifica se l'utente esiste
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: 'Utente non trovato',
-        code: 'USER_NOT_FOUND'
+        code: 'USER_NOT_FOUND',
       })
     }
 
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         message: 'Email già verificata! Puoi fare login.',
-        code: 'ALREADY_VERIFIED'
+        code: 'ALREADY_VERIFIED',
       })
     }
 
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
     if (!user.verificationToken) {
       return res.status(400).json({
         error: 'Token di verifica non trovato. Richiedi un nuovo link.',
-        code: 'NO_TOKEN'
+        code: 'NO_TOKEN',
       })
     }
 
@@ -87,13 +87,13 @@ export default async function handler(req, res) {
         where: { id: user.id },
         data: {
           verificationToken: null,
-          verificationTokenExpiry: null
-        }
+          verificationTokenExpiry: null,
+        },
       })
 
       return res.status(400).json({
         error: 'Token di verifica scaduto. Richiedi un nuovo link.',
-        code: 'TOKEN_EXPIRED'
+        code: 'TOKEN_EXPIRED',
       })
     }
 
@@ -101,7 +101,7 @@ export default async function handler(req, res) {
     if (!secureTokenCompare(token, user.verificationToken)) {
       return res.status(400).json({
         error: 'Token di verifica non valido',
-        code: 'INVALID_TOKEN'
+        code: 'INVALID_TOKEN',
       })
     }
 
@@ -111,7 +111,7 @@ export default async function handler(req, res) {
       data: {
         emailVerified: true,
         verificationToken: null,
-        verificationTokenExpiry: null
+        verificationTokenExpiry: null,
       },
       select: {
         id: true,
@@ -124,12 +124,12 @@ export default async function handler(req, res) {
             livello: true,
           },
         },
-        createdAt: true
-      }
+        createdAt: true,
+      },
     })
 
     // Invia email di benvenuto (non bloccante)
-    sendWelcomeEmail(user.email, user.comune || '').catch(error => {
+    sendWelcomeEmail(user.email, user.comune || '').catch((error) => {
       console.error('Errore invio email benvenuto:', error)
     })
 
@@ -138,24 +138,23 @@ export default async function handler(req, res) {
       success: true,
       message: 'Email verificata con successo! Ora puoi fare login.',
       user: updatedUser,
-      code: 'VERIFICATION_SUCCESS'
+      code: 'VERIFICATION_SUCCESS',
     })
-
   } catch (error) {
     console.error('Errore verifica email:', error)
 
     // Gestione errori specifici Prisma
     if (error.code === 'P2025') {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: 'Utente non trovato',
-        code: 'USER_NOT_FOUND'
+        code: 'USER_NOT_FOUND',
       })
     }
 
     // Errore generico
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Errore interno del server. Riprova più tardi.',
-      code: 'INTERNAL_ERROR'
+      code: 'INTERNAL_ERROR',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

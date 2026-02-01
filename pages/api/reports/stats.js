@@ -13,65 +13,65 @@ async function handler(req, res) {
 
     // Statistiche generali sui report
     const totalReports = await prisma.report.count()
-    
+
     const reportsByStatus = await prisma.report.groupBy({
       by: ['status'],
       _count: {
-        status: true
-      }
+        status: true,
+      },
     })
 
     const reportsByReason = await prisma.report.groupBy({
       by: ['reason'],
       _count: {
-        reason: true
+        reason: true,
       },
       orderBy: {
         _count: {
-          reason: 'desc'
-        }
-      }
+          reason: 'desc',
+        },
+      },
     })
 
     // Utenti più segnalati (top 5)
     const mostReportedUsers = await prisma.report.groupBy({
       by: ['reportedId'],
       _count: {
-        reportedId: true
+        reportedId: true,
       },
       orderBy: {
         _count: {
-          reportedId: 'desc'
-        }
+          reportedId: 'desc',
+        },
       },
-      take: 5
+      take: 5,
     })
 
     // Ottieni dettagli degli utenti più segnalati
-    const userIds = mostReportedUsers.map(item => item.reportedId)
+    const userIds = mostReportedUsers.map((item) => item.reportedId)
     const userDetails = await prisma.user.findMany({
       where: {
         id: {
-          in: userIds
-        }
+          in: userIds,
+        },
       },
       select: {
         id: true,
         email: true,
         comune: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     })
 
     // Combina dati
-    const mostReportedWithDetails = mostReportedUsers.map(item => {
-      const user = userDetails.find(u => u.id === item.reportedId)
+    const mostReportedWithDetails = mostReportedUsers.map((item) => {
+      const user = userDetails.find((u) => u.id === item.reportedId)
       return {
         userId: item.reportedId,
         reportCount: item._count.reportedId,
         username: user ? user.email.split('@')[0] : 'Unknown',
         comune: user ? user.comune : null,
-        userCreatedAt: user ? user.createdAt : null
+        userCreatedAt: user ? user.createdAt : null,
       }
     })
 
@@ -79,31 +79,31 @@ async function handler(req, res) {
     const recentReports = await prisma.report.findMany({
       take: 10,
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
       include: {
         reporter: {
           select: {
             id: true,
-            email: true
-          }
+            email: true,
+          },
         },
         reported: {
           select: {
             id: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     })
 
-    const formattedRecentReports = recentReports.map(report => ({
+    const formattedRecentReports = recentReports.map((report) => ({
       id: report.id,
       reason: report.reason,
       status: report.status,
       createdAt: report.createdAt,
       reporter: report.reporter.email.split('@')[0],
-      reported: report.reported.email.split('@')[0]
+      reported: report.reported.email.split('@')[0],
     }))
 
     // Risposta di successo
@@ -111,25 +111,24 @@ async function handler(req, res) {
       success: true,
       stats: {
         total: totalReports,
-        byStatus: reportsByStatus.map(item => ({
+        byStatus: reportsByStatus.map((item) => ({
           status: item.status,
-          count: item._count.status
+          count: item._count.status,
         })),
-        byReason: reportsByReason.map(item => ({
+        byReason: reportsByReason.map((item) => ({
           reason: item.reason,
-          count: item._count.reason
+          count: item._count.reason,
         })),
         mostReported: mostReportedWithDetails,
-        recent: formattedRecentReports
-      }
+        recent: formattedRecentReports,
+      },
     })
-
   } catch (error) {
     console.error('Errore recupero statistiche report:', error)
 
     // Errore generico
-    res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+    res.status(500).json({
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

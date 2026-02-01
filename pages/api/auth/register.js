@@ -1,6 +1,10 @@
 import { prisma } from '../../../lib/prisma'
 import bcrypt from 'bcryptjs'
-import { validateEmail, validatePassword, sanitizeInput } from '../../../lib/security/emailValidator'
+import {
+  validateEmail,
+  validatePassword,
+  sanitizeInput,
+} from '../../../lib/security/emailValidator'
 import { generateVerificationToken } from '../../../lib/security/tokenUtils'
 import { sendVerificationEmail } from '../../../lib/services/emailService'
 import { registrationLimiter } from '../../../lib/security/rateLimiter'
@@ -52,18 +56,18 @@ export default async function handler(req, res) {
       where: { email: normalizedEmail },
       select: {
         id: true,
-        emailVerified: true
-      }
+        emailVerified: true,
+      },
     })
 
     if (existingUser) {
       if (existingUser.emailVerified) {
-        return res.status(400).json({ 
-          error: ERROR_MESSAGES.EMAIL_EXISTS_VERIFIED 
+        return res.status(400).json({
+          error: ERROR_MESSAGES.EMAIL_EXISTS_VERIFIED,
         })
       } else {
-        return res.status(400).json({ 
-          error: ERROR_MESSAGES.EMAIL_EXISTS_UNVERIFIED 
+        return res.status(400).json({
+          error: ERROR_MESSAGES.EMAIL_EXISTS_UNVERIFIED,
         })
       }
     }
@@ -88,12 +92,14 @@ export default async function handler(req, res) {
         verificationTokenExpiry: expiry,
         lastVerificationSent: new Date(),
         // Creazione annidata dei UserSportLevel
-        sportLevels: sportLevels ? {
-          create: sportLevels.map(sl => ({
-            sport: sl.sport,
-            livello: sl.livello,
-          })),
-        } : undefined
+        sportLevels: sportLevels
+          ? {
+              create: sportLevels.map((sl) => ({
+                sport: sl.sport,
+                livello: sl.livello,
+              })),
+            }
+          : undefined,
       },
       select: {
         id: true,
@@ -109,26 +115,22 @@ export default async function handler(req, res) {
             sport: true,
             livello: true,
           },
-        }
+        },
         // Non restituiamo mai la password o il token
-      }
+      },
     })
 
     // Invia email di verifica
-    const emailSent = await sendVerificationEmail(
-      normalizedEmail, 
-      token, 
-      sanitizedComune || ''
-    )
+    const emailSent = await sendVerificationEmail(normalizedEmail, token, sanitizedComune || '')
 
     if (!emailSent) {
       // Se l'email non viene inviata, elimina l'utente creato
       await prisma.user.delete({
-        where: { id: newUser.id }
+        where: { id: newUser.id },
       })
-      
-      return res.status(500).json({ 
-        error: 'Errore nell\'invio dell\'email di verifica. Riprova più tardi.' 
+
+      return res.status(500).json({
+        error: "Errore nell'invio dell'email di verifica. Riprova più tardi.",
       })
     }
 
@@ -139,11 +141,10 @@ export default async function handler(req, res) {
       user: {
         id: newUser.id,
         email: newUser.email,
-        emailVerified: newUser.emailVerified
+        emailVerified: newUser.emailVerified,
       },
-      nextStep: 'EMAIL_VERIFICATION_REQUIRED'
+      nextStep: 'EMAIL_VERIFICATION_REQUIRED',
     })
-
   } catch (error) {
     console.error('Errore registrazione:', error)
 
@@ -153,8 +154,8 @@ export default async function handler(req, res) {
     }
 
     // Errore generico
-    res.status(500).json({ 
-      error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR 
+    res.status(500).json({
+      error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

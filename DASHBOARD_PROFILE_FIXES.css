@@ -7,16 +7,16 @@
 
 .profileName {
   /* Mobile first - dimensione leggibile e gestibile */
-  font-size: 1.25rem !important;        /* 20px invece di 32px */
-  font-weight: 700 !important;          /* Ridotto da 800 per meno dominanza */
+  font-size: 1.25rem !important; /* 20px invece di 32px */
+  font-weight: 700 !important; /* Ridotto da 800 per meno dominanza */
   line-height: 1.2 !important;
-  
+
   /* Gestione overflow essenziale */
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
   max-width: 100% !important;
-  
+
   /* Mantieni gli effetti visivi esistenti */
   color: white;
   margin-bottom: var(--space-xs);
@@ -30,26 +30,26 @@
 /* Scaling progressivo e intelligente */
 @media (min-width: 480px) {
   .profileName {
-    font-size: 1.375rem !important;     /* 22px */
+    font-size: 1.375rem !important; /* 22px */
   }
 }
 
 @media (min-width: 640px) {
   .profileName {
-    font-size: 1.5rem !important;       /* 24px */
+    font-size: 1.5rem !important; /* 24px */
   }
 }
 
 @media (min-width: 768px) {
   .profileName {
-    font-size: 1.75rem !important;      /* 28px */
-    white-space: normal !important;     /* Permetti wrap su tablet+ */
+    font-size: 1.75rem !important; /* 28px */
+    white-space: normal !important; /* Permetti wrap su tablet+ */
   }
 }
 
 @media (min-width: 1024px) {
   .profileName {
-    font-size: 2rem !important;         /* 32px solo su desktop */
+    font-size: 2rem !important; /* 32px solo su desktop */
   }
 }
 
@@ -59,7 +59,7 @@
 
 .profileHeader {
   display: flex !important;
-  flex-direction: column !important;    /* Stack verticale su mobile */
+  flex-direction: column !important; /* Stack verticale su mobile */
   gap: var(--space-md) !important;
   align-items: stretch !important;
 }
@@ -67,14 +67,14 @@
 .avatarSection {
   display: flex !important;
   align-items: center !important;
-  gap: var(--space-sm) !important;      /* Gap ridotto: 12px invece di 24px */
-  min-width: 0 !important;              /* Permetti shrinking */
+  gap: var(--space-sm) !important; /* Gap ridotto: 12px invece di 24px */
+  min-width: 0 !important; /* Permetti shrinking */
   width: 100% !important;
 }
 
 .profileInfo {
   flex: 1 !important;
-  min-width: 0 !important;              /* ESSENZIALE per text-overflow */
+  min-width: 0 !important; /* ESSENZIALE per text-overflow */
   overflow: hidden !important;
 }
 
@@ -92,15 +92,15 @@
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: center !important;
-    flex-wrap: wrap !important;         /* Permetti wrap se necessario */
+    flex-wrap: wrap !important; /* Permetti wrap se necessario */
   }
-  
+
   .avatarSection {
-    gap: var(--space-lg) !important;    /* Ripristina gap normale */
+    gap: var(--space-lg) !important; /* Ripristina gap normale */
     flex: 1 !important;
-    max-width: 70% !important;          /* Limita larghezza per lasciare spazio alle azioni */
+    max-width: 70% !important; /* Limita larghezza per lasciare spazio alle azioni */
   }
-  
+
   .profileActions {
     flex-shrink: 0 !important;
     max-width: 30% !important;
@@ -116,7 +116,7 @@
   width: 60px !important;
   height: 60px !important;
   font-size: 1.5rem !important;
-  flex-shrink: 0 !important;            /* Non rimpicciolire mai */
+  flex-shrink: 0 !important; /* Non rimpicciolire mai */
 }
 
 @media (min-width: 480px) {
@@ -158,7 +158,7 @@
 .profileActions {
   display: flex !important;
   align-items: center !important;
-  gap: var(--space-sm) !important;      /* Gap ridotto su mobile */
+  gap: var(--space-sm) !important; /* Gap ridotto su mobile */
   flex-wrap: wrap !important;
   justify-content: flex-start !important;
 }
@@ -170,13 +170,13 @@
     align-items: stretch !important;
     gap: var(--space-xs) !important;
   }
-  
+
   .profileActions .btn {
-    font-size: 0.75rem !important;      /* Testo più piccolo sui bottoni */
+    font-size: 0.75rem !important; /* Testo più piccolo sui bottoni */
     padding: var(--space-xs) var(--space-sm) !important;
-    min-height: 36px !important;        /* Altezza ridotta */
+    min-height: 36px !important; /* Altezza ridotta */
   }
-  
+
   .availabilityToggle {
     margin-top: var(--space-sm) !important;
     justify-content: center !important;
@@ -196,7 +196,7 @@
 
 .profileCard {
   /* Assicurati che il padding non causi overflow */
-  padding: var(--space-md) !important;  /* Ridotto su mobile */
+  padding: var(--space-md) !important; /* Ridotto su mobile */
   overflow: hidden !important;
 }
 
@@ -262,7 +262,7 @@
 
 /* Gestisci contenuto vuoto */
 .profileName:empty::before {
-  content: "Utente" !important;
+  content: 'Utente' !important;
   opacity: 0.7 !important;
 }
 
@@ -283,7 +283,7 @@
     background: none !important;
     -webkit-text-fill-color: initial !important;
   }
-  
+
   .avatar {
     width: 40px !important;
     height: 40px !important;

@@ -40,29 +40,31 @@ export default async function handler(req, res) {
         email: true,
         emailVerified: true,
         lastVerificationSent: true,
-        comune: true
-      }
+        comune: true,
+      },
     })
 
     if (!user) {
-      return res.status(404).json({ 
-        error: 'Utente non trovato. Verifica di aver inserito l\'email corretta.' 
+      return res.status(404).json({
+        error: "Utente non trovato. Verifica di aver inserito l'email corretta.",
       })
     }
 
     if (user.emailVerified) {
-      return res.status(400).json({ 
-        error: 'Email già verificata! Puoi fare login normalmente.' 
+      return res.status(400).json({
+        error: 'Email già verificata! Puoi fare login normalmente.',
       })
     }
 
     const now = new Date()
     const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000)
-    
+
     if (user.lastVerificationSent && user.lastVerificationSent > fiveMinutesAgo) {
-      const waitMinutes = Math.ceil((user.lastVerificationSent.getTime() + 5 * 60 * 1000 - now.getTime()) / (1000 * 60))
-      return res.status(429).json({ 
-        error: `Attendi ${waitMinutes} minuti prima di richiedere un nuovo link.` 
+      const waitMinutes = Math.ceil(
+        (user.lastVerificationSent.getTime() + 5 * 60 * 1000 - now.getTime()) / (1000 * 60)
+      )
+      return res.status(429).json({
+        error: `Attendi ${waitMinutes} minuti prima di richiedere un nuovo link.`,
       })
     }
 
@@ -73,38 +75,34 @@ export default async function handler(req, res) {
       data: {
         verificationToken: token,
         verificationTokenExpiry: expiry,
-        lastVerificationSent: now
-      }
+        lastVerificationSent: now,
+      },
     })
 
-    const emailSent = await sendVerificationEmail(
-      normalizedEmail, 
-      token
-    )
+    const emailSent = await sendVerificationEmail(normalizedEmail, token)
 
     if (!emailSent) {
-      return res.status(500).json({ 
-        error: 'Errore nell\'invio dell\'email. Riprova più tardi.' 
+      return res.status(500).json({
+        error: "Errore nell'invio dell'email. Riprova più tardi.",
       })
     }
 
     res.status(200).json({
       success: true,
       message: 'Email di verifica inviata! Controlla la tua casella di posta.',
-      email: normalizedEmail
+      email: normalizedEmail,
     })
-
   } catch (error) {
     console.error('Errore reinvio verifica:', error)
 
     if (error.code === 'P2025') {
-      return res.status(404).json({ 
-        error: 'Utente non trovato' 
+      return res.status(404).json({
+        error: 'Utente non trovato',
       })
     }
 
-    res.status(500).json({ 
-      error: 'Errore interno del server. Riprova più tardi.' 
+    res.status(500).json({
+      error: 'Errore interno del server. Riprova più tardi.',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

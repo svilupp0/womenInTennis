@@ -30,8 +30,8 @@ async function handler(req, res) {
       select: {
         id: true,
         email: true,
-        password: true
-      }
+        password: true,
+      },
     })
 
     // Verifica password attuale
@@ -47,18 +47,17 @@ async function handler(req, res) {
     // Aggiorna la password nel database
     await prisma.user.update({
       where: { id: user.id },
-      data: { password: hashedNewPassword }
+      data: { password: hashedNewPassword },
     })
 
     res.status(200).json({
       success: true,
-      message: 'Password cambiata con successo!'
+      message: 'Password cambiata con successo!',
     })
-
   } catch (error) {
     console.error('Errore cambio password admin:', error)
-    res.status(500).json({ 
-      error: 'Errore interno del server' 
+    res.status(500).json({
+      error: 'Errore interno del server',
     })
   }
   // Nota: Non disconnettiamo il singleton prisma

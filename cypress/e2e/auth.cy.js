@@ -20,7 +20,7 @@ describe('Authentication Flow', () => {
 
     it('should show validation errors for empty fields', () => {
       cy.get('button[type="submit"]').click()
-      
+
       // HTML5 validation should prevent submission
       cy.get('input[name="email"]:invalid').should('exist')
       cy.get('input[name="password"]:invalid').should('exist')
@@ -29,7 +29,7 @@ describe('Authentication Flow', () => {
     it('should show error for invalid credentials', () => {
       cy.fillLoginForm('wrong@example.com', 'wrongpassword')
       cy.get('button[type="submit"]').click()
-      
+
       cy.contains('Credenziali non valide').should('be.visible')
     })
 
@@ -41,16 +41,16 @@ describe('Authentication Flow', () => {
           success: false,
           error: 'Email non verificata',
           code: 'EMAIL_NOT_VERIFIED',
-          email: 'unverified@example.com'
-        }
+          email: 'unverified@example.com',
+        },
       }).as('loginUnverified')
 
       cy.fillLoginForm('unverified@example.com', 'password123')
       cy.get('button[type="submit"]').click()
-      
+
       cy.wait('@loginUnverified')
       cy.shouldSeeUnverifiedEmailScreen()
-      
+
       // Should have resend verification button
       cy.contains('Reinvia Email di Verifica').should('be.visible')
       cy.contains('Torna al Login').should('be.visible')
@@ -67,15 +67,15 @@ describe('Authentication Flow', () => {
             email: 'test@example.com',
             emailVerified: true,
             comune: 'Milano',
-            livello: 'Intermedio'
+            livello: 'Intermedio',
           },
-          token: 'mock-jwt-token'
-        }
+          token: 'mock-jwt-token',
+        },
       }).as('loginSuccess')
 
       cy.fillLoginForm('test@example.com', 'password123')
       cy.get('button[type="submit"]').click()
-      
+
       cy.wait('@loginSuccess')
       cy.shouldBeOnDashboard()
     })
@@ -88,8 +88,8 @@ describe('Authentication Flow', () => {
           success: false,
           error: 'Email non verificata',
           code: 'EMAIL_NOT_VERIFIED',
-          email: 'unverified@example.com'
-        }
+          email: 'unverified@example.com',
+        },
       }).as('loginUnverified')
 
       // Mock resend verification
@@ -97,8 +97,8 @@ describe('Authentication Flow', () => {
         statusCode: 200,
         body: {
           success: true,
-          message: 'Email di verifica inviata! Controlla la tua casella di posta.'
-        }
+          message: 'Email di verifica inviata! Controlla la tua casella di posta.',
+        },
       }).as('resendVerification')
 
       cy.fillLoginForm('unverified@example.com', 'password123')
@@ -107,7 +107,7 @@ describe('Authentication Flow', () => {
 
       cy.contains('Reinvia Email di Verifica').click()
       cy.wait('@resendVerification')
-      
+
       cy.contains('Email di verifica inviata!').should('be.visible')
     })
   })
@@ -131,9 +131,9 @@ describe('Authentication Flow', () => {
       cy.fillRegistrationForm({
         email: 'test@example.com',
         password: 'password123',
-        confirmPassword: 'different123'
+        confirmPassword: 'different123',
       })
-      
+
       cy.get('button[type="submit"]').click()
       cy.contains('Le password non coincidono').should('be.visible')
     })
@@ -142,9 +142,9 @@ describe('Authentication Flow', () => {
       cy.fillRegistrationForm({
         email: 'test@example.com',
         password: '123',
-        confirmPassword: '123'
+        confirmPassword: '123',
       })
-      
+
       cy.get('button[type="submit"]').click()
       cy.contains('La password deve essere di almeno 6 caratteri').should('be.visible')
     })
@@ -155,25 +155,25 @@ describe('Authentication Flow', () => {
         statusCode: 201,
         body: {
           success: true,
-          message: 'Registrazione completata! Controlla la tua email per verificare l\'account.',
+          message: "Registrazione completata! Controlla la tua email per verificare l'account.",
           user: {
             id: 1,
             email: 'newuser@example.com',
-            emailVerified: false
+            emailVerified: false,
           },
-          nextStep: 'EMAIL_VERIFICATION_REQUIRED'
-        }
+          nextStep: 'EMAIL_VERIFICATION_REQUIRED',
+        },
       }).as('registerSuccess')
 
       cy.fillRegistrationForm({
         email: 'newuser@example.com',
         password: 'password123',
-        confirmPassword: 'password123'
+        confirmPassword: 'password123',
       })
-      
+
       cy.get('button[type="submit"]').click()
       cy.wait('@registerSuccess')
-      
+
       cy.shouldSeeEmailVerification()
       cy.contains('newuser@example.com').should('be.visible')
       cy.contains('Reinvia Email').should('be.visible')
@@ -185,19 +185,19 @@ describe('Authentication Flow', () => {
         statusCode: 400,
         body: {
           success: false,
-          error: 'Un utente con questa email esiste già ed è verificato. Prova a fare login.'
-        }
+          error: 'Un utente con questa email esiste già ed è verificato. Prova a fare login.',
+        },
       }).as('registerError')
 
       cy.fillRegistrationForm({
         email: 'existing@example.com',
         password: 'password123',
-        confirmPassword: 'password123'
+        confirmPassword: 'password123',
       })
-      
+
       cy.get('button[type="submit"]').click()
       cy.wait('@registerError')
-      
+
       cy.contains('Un utente con questa email esiste già').should('be.visible')
     })
   })
@@ -210,13 +210,13 @@ describe('Authentication Flow', () => {
         body: {
           success: true,
           message: 'Email verificata con successo! Ora puoi fare login.',
-          code: 'VERIFICATION_SUCCESS'
-        }
+          code: 'VERIFICATION_SUCCESS',
+        },
       }).as('verifySuccess')
 
       cy.visit('/verify-email?token=valid-token&email=test@example.com')
       cy.wait('@verifySuccess')
-      
+
       cy.contains('Verifica completata!').should('be.visible')
       cy.contains('Email verificata con successo!').should('be.visible')
       cy.contains('Vai al Login').should('be.visible')
@@ -228,13 +228,13 @@ describe('Authentication Flow', () => {
         body: {
           success: false,
           error: 'Il link di verifica è scaduto. Puoi richiedere un nuovo link qui sotto.',
-          code: 'TOKEN_EXPIRED'
-        }
+          code: 'TOKEN_EXPIRED',
+        },
       }).as('verifyExpired')
 
       cy.visit('/verify-email?token=expired-token&email=test@example.com')
       cy.wait('@verifyExpired')
-      
+
       cy.contains('Errore di verifica').should('be.visible')
       cy.contains('Il link di verifica è scaduto').should('be.visible')
       cy.contains('Invia Nuovo Link').should('be.visible')
@@ -246,13 +246,13 @@ describe('Authentication Flow', () => {
         body: {
           success: true,
           message: 'Email già verificata! Puoi fare login.',
-          code: 'ALREADY_VERIFIED'
-        }
+          code: 'ALREADY_VERIFIED',
+        },
       }).as('alreadyVerified')
 
       cy.visit('/verify-email?token=any-token&email=test@example.com')
       cy.wait('@alreadyVerified')
-      
+
       cy.contains('Email già verificata!').should('be.visible')
       cy.contains('Vai al Login').should('be.visible')
     })
@@ -263,7 +263,7 @@ describe('Authentication Flow', () => {
       cy.visit('/login')
       cy.contains('Registrati qui').click()
       cy.url().should('include', '/register')
-      
+
       cy.contains('Accedi qui').click()
       cy.url().should('include', '/login')
     })

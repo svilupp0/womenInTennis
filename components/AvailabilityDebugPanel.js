@@ -2,7 +2,35 @@
 // Componente per debug e troubleshooting del sistema disponibilità
 
 import React, { useState } from 'react'
-import { useAvailabilityDebug } from '../hooks/useAvailabilityDebug'\n\nconst AvailabilityDebugPanel = () => {\n  const {\n    availability,\n    isUpdating,\n    error,\n    lastUpdated,\n    isSynced,\n    isOnline,\n    isOffline,\n    toggleAvailability,\n    debugInfo,\n    clearError\n  } = useAvailabilityDebug()\n\n  const [isExpanded, setIsExpanded] = useState(false)\n  const [showLogs, setShowLogs] = useState(false)\n\n  // Non mostrare in produzione\n  if (process.env.NODE_ENV === 'production') {\n    return null\n  }\n\n  return (\n    <div style={{\n      position: 'fixed',\n      bottom: '20px',\n      right: '20px',\n      background: 'rgba(0, 0, 0, 0.9)',\n      color: 'white',\n      padding: '15px',\n      borderRadius: '8px',\n      fontFamily: 'monospace',\n      fontSize: '12px',\n      zIndex: 9999,\n      maxWidth: isExpanded ? '500px' : '200px',\n      transition: 'all 0.3s ease'\n    }}>\n      {/* Header */}\n      <div style={{ \n        display: 'flex', \n        justifyContent: 'space-between', \n        alignItems: 'center',\n        marginBottom: '10px'\n      }}>\n        <strong>🔍 Availability Debug</strong>\n        <button \n          onClick={() => setIsExpanded(!isExpanded)}\n          style={{\n            background: 'none',\n            border: '1px solid white',\n            color: 'white',\n            padding: '2px 6px',\n            borderRadius: '3px',\n            cursor: 'pointer'\n          }}\n        >\n          {isExpanded ? '−' : '+'}\n        </button>\n      </div>\n\n      {/* Status Overview */}\n      <div style={{ marginBottom: '10px' }}>\n        <div>Status: <span style={{ \n          color: isOnline ? '#00ff00' : isOffline ? '#ff6666' : '#ffaa00' \n        }}>\n          {isOnline ? '🟢 Online' : isOffline ? '🔴 Offline' : '🟡 Updating'}\n        </span></div>\n        <div>Available: <strong>{availability ? 'YES' : 'NO'}</strong></div>\n        {isUpdating && <div style={{ color: '#ffaa00' }}>⏳ Updating...</div>}\n        {error && <div style={{ color: '#ff6666' }}>❌ {error}</div>}\n      </div>\n\n      {/* Quick Actions */}\n      <div style={{ marginBottom: '10px' }}>\n        <button \n          onClick={toggleAvailability}\n          disabled={isUpdating}\n          style={{\n            background: availability ? '#ff6666' : '#00aa00',\n            color: 'white',\n            border: 'none',\n            padding: '5px 10px',\n            borderRadius: '3px',\n            cursor: isUpdating ? 'not-allowed' : 'pointer',\n            marginRight: '5px',\n            opacity: isUpdating ? 0.5 : 1\n          }}\n        >\n          {availability ? 'Set Offline' : 'Set Online'}\n        </button>\n        \n        {error && (\n          <button \n            onClick={clearError}\n            style={{\n              background: '#666',\n              color: 'white',\n              border: 'none',\n              padding: '5px 10px',\n              borderRadius: '3px',\n              cursor: 'pointer'\n            }}\n          >\n            Clear Error\n          </button>\n        )}\n      </div>\n\n      {/* Expanded Details */}\n      {isExpanded && (\n        <div>\n          {/* State Details */}\n          <div style={{ marginBottom: '10px' }}>\n            <strong>State:</strong>\n            <div style={{ marginLeft: '10px', fontSize: '11px' }}>\n              <div>isSynced: {isSynced ? '✅' : '❌'}</div>\n              <div>lastUpdated: {lastUpdated ? new Date(lastUpdated).toLocaleTimeString() : 'Never'}</div>\n            </div>\n          </div>\n\n          {/* Auth Details */}\n          <div style={{ marginBottom: '10px' }}>\n            <strong>Auth:</strong>\n            <div style={{ marginLeft: '10px', fontSize: '11px' }}>\n              <div>hasUser: {debugInfo.auth.hasUser ? '✅' : '❌'}</div>\n              <div>hasToken: {debugInfo.auth.hasToken ? '✅' : '❌'}</div>\n              <div>userEmail: {debugInfo.auth.userEmail || 'N/A'}</div>\n            </div>\n          </div>\n\n          {/* Logs Toggle */}\n          <div style={{ marginBottom: '10px' }}>\n            <button \n              onClick={() => setShowLogs(!showLogs)}\n              style={{\n                background: '#333',\n                color: 'white',\n                border: '1px solid #666',\n                padding: '3px 8px',\n                borderRadius: '3px',\n                cursor: 'pointer',\n                fontSize: '11px'\n              }}\n            >\n              {showLogs ? 'Hide Logs' : `Show Logs (${debugInfo.logs.length})`}\n            </button>\n          </div>\n\n          {/* Debug Logs */}\n          {showLogs && (\n            <div style={{\n              maxHeight: '200px',\n              overflow: 'auto',\n              background: '#111',\n              padding: '5px',\n              borderRadius: '3px',\n              fontSize: '10px'\n            }}>\n              {debugInfo.logs.length === 0 ? (\n                <div style={{ color: '#666' }}>No logs yet</div>\n              ) : (\n                debugInfo.logs.map((log, index) => (\n                  <div key={index} style={{ \n                    marginBottom: '3px',\n                    paddingBottom: '3px',\n                    borderBottom: '1px solid #333'\n                  }}>\n                    <div style={{ color: '#888' }}>\n                      {new Date(log.timestamp).toLocaleTimeString()}\n                    </div>\n                    <div style={{ color: '#fff' }}>{log.message}</div>\n                    {log.data && (\n                      <div style={{ color: '#aaa', marginLeft: '10px' }}>\n                        {JSON.stringify(log.data, null, 2)}\n                      </div>\n                    )}\n                  </div>\n                ))\n              )}\n            </div>\n          )}\n        </div>\n      )}\n    </div>\n  )\n}\n\nexport default AvailabilityDebugPanel"
+import { useAvailabilityDebug } from '../hooks/useAvailabilityDebug'
+
+const AvailabilityDebugPanel = () => {
+  const {
+    availability,
+    isUpdating,
+    error,
+    lastUpdated,
+    isSynced,
+    isOnline,
+    isOffline,
+    toggleAvailability,
+    debugInfo,
+    clearError
+  } = useAvailabilityDebug()
+
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [showLogs, setShowLogs] = useState(false)
+
+  // Non mostrare in produzione
+  if (process.env.NODE_ENV === 'production') {
+    return null
   }
-]
-</invoke>
+
+  return (
+    <div>
+      Availability Debug Panel
+    </div>
+  )
+}
+
+export default AvailabilityDebugPanel

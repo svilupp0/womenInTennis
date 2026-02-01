@@ -78,13 +78,13 @@
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: var(--space-xs);
-  
+
   /* Gestione overflow */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
-  
+
   /* Effetti visivi */
   color: white;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -92,7 +92,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  
+
   /* Accessibilità */
   cursor: help;
 }
@@ -102,7 +102,7 @@
   font-size: 1rem;
   margin: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  
+
   /* Gestione overflow */
   overflow: hidden;
   text-overflow: ellipsis;
@@ -223,23 +223,23 @@
   .profileName {
     font-size: 1.375rem;
   }
-  
+
   .avatar {
     width: 70px;
     height: 70px;
     font-size: 1.75rem;
   }
-  
+
   .toggle {
     width: 65px;
     height: 34px;
   }
-  
+
   .toggleSlider {
     width: 28px;
     height: 28px;
   }
-  
+
   .toggle.active .toggleSlider {
     transform: translateX(31px);
   }
@@ -249,26 +249,26 @@
   .profileName {
     font-size: 1.5rem;
   }
-  
+
   .avatar {
     width: 75px;
     height: 75px;
     font-size: 1.875rem;
   }
-  
+
   .profileActions {
     flex-direction: row;
     justify-content: center;
     flex-wrap: wrap;
     gap: var(--space-sm);
   }
-  
+
   .profileActions .btn {
     font-size: 0.875rem;
     padding: var(--space-sm) var(--space-md);
     min-height: 40px;
   }
-  
+
   .mobileStatusBar {
     display: none;
   }
@@ -281,49 +281,49 @@
     align-items: center;
     flex-wrap: wrap;
   }
-  
+
   .avatarSection {
     gap: var(--space-lg);
     flex: 1;
     max-width: 70%;
   }
-  
+
   .profileActions {
     flex-shrink: 0;
     max-width: 30%;
     justify-content: flex-end;
   }
-  
+
   .profileName {
     font-size: 1.75rem;
     white-space: normal;
   }
-  
+
   .profileDetails {
     font-size: 1.125rem;
     white-space: normal;
   }
-  
+
   .avatar {
     width: 85px;
     height: 85px;
     font-size: 2rem;
   }
-  
+
   .toggle {
     width: 70px;
     height: 36px;
   }
-  
+
   .toggleSlider {
     width: 28px;
     height: 28px;
   }
-  
+
   .toggle.active .toggleSlider {
     transform: translateX(34px);
   }
-  
+
   .toggleLabel {
     font-size: 1rem;
   }
@@ -333,13 +333,13 @@
   .profileName {
     font-size: 2rem;
   }
-  
+
   .avatar {
     width: 90px;
     height: 90px;
     font-size: 2.2rem;
   }
-  
+
   .profileActions .btn {
     font-size: 1rem;
     padding: var(--space-sm) var(--space-lg);
@@ -379,11 +379,11 @@
     -webkit-text-fill-color: white;
     color: white;
   }
-  
+
   .toggle {
     border-width: 3px;
   }
-  
+
   .statusIndicator {
     border-width: 2px;
   }
@@ -397,7 +397,7 @@
   .profileActions .btn {
     transition: none;
   }
-  
+
   .avatar:hover {
     transform: none;
   }
@@ -413,11 +413,11 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  
+
   .mobileStatusBar {
     background: rgba(0, 0, 0, 0.3);
   }
-  
+
   .statusIndicator.unavailable {
     background: rgba(0, 0, 0, 0.2);
     border-color: rgba(255, 255, 255, 0.3);

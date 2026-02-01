@@ -9,11 +9,11 @@ const runCommand = (command, description) => {
   console.log(`📋 ${description}`)
   console.log(`🔧 Running: ${command}`)
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
-  
+
   try {
-    const output = execSync(command, { 
+    const output = execSync(command, {
       stdio: 'inherit',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     })
     console.log('✅ Success!\n')
     return true
@@ -26,56 +26,56 @@ const runCommand = (command, description) => {
 
 async function runAllTests() {
   const results = []
-  
+
   // 1. Unit Tests
   console.log('🎯 PHASE 1: Unit Tests')
   console.log('═══════════════════════════════════════════════════════════════\n')
-  
+
   const unitTestResult = runCommand('npm test', 'Running Jest unit tests')
   results.push({ name: 'Unit Tests', success: unitTestResult })
-  
+
   // 2. Test Coverage
   console.log('📊 PHASE 2: Test Coverage')
   console.log('═══════════════════════════════════════════════════════════════\n')
-  
+
   const coverageResult = runCommand('npm run test:coverage', 'Generating test coverage report')
   results.push({ name: 'Test Coverage', success: coverageResult })
-  
+
   // 3. Build Test
   console.log('🏗️  PHASE 3: Build Test')
   console.log('═══════════════════════════════════════════════════════════════\n')
-  
+
   const buildResult = runCommand('npm run build', 'Testing production build')
   results.push({ name: 'Build Test', success: buildResult })
-  
+
   // 4. E2E Tests (only if build succeeded)
   if (buildResult) {
     console.log('🌐 PHASE 4: End-to-End Tests')
     console.log('═══════════════════════════════════════════════════════════════\n')
-    
+
     console.log('⚠️  Note: E2E tests require the application to be running.')
     console.log('   Start the app with: npm run dev')
     console.log('   Then run: npm run test:e2e:headless\n')
-    
+
     // Uncomment if you want to run E2E tests automatically
     // const e2eResult = runCommand('npm run test:e2e:headless', 'Running Cypress E2E tests')
     // results.push({ name: 'E2E Tests', success: e2eResult })
   }
-  
+
   // Summary
   console.log('📋 TEST SUMMARY')
   console.log('═══════════════════════════════════════════════════════════════')
-  
+
   let allPassed = true
-  results.forEach(result => {
+  results.forEach((result) => {
     const status = result.success ? '✅' : '❌'
     console.log(`${status} ${result.name}`)
     if (!result.success) allPassed = false
   })
-  
+
   console.log('\n🎯 OVERALL RESULT')
   console.log('═══════════════════════════════════════════════════════════════')
-  
+
   if (allPassed) {
     console.log('🎉 All tests passed! Your application is ready for deployment.')
     console.log('\n🚀 Next steps:')
@@ -89,7 +89,7 @@ async function runAllTests() {
     console.log('   2. Run individual test suites: npm test')
     console.log('   3. Fix failing tests and run again')
   }
-  
+
   console.log('\n📚 Test Commands Reference:')
   console.log('   npm test              - Run unit tests')
   console.log('   npm run test:watch    - Run tests in watch mode')

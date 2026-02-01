@@ -4,10 +4,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, 
-    var(--gray-50) 0%, 
-    var(--gray-100) 50%, 
-    var(--gray-200) 100%);
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 50%, var(--gray-200) 100%);
 }
 
 /* Header */
@@ -30,7 +27,11 @@
 .logoIcon {
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, var(--primary-green-alpha) 0%, var(--accent-orange-alpha) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-green-alpha) 0%,
+    var(--accent-orange-alpha) 100%
+  );
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -161,7 +162,7 @@
   .authCard {
     padding: var(--space-2xl);
   }
-  
+
   .authHeader h1 {
     font-size: 2.25rem;
   }
@@ -171,7 +172,7 @@
   .main {
     padding: var(--space-2xl) 0;
   }
-  
+
   .authCard {
     max-width: 520px;
   }
