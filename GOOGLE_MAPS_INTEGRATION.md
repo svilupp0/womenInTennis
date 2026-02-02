@@ -18,16 +18,6 @@ Questa documentazione descrive l'integrazione di Google Maps nella webapp Women 
 - `pages/dashboard.js` - Aggiunto link alla mappa nell'header
 - `styles/Dashboard.module.css` - Aggiunto stile per headerActions
 
-## 🔧 Configurazione
-
-### Variabili d'Ambiente
-
-La chiave API di Google Maps è configurata nel file `.env`:
-
-```
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyARB1jY0ZnHgzoVZFPhELkw4nT_x-dmK04"
-```
-
 ### Script di Caricamento
 
 La mappa utilizza il caricamento dinamico dello script Google Maps:
