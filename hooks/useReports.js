@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createReport, fetchMyReports } from '../lib/services/reportService'
 
 /**
  * Custom Hook per gestione segnalazioni utenti
@@ -9,10 +10,9 @@ import { useState } from 'react'
  * - Caricamento e visualizzazione segnalazioni fatte
  * - Gestione stati form e loading
  *
- * @param {string} token - JWT token per autenticazione API
  * @returns {object} - Stati e funzioni per le segnalazioni
  */
-export function useReports(token) {
+export function useReports() {
   // Stati modal segnalazione
   const [showReportModal, setShowReportModal] = useState(false)
   const [reportTarget, setReportTarget] = useState(null)
@@ -57,31 +57,15 @@ export function useReports(token) {
       }
     }
 
-    if (!token) {
-      return {
-        success: false,
-        error: 'Sessione scaduta. Effettua nuovamente il login.',
-      }
-    }
-
     setIsSubmittingReport(true)
     try {
-      const response = await fetch('/api/reports/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          reportedId: reportTarget.id,
-          reason: reportForm.reason,
-          description: reportForm.description,
-        }),
+      const result = await createReport({
+        reportedId: reportTarget.id,
+        reason: reportForm.reason,
+        description: reportForm.description,
       })
 
-      const data = await response.json()
-
-      if (response.ok) {
+      if (result.success) {
         // Successo - chiudi modal e reset form
         setShowReportModal(false)
         setReportTarget(null)
@@ -94,7 +78,7 @@ export function useReports(token) {
       } else {
         return {
           success: false,
-          error: data.error || "Errore durante l'invio della segnalazione",
+          error: result.error || "Errore durante l'invio della segnalazione",
         }
       }
     } catch (error) {
@@ -112,24 +96,13 @@ export function useReports(token) {
    * Carica lista segnalazioni fatte dall'utente
    */
   const loadMyReports = async () => {
-    if (!token) {
-      console.error('Token non disponibile')
-      return
-    }
-
     setIsLoadingReports(true)
     try {
-      const response = await fetch('/api/reports/my?type=given', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setMyReports(data.reports || [])
+      const result = await fetchMyReports('given')
+      if (result.success) {
+        setMyReports(result.reports)
       } else {
-        console.error('Errore caricamento segnalazioni:', response.statusText)
+        console.error('Errore caricamento segnalazioni:', result.error)
         setMyReports([])
       }
     } catch (error) {

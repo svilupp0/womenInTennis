@@ -109,7 +109,10 @@ describe('/api/auth/login', () => {
     const data = JSON.parse(res._getData())
     expect(data.success).toBe(true)
     expect(data.user.email).toBe('test@example.com')
-    expect(data.token).toBeDefined()
+    // Token is now in HttpOnly cookie, not in response body
+    const setCookie = res.getHeader('Set-Cookie')
+    expect(setCookie).toBeTruthy()
+    expect(setCookie).toContain('HttpOnly')
   })
 
   it('should return EMAIL_NOT_VERIFIED for unverified email', async () => {

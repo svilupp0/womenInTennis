@@ -135,11 +135,16 @@ export default async function handler(req, res) {
       }
     )
 
+    const isProduction = process.env.NODE_ENV === 'production'
+    res.setHeader(
+      'Set-Cookie',
+      `token=${token}; HttpOnly; ${isProduction ? 'Secure; ' : ''}SameSite=Strict; Path=/; Max-Age=86400`
+    )
+
     res.status(200).json({
       success: true,
       message: ERROR_MESSAGES.LOGIN_SUCCESS,
       user: userWithoutPassword,
-      token: token,
     })
   } catch (error) {
     console.error('Errore login:', error)

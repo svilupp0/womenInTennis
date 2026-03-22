@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { updateUserProfile } from '../lib/services/playerService'
 
 /**
  * Custom Hook per gestione modifica profilo utente
@@ -10,11 +11,10 @@ import { useState, useEffect } from 'react'
  * - Sincronizzazione con backend
  *
  * @param {object} user - Utente corrente
- * @param {string} token - JWT token per autenticazione API
  * @param {function} updateUser - Callback per aggiornare utente in AuthContext
  * @returns {object} - Stati e funzioni per modifica profilo
  */
-export function useProfileEditor(user, token, updateUser) {
+export function useProfileEditor(user, updateUser) {
   // Stato form modifica profilo
   const [editProfileForm, setEditProfileForm] = useState({
     name: '',
@@ -113,30 +113,15 @@ export function useProfileEditor(user, token, updateUser) {
    * Salva modifiche profilo al backend
    */
   const saveProfileChanges = async () => {
-    if (!token) {
-      setProfileUpdateError('Sessione scaduta. Effettua nuovamente il login.')
-      return { success: false }
-    }
-
     setIsUpdatingProfile(true)
     setProfileUpdateError(null)
 
     try {
-      const response = await fetch('/api/users/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(editProfileForm),
-      })
+      const result = await updateUserProfile(editProfileForm)
 
-      const data = await response.json()
-
-      if (response.ok && data.success) {
+      if (result.success) {
         // Aggiorna utente nel context (senza reload)
-        const updatedUserFromDB = data.user
-        updateUser(updatedUserFromDB)
+        updateUser(result.user)
 
         // Chiudi form
         setShowEditProfile(false)
@@ -146,8 +131,7 @@ export function useProfileEditor(user, token, updateUser) {
           message: 'Profilo aggiornato con successo!',
         }
       } else {
-        // Errore dal server
-        const errorMsg = data.error || "Errore durante l'aggiornamento del profilo"
+        const errorMsg = result.error || "Errore durante l'aggiornamento del profilo"
         setProfileUpdateError(errorMsg)
         return { success: false, error: errorMsg }
       }

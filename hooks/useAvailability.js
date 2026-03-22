@@ -3,9 +3,10 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from './useAuth'
+import { updateUserAvailability } from '../lib/services/playerService'
 
 export const useAvailability = () => {
-  const { user, token, isAvailable, updateUser } = useAuth()
+  const { user, isAvailable, updateUser } = useAuth()
   const [availability, setAvailability] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState(null)
@@ -21,9 +22,9 @@ export const useAvailability = () => {
   }, [user, isAvailable])
 
   // 🚀 Funzione per aggiornare disponibilità con ottimismo UI
-  const updateAvailability = useCallback(
+  const updateAvailabilityState = useCallback(
     async (newAvailability) => {
-      if (!token) {
+      if (!user) {
         setError('Non autenticato. Effettua il login.')
         return false
       }
@@ -35,54 +36,25 @@ export const useAvailability = () => {
       setError(null)
 
       try {
-        const response = await fetch('/api/users/availability', {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ available: newAvailability }),
-        })
+        const result = await updateUserAvailability(newAvailability)
 
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Errore aggiornamento disponibilità')
+        if (!result.success) {
+          throw new Error(result.error || 'Errore aggiornamento disponibilità')
         }
 
         // ✅ Successo - Conferma stato e aggiorna timestamp
-        // Gestisce sia la vecchia (available, timestamp) che la nuova (disponibilita, updatedAt) struttura
-        const confirmedAvailability = data.disponibilita ?? data.available
-        const confirmedTimestamp = data.updatedAt ?? data.timestamp
+        const confirmedAvailability = result.disponibilita ?? newAvailability
 
-        // --- Gestione e Setting dell'Availability ---
-        // Verifico se ho un valore di disponibilità valido da una delle due chiavi.
-        // Ho bisogno di un controllo più rigoroso per evitare che 'undefined' venga passato ai setters
-        // e per implementare il fallback richiesto.
         if (confirmedAvailability !== undefined && confirmedAvailability !== null) {
-          // Uso il valore confermato (o la vecchia o la nuova chiave)
           setAvailability(confirmedAvailability)
         } else {
-          // Fallback al valore ottimistico/locale (newAvailability) se l'API non ha restituito
-          // né la vecchia né la nuova chiave valide.
           setAvailability(newAvailability)
           console.warn(
             'API response missing expected availability field. Falling back to optimistic state.'
           )
         }
 
-        // --- Gestione e Setting del Timestamp ---
-        // Se confirmedTimestamp è un valore truthy (non null, non undefined, non '')
-        if (confirmedTimestamp) {
-          // Utilizzo il timestamp confermato (nuovo o vecchio)
-          setLastUpdated(new Date(confirmedTimestamp))
-        } else {
-          // Fallback al momento attuale se nessun timestamp è disponibile da entrambe le chiavi
-          setLastUpdated(new Date())
-          console.warn(
-            'API response missing expected timestamp field. Falling back to current local time.'
-          )
-        }
+        setLastUpdated(new Date())
 
         console.log('✅ Availability updated successfully:', confirmedAvailability)
 
@@ -111,13 +83,13 @@ export const useAvailability = () => {
         setIsUpdating(false)
       }
     },
-    [availability, token]
+    [availability, user, updateUser]
   )
 
   // 🔄 Toggle disponibilità
   const toggleAvailability = useCallback(async () => {
-    return await updateAvailability(!availability)
-  }, [availability, updateAvailability])
+    return await updateAvailabilityState(!availability)
+  }, [availability, updateAvailabilityState])
 
   // 🔄 Imposta disponibilità specifica
   const setAvailabilityTo = useCallback(
@@ -125,9 +97,9 @@ export const useAvailability = () => {
       if (newState === availability) {
         return true // Nessun cambiamento necessario
       }
-      return await updateAvailability(newState)
+      return await updateAvailabilityState(newState)
     },
-    [availability, updateAvailability]
+    [availability, updateAvailabilityState]
   )
 
   // 📊 Stato di sincronizzazione
@@ -137,15 +109,11 @@ export const useAvailability = () => {
 
   // 🔄 Funzione per ricaricare stato dal server
   const refreshAvailability = useCallback(async () => {
-    if (!token) return
+    if (!user) return
 
     try {
       setIsUpdating(true)
-      const response = await fetch('/api/users/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await fetch('/api/users/me')
 
       if (response.ok) {
         const userData = await response.json()
@@ -160,17 +128,17 @@ export const useAvailability = () => {
     } finally {
       setIsUpdating(false)
     }
-  }, [token])
+  }, [user])
 
   // 🔄 Auto-refresh periodico (opzionale)
   useEffect(() => {
-    if (!user || !token) return
+    if (!user) return
 
     // Refresh ogni 5 minuti per sincronizzare con altri dispositivi
     const interval = setInterval(refreshAvailability, 5 * 60 * 1000)
 
     return () => clearInterval(interval)
-  }, [user, token, refreshAvailability])
+  }, [user, refreshAvailability])
 
   // 🎯 Return hook interface
   return {

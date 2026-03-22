@@ -14,11 +14,10 @@ import {
  * - Creazione ed eliminazione eventi
  * - Preparazione dati per FullCalendar
  *
- * @param {string} token - JWT auth token
  * @param {object} user - Utente corrente
  * @returns {object} - Stati e funzioni calendario
  */
-export function useCalendar(token, user) {
+export function useCalendar(user) {
   // Stati eventi
   const [savedEvents, setSavedEvents] = useState([])
   const [calendarEvents, setCalendarEvents] = useState([])
@@ -34,10 +33,8 @@ export function useCalendar(token, user) {
    * Carica eventi dell'utente dal server
    */
   const loadEvents = async () => {
-    if (!token) return
-
     setIsLoading(true)
-    const result = await fetchUserEvents(token)
+    const result = await fetchUserEvents()
 
     if (result.success) {
       const events = result.events || []
@@ -65,10 +62,10 @@ export function useCalendar(token, user) {
    * Carica eventi al mount del componente
    */
   useEffect(() => {
-    if (user && token) {
+    if (user) {
       loadEvents()
     }
-  }, [user, token])
+  }, [user])
 
   /**
    * Gestisce click su data (apertura modal creazione)
@@ -98,7 +95,7 @@ export function useCalendar(token, user) {
    * Crea nuovo evento
    */
   const handleCreateEvent = async (eventData) => {
-    const result = await createEventService(eventData, token)
+    const result = await createEventService(eventData)
 
     if (result.success) {
       // Ricarica eventi
@@ -120,7 +117,7 @@ export function useCalendar(token, user) {
       return { success: false, error: 'Evento non selezionato' }
     }
 
-    const result = await deleteEventService(selectedEvent.id, token)
+    const result = await deleteEventService(selectedEvent.id)
 
     if (result.success) {
       // Ricarica eventi

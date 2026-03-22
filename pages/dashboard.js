@@ -40,7 +40,6 @@ const MyReportsList = dynamic(() => import('../components/dashboard/MyReportsLis
 export default function Dashboard() {
   const {
     user,
-    token,
     loading,
     isAuthenticated,
     logout,
@@ -63,7 +62,7 @@ export default function Dashboard() {
 
   // Hook ricerca giocatori
   const { searchFilters, handleFilterChange, searchResults, isSearching, comuniDisponibili } =
-    usePlayerSearch(token, user)
+    usePlayerSearch(user)
 
   // Hook modifica profilo
   const {
@@ -77,7 +76,7 @@ export default function Dashboard() {
     saveProfileChanges,
     cancelProfileEdit,
     setShowEditProfile,
-  } = useProfileEditor(user, token, updateUser)
+  } = useProfileEditor(user, updateUser)
 
   // Hook segnalazioni
   const {
@@ -94,7 +93,7 @@ export default function Dashboard() {
     closeReportModal,
     toggleMyReports,
     closeMyReports,
-  } = useReports(token)
+  } = useReports()
 
   // Stati UI locali
   const [isMobile, setIsMobile] = useState(false)

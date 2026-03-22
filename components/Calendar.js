@@ -22,7 +22,7 @@ import styles from '../styles/Calendar.module.css'
  * - Coordinamento tra hook e modali
  */
 const Calendar = () => {
-  const { user, token } = useAuth()
+  const { user } = useAuth()
 
   // Hook calendario - tutta la logica estratta
   const {
@@ -38,7 +38,7 @@ const Calendar = () => {
     handleDeleteEvent,
     closeCreateModal,
     closeDetailsModal,
-  } = useCalendar(token, user)
+  } = useCalendar(user)
 
   return (
     <div className={styles.calendarContainer}>

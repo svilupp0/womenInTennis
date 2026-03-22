@@ -3,33 +3,32 @@ import { createContext, useContext, useEffect, useState } from 'react'
 // Crea il Context
 export const AuthContext = createContext({})
 
+// Hook base per accedere al context
+export const useAuth = () => useContext(AuthContext)
+
 // Provider Component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [token, setToken] = useState(null)
-  const [loading, setLoading] = useState(true) // Loading iniziale per check token
+  const [loading, setLoading] = useState(true) // Loading iniziale per check sessione
 
-  // Funzione per salvare token e user in localStorage (SSR safe)
-  const saveAuthData = (userData, authToken) => {
+  // Funzione per salvare user in localStorage (SSR safe)
+  const saveAuthData = (userData) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('token', authToken)
       localStorage.setItem('user', JSON.stringify(userData))
     }
-    setToken(authToken)
     setUser(userData)
   }
 
   // Funzione per rimuovere dati auth
   const clearAuthData = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('token')
       localStorage.removeItem('user')
+      localStorage.removeItem('token') // pulizia backward-compat
     }
-    setToken(null)
     setUser(null)
   }
 
-  // Funzione login (AGGIORNATA per email verification)
+  // Funzione login
   const login = async (email, password) => {
     try {
       const response = await fetch('/api/auth/login', {
@@ -43,7 +42,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json()
 
       if (response.ok) {
-        saveAuthData(data.user, data.token)
+        saveAuthData(data.user)
         return { success: true, user: data.user }
       } else {
         // Gestione specifica per email non verificata
@@ -86,7 +85,7 @@ export const AuthProvider = ({ children }) => {
           }
         } else {
           // Fallback per registrazioni già verificate
-          saveAuthData(data.user, data.token)
+          saveAuthData(data.user)
           return { success: true, user: data.user }
         }
       } else {
@@ -97,8 +96,13 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Funzione logout
-  const logout = () => {
+  // Funzione logout — cancella il cookie HttpOnly server-side
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch (error) {
+      console.error('Errore logout:', error)
+    }
     clearAuthData()
   }
 
@@ -173,45 +177,37 @@ export const AuthProvider = ({ children }) => {
 
   // Funzione per verificare se utente è autenticato
   const isAuthenticated = () => {
-    return !!user && !!token
+    return !!user
   }
 
-  // Funzione per ottenere token per API calls
-  const getAuthHeader = () => {
-    return token ? { Authorization: `Bearer ${token}` } : {}
-  }
-
-  // Effect per caricare dati da localStorage al mount (SSR safe)
+  // Effect per caricare user da localStorage al mount (SSR safe)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        const savedToken = localStorage.getItem('token')
         const savedUser = localStorage.getItem('user')
 
-        if (savedToken && savedUser) {
-          setToken(savedToken)
+        if (savedUser) {
           setUser(JSON.parse(savedUser))
         }
       } catch (error) {
         console.error('Errore caricamento dati auth:', error)
-        // Se c'è errore, pulisci localStorage
         clearAuthData()
       }
     }
     setLoading(false)
   }, [])
 
-  // 🆕 FUNZIONE: Aggiorna dati utente senza logout/login (VERSIONE CORRETTA)
+  // Aggiorna dati utente senza logout/login
   const updateUser = (updatedUserData) => {
     if (!user) {
       console.warn('⚠️ Tentativo di aggiornare user quando user è null')
       return
     }
 
-    // 🔄 MERGE con i dati esistenti (non sovrascrivere!)
+    // Merge con i dati esistenti (non sovrascrivere!)
     const mergedUserData = {
-      ...user, // ← MANTIENI tutti i dati esistenti
-      ...updatedUserData, // ← SOVRASCRIVI solo i campi forniti
+      ...user,
+      ...updatedUserData,
     }
 
     // Aggiorna localStorage con i dati completi
@@ -232,7 +228,6 @@ export const AuthProvider = ({ children }) => {
   // Valore del context
   const value = {
     user,
-    token,
     loading,
     login,
     register,
@@ -241,10 +236,9 @@ export const AuthProvider = ({ children }) => {
     requestPasswordReset,
     resetPassword,
     isAuthenticated,
-    getAuthHeader,
     saveAuthData,
     clearAuthData,
-    updateUser, // ← NUOVA FUNZIONE ESPOSTA
+    updateUser,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

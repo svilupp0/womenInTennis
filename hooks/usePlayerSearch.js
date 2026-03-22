@@ -1,4 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import {
+  searchPlayers as searchPlayersService,
+  fetchAvailableComuni,
+} from '../lib/services/playerService'
 
 /**
  * Custom Hook per gestione ricerca giocatrici
@@ -13,11 +17,10 @@ import { useState, useEffect, useRef, useCallback } from 'react'
  * - Debounce 500ms per ridurre chiamate API durante digitazione
  * - useCallback per funzioni stabili
  *
- * @param {string} token - JWT token per autenticazione API
  * @param {object} user - Utente corrente
  * @returns {object} - Stati e funzioni per la ricerca
  */
-export function usePlayerSearch(token, user) {
+export function usePlayerSearch(user) {
   // Stati filtri
   const [searchFilters, setSearchFilters] = useState({
     comune: '',
@@ -41,21 +44,13 @@ export function usePlayerSearch(token, user) {
    * Carica lista comuni disponibili con conteggio giocatrici
    */
   const loadComuniDisponibili = async () => {
-    if (!token) return
-
     setIsLoadingComuni(true)
     try {
-      const response = await fetch('/api/comuni/available', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setComuniDisponibili(data.comuni || [])
+      const result = await fetchAvailableComuni()
+      if (result.success) {
+        setComuniDisponibili(result.comuni)
       } else {
-        console.error('Errore caricamento comuni:', response.statusText)
+        console.error('Errore caricamento comuni:', result.error)
         setComuniDisponibili([])
       }
     } catch (error) {
@@ -70,28 +65,14 @@ export function usePlayerSearch(token, user) {
    * Ricerca giocatrici con i filtri attuali
    * Memoized con useCallback per evitare ricreazione
    */
-  const searchPlayers = useCallback(async () => {
-    if (!token) return
-
+  const executeSearch = useCallback(async () => {
     setIsSearching(true)
     try {
-      const queryParams = new URLSearchParams()
-      if (searchFilters.comune) queryParams.append('comune', searchFilters.comune)
-      if (searchFilters.sport) queryParams.append('sport', searchFilters.sport)
-      if (searchFilters.livello) queryParams.append('livello', searchFilters.livello)
-      if (searchFilters.disponibilita) queryParams.append('disponibilita', 'true')
-
-      const response = await fetch(`/api/users/search?${queryParams}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setSearchResults(data.users || [])
+      const result = await searchPlayersService(searchFilters)
+      if (result.success) {
+        setSearchResults(result.users)
       } else {
-        console.error('Errore ricerca:', response.statusText)
+        console.error('Errore ricerca:', result.error)
         setSearchResults([])
       }
     } catch (error) {
@@ -100,7 +81,7 @@ export function usePlayerSearch(token, user) {
     } finally {
       setIsSearching(false)
     }
-  }, [token, searchFilters])
+  }, [searchFilters])
 
   /**
    * Ricerca con debounce - chiamata dopo 500ms di inattività
@@ -113,7 +94,7 @@ export function usePlayerSearch(token, user) {
 
     // Imposta nuovo timer
     debounceTimerRef.current = setTimeout(() => {
-      searchPlayers()
+      executeSearch()
     }, 500) // 500ms debounce
 
     return () => {
@@ -121,7 +102,7 @@ export function usePlayerSearch(token, user) {
         clearTimeout(debounceTimerRef.current)
       }
     }
-  }, [searchPlayers])
+  }, [executeSearch])
 
   /**
    * Aggiorna un singolo filtro
@@ -147,15 +128,15 @@ export function usePlayerSearch(token, user) {
 
   // Carica comuni all'avvio
   useEffect(() => {
-    if (user && token) {
+    if (user) {
       loadComuniDisponibili()
     }
-  }, [user, token])
+  }, [user])
 
   // Ricerca automatica quando cambiano i filtri (con debounce)
   useEffect(() => {
-    if (user && token) {
-      // Usa debounced search invece di searchPlayers diretta
+    if (user) {
+      // Usa debounced search invece di executeSearch diretta
       debouncedSearch()
     }
 
@@ -165,7 +146,7 @@ export function usePlayerSearch(token, user) {
         clearTimeout(debounceTimerRef.current)
       }
     }
-  }, [searchFilters, user, token, debouncedSearch])
+  }, [searchFilters, user, debouncedSearch])
 
   return {
     // Stati filtri
@@ -182,7 +163,7 @@ export function usePlayerSearch(token, user) {
     isLoadingComuni,
 
     // Funzioni
-    searchPlayers,
+    searchPlayers: executeSearch,
     loadComuniDisponibili,
   }
 }

@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from './useAuth'
 
 export const useAvailabilityDebug = () => {
-  const { user, token, isAvailable } = useAuth()
+  const { user, isAvailable } = useAuth()
   const [availability, setAvailability] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState(null)
@@ -42,13 +42,13 @@ export const useAvailabilityDebug = () => {
       addDebugLog('Update availability started', {
         newAvailability,
         currentAvailability: availability,
-        hasToken: !!token,
+        hasUser: !!user,
       })
 
-      if (!token) {
+      if (!user) {
         const errorMsg = 'Non autenticato. Effettua il login.'
         setError(errorMsg)
-        addDebugLog('Error: No token', { errorMsg })
+        addDebugLog('Error: No user', { errorMsg })
         return false
       }
 
@@ -74,7 +74,6 @@ export const useAvailabilityDebug = () => {
         const response = await fetch('/api/users/availability', {
           method: 'PUT',
           headers: {
-            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ available: newAvailability }),
@@ -157,7 +156,7 @@ export const useAvailabilityDebug = () => {
         addDebugLog('Update process completed', { isUpdating: false })
       }
     },
-    [availability, token, addDebugLog]
+    [availability, user, addDebugLog]
   )
 
   // 🔄 Toggle disponibilità
@@ -185,7 +184,6 @@ export const useAvailabilityDebug = () => {
     },
     auth: {
       hasUser: !!user,
-      hasToken: !!token,
       userEmail: user?.email,
     },
   }

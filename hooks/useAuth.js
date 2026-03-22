@@ -10,7 +10,6 @@ export const useAuth = () => {
 
   const {
     user,
-    token,
     loading,
     login,
     logout,
@@ -19,7 +18,6 @@ export const useAuth = () => {
     resetPassword,
     resendVerificationEmail,
     isAuthenticated,
-    getAuthHeader,
     saveAuthData,
     clearAuthData,
     updateUser, // <- IMPORTATO dal context
@@ -74,7 +72,7 @@ export const useAuth = () => {
     },
 
     // Informazioni auth
-    hasValidToken: () => !!token && !loading,
+    hasValidToken: () => !!user && !loading,
 
     // Informazioni profilo
     hasCompleteProfile: () => {
@@ -130,7 +128,6 @@ export const useAuth = () => {
   return {
     // Stati base
     user,
-    token,
     loading,
 
     // Funzioni auth
@@ -141,7 +138,6 @@ export const useAuth = () => {
     resetPassword,
     resendVerificationEmail,
     isAuthenticated,
-    getAuthHeader,
     saveAuthData,
     clearAuthData,
     updateUser, // <- ESPORTATO per l'uso nei componenti

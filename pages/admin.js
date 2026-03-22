@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import styles from '../styles/Admin.module.css'
 
 export default function AdminDashboard() {
-  const { user, token, loading, isAuthenticated, logout, getDisplayName, isAdmin } = useAuth()
+  const { user, loading, isAuthenticated, logout, getDisplayName, isAdmin } = useAuth()
 
   const [reports, setReports] = useState([])
   const [isLoadingReports, setIsLoadingReports] = useState(false)
@@ -33,11 +33,7 @@ export default function AdminDashboard() {
   const loadReports = async () => {
     setIsLoadingReports(true)
     try {
-      const response = await fetch('/api/admin/reports', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await fetch('/api/admin/reports')
 
       if (response.ok) {
         const data = await response.json()
@@ -56,10 +52,10 @@ export default function AdminDashboard() {
 
   // Carica segnalazioni quando il componente si monta
   useEffect(() => {
-    if (user && token && user?.isAdmin) {
+    if (user && user?.isAdmin) {
       loadReports()
     }
-  }, [user, token])
+  }, [user])
 
   // Logout con conferma
   const handleLogout = () => {
@@ -105,7 +101,6 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           currentPassword: passwordForm.currentPassword,
@@ -143,7 +138,6 @@ export default function AdminDashboard() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ action }),
       })
