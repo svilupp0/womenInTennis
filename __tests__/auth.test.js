@@ -110,6 +110,7 @@ describe('AuthContext', () => {
       json: async () => ({
         success: true,
         user: { id: 1, email: 'new@example.com', emailVerified: false },
+        nextStep: 'EMAIL_VERIFICATION_REQUIRED',
         requiresEmailVerification: true,
         message: "Controlla la tua email per verificare l'account.",
       }),

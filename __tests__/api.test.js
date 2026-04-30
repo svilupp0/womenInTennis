@@ -25,7 +25,7 @@ jest.mock('bcryptjs', () => ({
 // Mock email service
 jest.mock('../lib/services/emailService', () => ({
   sendVerificationEmail: jest.fn(),
-  sendWelcomeEmail: jest.fn(),
+  sendWelcomeEmail: jest.fn().mockResolvedValue(),
 }))
 
 // Mock security functions
