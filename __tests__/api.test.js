@@ -71,6 +71,7 @@ describe('/api/auth/login', () => {
 
     expect(res._getStatusCode()).toBe(405)
     expect(JSON.parse(res._getData())).toEqual({
+      success: false,
       error: 'Metodo non consentito',
     })
   })

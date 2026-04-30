@@ -7,7 +7,7 @@ import { ERROR_MESSAGES, ERROR_CODES } from '../../../lib/constants/errorMessage
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: ERROR_MESSAGES.METHOD_NOT_ALLOWED })
+    return res.status(405).json({ success: false, error: ERROR_MESSAGES.METHOD_NOT_ALLOWED })
   }
 
   try {
@@ -21,19 +21,19 @@ export default async function handler(req, res) {
       })
     })
   } catch (error) {
-    return res.status(429).json({ error: ERROR_MESSAGES.TOO_MANY_LOGIN_ATTEMPTS })
+    return res.status(429).json({ success: false, error: ERROR_MESSAGES.TOO_MANY_LOGIN_ATTEMPTS })
   }
 
   try {
     const { email, password } = req.body
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email e password sono obbligatori' })
+      return res.status(400).json({ success: false, error: 'Email e password sono obbligatori' })
     }
 
     const emailValidation = validateEmail(email)
     if (!emailValidation.isValid) {
-      return res.status(400).json({ error: emailValidation.error })
+      return res.status(400).json({ success: false, error: emailValidation.error })
     }
 
     const normalizedEmail = emailValidation.email
@@ -61,12 +61,13 @@ export default async function handler(req, res) {
     })
 
     if (!user) {
-      return res.status(401).json({ error: ERROR_MESSAGES.CREDENTIALS_INVALID })
+      return res.status(401).json({ success: false, error: ERROR_MESSAGES.CREDENTIALS_INVALID })
     }
 
     if (user.lockoutUntil && new Date() < user.lockoutUntil) {
       const lockoutMinutes = Math.ceil((user.lockoutUntil - new Date()) / (1000 * 60))
       return res.status(423).json({
+        success: false,
         error: `Account temporaneamente bloccato. Riprova tra ${lockoutMinutes} minuti.`,
       })
     }
@@ -87,16 +88,18 @@ export default async function handler(req, res) {
 
       if (lockoutUntil) {
         return res.status(423).json({
+          success: false,
           error: 'Troppi tentativi falliti. Account bloccato per 15 minuti.',
         })
       }
 
-      return res.status(401).json({ error: ERROR_MESSAGES.CREDENTIALS_INVALID })
+      return res.status(401).json({ success: false, error: ERROR_MESSAGES.CREDENTIALS_INVALID })
     }
 
     // CONTROLLO CRITICO: Email deve essere verificata
     if (!user.emailVerified) {
       return res.status(403).json({
+        success: false,
         error: ERROR_MESSAGES.EMAIL_NOT_VERIFIED,
         code: ERROR_CODES.EMAIL_NOT_VERIFIED,
         email: user.email,
@@ -118,6 +121,7 @@ export default async function handler(req, res) {
     if (!jwtSecret) {
       console.error('❌ CRITICAL: JWT_SECRET non configurato!')
       return res.status(500).json({
+        success: false,
         error: "Configurazione server non valida. Contatta l'amministratore.",
       })
     }
@@ -150,6 +154,7 @@ export default async function handler(req, res) {
     console.error('Errore login:', error)
 
     res.status(500).json({
+      success: false,
       error: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     })
   }

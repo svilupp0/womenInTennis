@@ -1,5 +1,6 @@
 import '../styles/globals.css'
 import { AuthProvider } from '../contexts/AuthContext'
+import ErrorBoundary from '../components/ErrorBoundary'
 import { useEffect } from 'react'
 import PWAInstallManager from '../lib/pwaInstallManager'
 import Script from 'next/script'
@@ -24,21 +25,23 @@ export default function App({ Component, pageProps }) {
   }, [])
 
   return (
-    <AuthProvider>
-      <Component {...pageProps} />
-      <Script
-        src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
-        strategy="beforeInteractive"
-        data-name="BMC-Widget"
-        data-cfasync="false"
-        data-id="winwomenina"
-        data-description="Support me on Buy me a coffee!"
-        data-message="🎾 Questa piattaforma è stata creata con passione per te, ma ha costi vivi reali. Offrimi un caffè e sostieni il tennis femminile digitale!"
-        data-color="#40DCA5"
-        data-position="Right"
-        data-x_margin="18"
-        data-y_margin="18"
-      />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Component {...pageProps} />
+        <Script
+          src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+          strategy="beforeInteractive"
+          data-name="BMC-Widget"
+          data-cfasync="false"
+          data-id="winwomenina"
+          data-description="Support me on Buy me a coffee!"
+          data-message="🎾 Questa piattaforma è stata creata con passione per te, ma ha costi vivi reali. Offrimi un caffè e sostieni il tennis femminile digitale!"
+          data-color="#40DCA5"
+          data-position="Right"
+          data-x_margin="18"
+          data-y_margin="18"
+        />
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }

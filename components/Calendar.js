@@ -41,7 +41,7 @@ const Calendar = () => {
   } = useCalendar(user)
 
   return (
-    <div className={styles.calendarContainer}>
+    <div className={styles.calendarContainer} aria-label="Calendario disponibilità">
       <div className={styles.calendarHeader}>
         {isLoading && <span className={styles.loading}>🔄 Caricamento...</span>}
       </div>
@@ -79,7 +79,7 @@ const Calendar = () => {
       </div>
 
       {/* Legenda Stati - Usa constanti centralizzate */}
-      <div className={styles.calendarLegend}>
+      <div className={styles.calendarLegend} aria-label="Legenda stati eventi">
         <h4>Legenda:</h4>
         <div className={styles.legendItems}>
           <div className={styles.legendItem}>

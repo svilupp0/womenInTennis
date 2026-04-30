@@ -77,7 +77,7 @@ function PlayerList({ players, isSearching, onWhatsApp, onCall, onEmail, onRepor
       {/* Scroll Indicator */}
       {showScrollIndicator && (
         <div className={styles.scrollIndicator}>
-          <span>⬇️ Scorri per vedere altre giocatrici</span>
+          <span aria-hidden="true">⬇️</span> Scorri per vedere altre giocatrici
         </div>
       )}
     </div>

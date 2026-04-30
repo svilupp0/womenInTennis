@@ -110,15 +110,21 @@ function PlayerCard({ player, onWhatsApp, onCall, onEmail, onReport }) {
       </div>
       <div className={styles.playerActions}>
         <div className={styles.contactDropdown}>
-          <button className="btn btn-primary" onClick={toggleContactMenu}>
+          <button
+            className="btn btn-primary"
+            onClick={toggleContactMenu}
+            aria-expanded={openContactMenu}
+            aria-haspopup="true"
+          >
             💬 Contatta
           </button>
           {openContactMenu && (
-            <div className={styles.contactMenu}>
+            <div className={styles.contactMenu} role="menu">
               {player.telefono && (
                 <>
                   <button
                     className={styles.contactOption}
+                    role="menuitem"
                     onClick={(e) => {
                       e.stopPropagation()
                       onWhatsApp(player)
@@ -129,6 +135,7 @@ function PlayerCard({ player, onWhatsApp, onCall, onEmail, onReport }) {
                   </button>
                   <button
                     className={styles.contactOption}
+                    role="menuitem"
                     onClick={(e) => {
                       e.stopPropagation()
                       onCall(player)
@@ -141,6 +148,7 @@ function PlayerCard({ player, onWhatsApp, onCall, onEmail, onReport }) {
               )}
               <button
                 className={styles.contactOption}
+                role="menuitem"
                 onClick={(e) => {
                   e.stopPropagation()
                   onEmail(player)
